@@ -1,7 +1,7 @@
 {
   "name": "afj",
   "private": true,
-  "description": "Automaty a form\u00e1lne jazyky \u2013 a Studygraph course",
+  "description": "Automaty a formálne jazyky – a Studygraph course",
   "type": "module",
   "scripts": {
     "validate": "studygraph validate",
@@ -14,6 +14,6 @@
     "upgrade:check": "studygraph upgrade --check"
   },
   "devDependencies": {
-    "studygraph": "github:P4trick-sk/studygraph#semver:^1.0.0"
+    "studygraph": "github:P4trick-sk/studygraph#semver:^1.1.0"
   }
 }
