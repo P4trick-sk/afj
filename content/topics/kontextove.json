@@ -1,0 +1,933 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "kontextove",
+  "title": "Kontextové jazyky",
+  "course": "B",
+  "order": 24,
+  "sourceFiles": [
+   "Afjb11_KontextJaz_P.pdf"
+  ],
+  "summary": "Kontextové gramatiky (typ 1) majú neskracujúce pravidlá; zodpovedajúci stroj je nedeterministický lineárne ohraničený Turingov stroj (LBA), ktorý pracuje iba na úseku pásky obsahujúcom vstup. Dokazuje sa ekvivalencia: LBA $\\to$ kontextová gramatika a kontextová gramatika $\\to$ LBA.",
+  "overview": "Prednáška zavádza kontextové gramatiky ($|\\alpha|\\le|\\beta|$) a príklad $a^nb^nc^n$, ktorý je kontextový, ale nie bezkontextový. Potom definuje LBA: Turingov stroj, ktorého hlava sa nesmie dostať za koncové značky a nesmie ich prepísať, takže pamäť je lineárna vzhľadom na vstup. Obe dôkazy ekvivalencie sú simuláčné: gramatika z LBA používa tri stopy (archívna kópia vstupu, pracovná páska, stav a poloha hlavy) a simuluje výpočet pravidlami; LBA z gramatiky odvodzuje spätne od slova $w$ k $S$ a porovnáva pásku s $S$.",
+  "keyQuestions": [
+   "Čo je kontextová gramatika a prečo „nesmie skracovať“?",
+   "Čo je LBA a prečo má lineárnu pamäť?",
+   "Ako sa simuluje LBA gramatikou a naopak?"
+  ],
+  "prerequisites": [
+   "gramatiky",
+   "pumping2"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "dfn.kontextova-gramatika",
+   "type": "definition",
+   "topic": "kontextove",
+   "title": "Kontextová gramatika",
+   "terms": [
+    {
+     "term": "kontextová gramatika",
+     "alt": "context-sensitive grammar, CSG"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb11_KontextJaz_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "**Kontextová gramatika** je [gramatika](dfn.gramatika) $G=(N,T,P,S)$, ktorá má všetky pravidlá v tvare $\\alpha\\to\\beta$, $|\\alpha|\\le|\\beta|$. Povolenou výnimkou je pravidlo $S\\to\\varepsilon$, za podmienky, že $S$ sa nevyskytuje na pravej strane žiadneho pravidla. Napríklad pravidlá $aABc\\to aDDBc$, $AB\\to DX$ sú povolené, pravidlá $AB\\to C$, $A\\to\\varepsilon$ nie.",
+   "explanation": {
+    "intuition": "Odvodenie nikdy nezkráti reťazec, preto každá vetná forma je najviac také dlhé ako výsledné [slovo](dfn.slovo).",
+    "detailed": "Vlastnosť neskracovania dáva [LBA](dfn.lba): aby sme zistili, či $w\\in L(G)$, stačí sa pozerať na reťazce dĺžky najviac $|w|$. Názov pochádza z pravidiel $\\gamma A\\delta\\to\\gamma\\beta\\delta$, ktoré prepisujú $A$ iba v kontexte; slajdová definícia cez dĺžky je ekvivalentná.",
+    "pitfalls": [
+     "Pravidlo $A\\to\\varepsilon$ pre $A\\ne S$ nie je povolené."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.gramatika",
+    "def.chomskeho-hierarchia",
+    "dfn.slovo",
+    "dfn.lba"
+   ],
+   "relations": [
+    {
+     "type": "generalizes",
+     "target": "dfn.bezkontextova-gramatika",
+     "note": "bezkontextové pravidlá s $\\varepsilon$-výnimkou"
+    },
+    {
+     "type": "specializes",
+     "target": "dfn.frazova-gramatika",
+     "note": "neskracujúce pravidlá"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.kontextova-gramatika-anbncn",
+   "type": "example",
+   "topic": "kontextove",
+   "title": "Kontextová gramatika pre a^n b^n c^n",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb11_KontextJaz_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "$S\\to aSBC\\mid aBC$, $CB\\to BC$, $aB\\to ab$, $bB\\to bb$, $bC\\to bc$, $cC\\to cc$ generuje $\\{a^nb^nc^n:n\\ge1\\}$: prvé dve pravidlá vygenerujú $a\\dots aBCBC\\dots BC$, pravidlo $CB\\to BC$ utriedi na $a\\dots aB\\dots BC\\dots C$ a ostatné pravidlá preklopia neterminály na malé písmená.",
+   "explanation": {
+    "intuition": "Rovnaký príklad ako v prvej prednáške, teraz označený ako kontextový.",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "dfn.kontextova-gramatika"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Overené: $L(G)=\\{a^nb^nc^n\\}$ na slovách do dĺžky 9 (prehľadávanie odvodení)."
+    ]
+   }
+  },
+  {
+   "id": "dfn.lba",
+   "type": "definition",
+   "topic": "kontextove",
+   "title": "Nedeterministický lineárne ohraničený Turingov stroj",
+   "terms": [
+    {
+     "term": "lineárne ohraničený automat",
+     "alt": "linear bounded automaton, LBA",
+     "symbol": "M=(Q,\\Sigma,\\Gamma,q_I,q_F,\\vdash,\\dashv,H)"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb11_KontextJaz_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "**Nedeterministický lineárne ohraničený [Turingov stroj](dfn.turingov-stroj)** (LBA) je $M=(Q,\\Sigma,\\Gamma,q_I,q_F,\\vdash,\\dashv,H)$, kde $Q$ je konečná množina stavov, $\\Sigma$ vstupná [abeceda](dfn.abeceda), $\\Gamma$ konečná abeceda páskových symbolov, $\\Sigma\\subseteq\\Gamma$, $q_I\\in Q$ počiatočný stav, $q_F\\in Q$ koncový (akceptujúci) stav, $q_I\\ne q_F$, $\\vdash\\in\\Gamma-\\Sigma$ ľavý okraj pásky, $\\dashv\\in\\Gamma-\\Sigma$ pravý okraj pásky ($\\vdash\\ne\\dashv$) a $H\\subseteq Q\\times\\Gamma\\times\\Gamma\\times Q\\times\\{-1,0,+1\\}$ množina prechodov (inštrukcií). Inštrukcia $(q,a,a',q',d)\\in H$: v stave $q$ pri čítaní $a$ stroj zapíše $a'$, prejde do $q'$ a posunie hlavu o $d$. Obmedzenia: hlava sa nemôže dostať za koncové značky ($d\\ne-1$ pre $\\vdash$, $d\\ne+1$ pre $\\dashv$); koncové značky nemožno zrušiť ($a\\in\\{\\vdash,\\dashv\\}\\Rightarrow a'=a$); v koncovom stave stroj vždy zastaví.",
+   "explanation": {
+    "intuition": "[Turingov stroj](dfn.turingov-stroj), ktorý smie používať iba toľko pásky, koľko zaberá vstup.",
+    "detailed": "Koncové značky zaručujú, že pamäť je lineárna: $\\Gamma$ je konečná, ale stroj môže prepisovať symboly, takže na pásku sa zmestí $O(n)$ bitov informácie navyše oproti vstupu. Na rozdiel od PDA má LBA prístup ku ľubovoľnému miestu pásky v oboch smeroch.",
+    "pitfalls": [
+     "Slajd definuje stroj nedeterministicky; deterministický prípad je podtrieda."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.zasobnikovy-automat",
+    "dfn.nfa",
+    "dfn.abeceda"
+   ],
+   "relations": [
+    {
+     "type": "specializes",
+     "target": "dfn.turingov-stroj",
+     "note": "pásku obmedzuje na vstup"
+    },
+    {
+     "type": "equivalent",
+     "target": "dfn.kontextova-gramatika",
+     "note": "rovnaká trieda jazykov"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.akceptovanie-lba",
+   "type": "definition",
+   "topic": "kontextove",
+   "title": "Akceptovanie a odmietnutie LBA",
+   "terms": [
+    {
+     "term": "akceptovanie LBA",
+     "alt": "acceptance by an LBA"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb11_KontextJaz_P.pdf",
+     "page": 6
+    }
+   ],
+   "statement": "Slovo $w=a_1\\dots a_n$ sa nachádza na páske medzi koncovými značkami: $\\vdash a_1a_2\\dots a_n\\dashv$. Slovo $w\\in L(M)$ (**akceptovanie**), ak aspoň jeden výpočet na $w$ sa zastaví v stave $q_F$. **Odmietnutie:** $w\\notin L(M)$, ak každý výpočet na $w$ sa buď zastaví v stave rôznom od $q_F$, alebo sa nezastaví vôbec (beží donekonečna).",
+   "explanation": {
+    "intuition": "Stačí jedna prijímajúca vetva výpočtu.",
+    "detailed": "Odmietnutie zahŕňa aj nekonečné výpočty; [LBA](dfn.lba) preto nemusí zastaviť na každom vstupe, hoci sa dá upraviť (prednáška 12).",
+    "pitfalls": [
+     "Nezastavenie je odmietnutie, nie chyba."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.lba"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.lba-anbncn",
+   "type": "example",
+   "topic": "kontextove",
+   "title": "LBA pre a^n b^n c^n",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb11_KontextJaz_P.pdf",
+     "page": 7
+    }
+   ],
+   "statement": "Stroj postupne označuje (veľkými písmenami $A,B,C$) po jednom $a$, $b$, $c$ a vracia sa k ľavému okraju; po označení všetkých $a$ overí, že zvyšné symbole sú označené $B,C$ a dosiahne $\\dashv$ v stave $q_F$. Inštrukcie: $(q_I,\\vdash,\\vdash,q_I,+1)$, $(q_I,A,A,q_I,+1)$, $(q_I,a,A,q_1,+1)$, $(q_1,a,a,q_1,+1)$, $(q_1,B,B,q_1,+1)$, $(q_1,b,B,q_2,+1)$, $(q_2,b,b,q_2,+1)$, $(q_2,C,C,q_2,+1)$, $(q_2,c,C,q_3,-1)$, $(q_3,x,x,q_3,-1)$ pre $x\\in\\{a,b,c,A,B,C\\}$, $(q_3,\\vdash,\\vdash,q_I,+1)$, $(q_I,B,B,q_4,+1)$, $(q_4,B,B,q_4,+1)$, $(q_4,C,C,q_4,+1)$, $(q_4,\\dashv,\\dashv,q_F,0)$.",
+   "explanation": {
+    "intuition": "Každé kolo odškrtne jeden trojicu $a,b,c$; ak sa na konci všetko odškrtlo, počty sú rovnaké.",
+    "detailed": "Stroj je deterministický a pracuje v kvadratickom čase (každé kolo prejde pásku). Pamäť je len páska so vstupom, preto je to naozaj [LBA](dfn.lba).",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "dfn.akceptovanie-lba"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.lba"
+    }
+   ],
+   "figures": [
+    "fig.lba-instrukcie",
+    "fig.lba-priebeh"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajdy 7–8 používajú označené symboly zobrazené iba obrázkom (kvôli extrakcii nečitateľné); inštrukcie sú zrekonštruované a overené simuláciou: LBA prijíma presne $\\{a^nb^nc^n:n\\ge1\\}$ na všetkých slovách nad $\\{a,b,c\\}$ do dĺžky 9."
+    ]
+   }
+  },
+  {
+   "id": "alg.kontextova-z-lba",
+   "type": "algorithm",
+   "topic": "kontextove",
+   "title": "Konštrukcia kontextovej gramatiky z LBA",
+   "terms": [
+    {
+     "term": "gramatika z LBA",
+     "alt": "grammar from an LBA"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb11_KontextJaz_P.pdf",
+     "page": 10
+    }
+   ],
+   "statement": "Pre [LBA](dfn.lba) $M$ zostrojíme [gramatiku](dfn.gramatika) $G=(N,T,P,S)$ s neterminálmi, ktoré predstavujú trojstopové symboly: prvá stopa – archivovaná kópia $a_1\\dots a_n\\in\\Sigma^*$, druhá – pracovná páska $M$ (na začiatku $\\vdash a_1\\dots a_n\\dashv$), tretia – stav $M$ a poloha hlavy. Fázy: (1) generovanie $a_1\\dots a_n$ spolu s $q_I$ na prvej pozícii a „prázdnymi“ ďalšími; (2) simulácia výpočtu $M$ pravidlami pre každú inštrukciu $(q,x,x',q',d)\\in H$ (osobitne pre posun doprava, doľava, na mieste, a okrajové prípady); (3) po dosiahnutí $q_F$ vymazanie pomocných dát a vznik [slova](dfn.slovo) $a_1\\dots a_n$ pomocou „čistiacich“ pravidiel; (4) slová dĺžky menej ako $3$ sa generujú osobitnými pravidlami $S\\to w$.",
+   "explanation": {
+    "intuition": "Gramatika najprv „hádá“ vstup, potom simuluje stroj na pracovnej stope a ak stroj akceptuje, [slovo](dfn.slovo) „odkryje“.",
+    "detailed": "Všetky pravidlá sú neskracujúce, lebo neterminály zodpovedajú jednotlivým políčkam pásky a nemení sa ich počet. Počet neterminálov je $2+5|\\Sigma||\\Gamma|+|Q|\\dots$ — konečný.",
+    "pitfalls": [
+     "Stav a hlava sú zakódované na tretej stope; posun hlavy sa vykoná lokálnym prepisom dvoch susedných políčok.",
+     "Pre krátke slová $|w|<3$ treba osobitné pravidlá, lebo okrajové prípady sa v pravidlách nevyskytujú."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Korektnosť: odvodenie slova $w$ z $S$ vo $G$ existuje práve vtedy, keď existuje prijímajúci výpočet $M$ na $w$ (fázy 1–3 simulujú $M$ políčko po políčku), čo sa dokazuje indukciou podľa dĺžky výpočtu.",
+    "steps": []
+   },
+   "uses": [
+    "dfn.lba",
+    "dfn.kontextova-gramatika",
+    "dfn.slovo",
+    "dfn.gramatika"
+   ],
+   "relations": [
+    {
+     "type": "algorithm-for",
+     "target": "thm.lba-na-kontextovu",
+     "note": "dôkaz"
+    }
+   ],
+   "figures": [
+    "fig.csg-lba-fazy"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.lba-na-kontextovu",
+   "type": "theorem",
+   "topic": "kontextove",
+   "title": "Veta (LBA → CSG): ku každému LBA existuje kontextová gramatika",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb11_KontextJaz_P.pdf",
+     "page": 9
+    }
+   ],
+   "statement": "Pre každý nedeterministický lineárne ohraničený [Turingov stroj](dfn.turingov-stroj) $M$ existuje [kontextová gramatika](dfn.kontextova-gramatika) $G$ taká, že $L(G)=L(M)$.",
+   "explanation": {
+    "intuition": "Všetko, čo vie [LBA](dfn.lba), vie aj [kontextová gramatika](dfn.kontextova-gramatika).",
+    "detailed": "Kľúčový nápad: [gramatika](dfn.gramatika) nezmenšuje reťazec, preto môže byť „nahrádzaním políčok“ simulovaná pásku dĺžky $n$ bez rozširovania; to presne zodpovedá [LBA](dfn.lba).",
+    "pitfalls": [
+     "Gramatika simuluje iba jeden výpočet, ktorý si nedeterministicky „vyberie“ (výber pravidiel)."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "sketch",
+    "steps": [
+     {
+      "text": "Fáza 1: pravidlá $S\\to\\binom{a}{q_I}\\dots$ vygenerujú pre každé $a\\in\\Sigma$ trojstopový reťazec, v ktorom prvá stopa $a_1\\dots a_n$, druhá $\\vdash a_1\\dots a_n\\dashv$ a tretia $q_I$ na prvej pozícii.",
+      "why": "Slajdy 10–11: archivovaná kópia, pracovná páska a stav.",
+      "uses": []
+     },
+     {
+      "text": "Fáza 2: pre každú inštrukciu $(q,x,x',q',+1)\\in H$ pravidlá prepíšu dvojicu susedných políčok, v ktorej je hlava na $x$ so stavom $q$, na dvojicu s $x'$ a hlavou na susednom políčku v stave $q'$; analogicky pre $-1$ a $0$ a okrajové prípady.",
+      "why": "Slajdy 12–16: lokálny prepis zachová dĺžku.",
+      "uses": []
+     },
+     {
+      "text": "Fáza 3: ak sa dosiahne $q_F$, čistiace pravidlá postupne vymažú druhú a tretiu stopu a ponechajú iba archivované slovo $a_1\\dots a_n$. Všetky pravidlá majú $|\\alpha|\\le|\\beta|$.",
+      "why": "Slajdy 17–18.",
+      "uses": []
+     },
+     {
+      "text": "Pre $|w|<3$ sa pridajú pravidlá $S\\to w$ pre prijaté slová, lebo okrajové prípady sa v pravidlách nevyskytujú.",
+      "why": "Slajd 20.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "alg.kontextova-z-lba",
+    "dfn.akceptovanie-lba",
+    "dfn.kontextova-gramatika",
+    "dfn.lba",
+    "dfn.gramatika"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.turingov-stroj"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajdy 9–21 ukazujú konštrukciu schémami s nečitateľnými indexami; dôkaz správnosti je naznačený. Pravidlá neboli implementované a overené simuláciou."
+    ]
+   }
+  },
+  {
+   "id": "alg.lba-z-kontextovej",
+   "type": "algorithm",
+   "topic": "kontextove",
+   "title": "Konštrukcia LBA z kontextovej gramatiky",
+   "terms": [
+    {
+     "term": "LBA z gramatiky",
+     "alt": "LBA from a grammar"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb11_KontextJaz_P.pdf",
+     "page": 23
+    }
+   ],
+   "statement": "Pre [kontextovú gramatiku](dfn.kontextova-gramatika) $G=(N,T,P,S)$ zostrojíme [LBA](dfn.lba) $M$ so $\\Sigma=T$, $\\Gamma=T\\cup N\\cup\\{\\_,\\vdash,\\dashv\\}$, ktorý na páske spätne rekonštruuje [odvodenie](dfn.odvodenie) $S=w_0\\Rightarrow w_1\\Rightarrow\\dots\\Rightarrow w_l=w$ od $w$ k $S$: reťazec $w_i'$ je $w_i$ s ľubovoľným počtom medzier za každým symbolom. V každom kroku $M$ nedeterministicky vyberie pravidlo $x_1\\dots x_g\\to y_1\\dots y_h$ a nahradí na páske výskyt pravej strany $y_1\\dots y_h$ ľavou $x_1\\dots x_g$ (a dorovná medzerami, lebo $g\\le h$). Po každom kroku sa $M$ nedeterministicky rozhodne, či porovná pásku s $w_0'=S\\_\\dots\\_$; ak sa zhodujú, akceptuje.",
+   "explanation": {
+    "intuition": "[LBA](dfn.lba) „vracia čas“: začne od [slova](dfn.slovo) a spätne rozbaľuje pravidlá, až kým nedostane $S$.",
+    "detailed": "Spätné odvodzovanie je možné vďaka neskracovaniu: každá vetná forma je najviac $|w|$ dlhá, takže pracovná páska dĺžky $|w|$ stačí. Stavy $q_{x_1\\dots x_g\\,y_1\\dots y_h}$ si pamätajú vybraté pravidlo; ich počet je konečný, lebo $P$ je konečná.",
+    "pitfalls": [
+     "Medzery pomáhajú pri kompresii: $g\\le h$ pri nahrádzaní pravej strany ľavou, rozdiel $h-g$ sa vyplní medzerami."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Každé odvodenie $S\\Rightarrow^*w$ v $G$ sa dá prečítať odzadu ako postupnosť krokov $M$; naopak, akceptujúci výpočet $M$ dáva odvodenie. Dôležité je, že vetné formy sú najviac $|w|$ dlhé (neskracujúce pravidlá).",
+    "steps": []
+   },
+   "uses": [
+    "dfn.lba",
+    "dfn.kontextova-gramatika",
+    "dfn.odvodenie",
+    "dfn.slovo"
+   ],
+   "relations": [
+    {
+     "type": "algorithm-for",
+     "target": "thm.kontextova-na-lba",
+     "note": "dôkaz"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.kontextova-na-lba",
+   "type": "theorem",
+   "topic": "kontextove",
+   "title": "Veta (CSG → LBA): ku každej kontextovej gramatike existuje LBA",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb11_KontextJaz_P.pdf",
+     "page": 22
+    }
+   ],
+   "statement": "Pre každú [kontextovú gramatiku](dfn.kontextova-gramatika) $G=(N,T,P,S)$ existuje nedeterministický lineárne ohraničený [Turingov stroj](dfn.turingov-stroj) $M$ taký, že $L(M)=L(G)$.",
+   "explanation": {
+    "intuition": "Kontextové [jazyky](dfn.jazyk) nevyžadujú viac než lineárnu pamäť.",
+    "detailed": "Spolu s opačným smerom to dáva dôležitú charakterizáciu [kontextových jazykov](dfn.kontextovy-jazyk): sú to práve [jazyky](dfn.jazyk) rozpoznávané nedeterministicky v lineárnej pamäti (NSPACE$(n)$).",
+    "pitfalls": [
+     "Dôkaz využíva nedeterminizmus: stroj „háda“, ktoré pravidlo sa použilo."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "sketch",
+    "steps": [
+     {
+      "text": "Odvodenie $S=w_0\\Rightarrow w_1\\Rightarrow\\dots\\Rightarrow w_l=w$ sa obrátene zapíše na pásku: $w=w_l'$, potom $w_{l-1}'$, \\dots, $w_0'=S\\_\\dots\\_$. Pásku vždy nahrádzame ďalšou vetnou formou, vyplnenou medzerami.",
+      "why": "Slajd 23.",
+      "uses": []
+     },
+     {
+      "text": "Krok „dozadu“: $M$ nedeterministicky vyberie pravidlo $x_1\\dots x_g\\to y_1\\dots y_h$, nájde na páske $y_1\\dots y_h$ (s medzerami) a nahradí ho $x_1\\dots x_g$ s dorovnaním medzerami. Prechody realizuje množina stavov $q_{x_1\\dots y_h}$.",
+      "why": "Slajdy 24–30.",
+      "uses": []
+     },
+     {
+      "text": "Po každom kroku sa $M$ nedeterministicky rozhodne porovnať obsah pásky s $S\\_\\dots\\_$ (slajdy 31–33). Zhoda znamená, že odvodenie existuje, a $M$ prejde do $q_F$.",
+      "why": "Prijímajúca vetva zodpovedá odvodeniu.",
+      "uses": []
+     },
+     {
+      "text": "Ak $G$ má pravidlo $S\\to\\varepsilon$, pridá sa inštrukcia pre prázdne slovo. Počet stavov je konečný, lebo $P$ je konečná.",
+      "why": "Slajd 33–34.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "alg.lba-z-kontextovej",
+    "dfn.kontextova-gramatika",
+    "dfn.lba",
+    "dfn.jazyk",
+    "dfn.kontextovy-jazyk"
+   ],
+   "relations": [
+    {
+     "type": "converse-of",
+     "target": "thm.lba-na-kontextovu"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.turingov-stroj"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajdy 22–34 popisujú konštrukciu pásky a stavov; formálny dôkaz správnosti nie je na slajdoch; konštrukcia nebola implementovaná."
+    ]
+   }
+  },
+  {
+   "id": "dfn.kontextovy-jazyk",
+   "type": "definition",
+   "topic": "kontextove",
+   "title": "Kontextový jazyk",
+   "terms": [
+    {
+     "term": "kontextový jazyk",
+     "alt": "context-sensitive language, CSL"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb11_KontextJaz_P.pdf",
+     "page": 22
+    }
+   ],
+   "statement": "**Kontextový [jazyk](dfn.jazyk)** je jazyk generovaný [kontextovou gramatikou](dfn.kontextova-gramatika); ekvivalentne jazyk rozpoznávaný nedeterministickým lineárne ohraničeným [Turingovým strojom](dfn.turingov-stroj).",
+   "explanation": {
+    "intuition": "Trieda [jazykov](dfn.jazyk) medzi bezkontextovými a rekurzívne vyčísliteľnými.",
+    "detailed": "Platí $\\text{CFL}\\subsetneq\\text{CSL}\\subsetneq\\text{RE}$. Deterministická verzia (deterministický [LBA](dfn.lba)) tvorí triedu deterministických kontextových [jazykov](dfn.jazyk); či sa rovná CSL, je otvorený problém (prednáška 12).",
+    "pitfalls": [
+     "Jazyk $\\{a^nb^nc^n\\}$ je kontextový, ale nie bezkontextový."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.kontextova-gramatika",
+    "thm.lba-na-kontextovu",
+    "dfn.jazyk",
+    "dfn.lba"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.turingov-stroj"
+    },
+    {
+     "type": "see-also",
+     "target": "thm.kontextova-na-lba"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.lba-instrukcie",
+   "title": "Inštrukcie LBA pre a^n b^n c^n",
+   "caption": "Zrekonštruované; $<$ je ľavá a $>$ pravá koncová značka. Overené simuláciou.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.lba-anbncn"
+   ],
+   "sources": [],
+   "kind": "table",
+   "columns": [
+    "stav",
+    "číta",
+    "zapíše",
+    "nový stav",
+    "posun"
+   ],
+   "rows": [
+    [
+     "I",
+     "<",
+     "<",
+     "I",
+     "+1"
+    ],
+    [
+     "I",
+     "A",
+     "A",
+     "I",
+     "+1"
+    ],
+    [
+     "I",
+     "a",
+     "A",
+     "1",
+     "+1"
+    ],
+    [
+     "1",
+     "a",
+     "a",
+     "1",
+     "+1"
+    ],
+    [
+     "1",
+     "B",
+     "B",
+     "1",
+     "+1"
+    ],
+    [
+     "1",
+     "b",
+     "B",
+     "2",
+     "+1"
+    ],
+    [
+     "2",
+     "b",
+     "b",
+     "2",
+     "+1"
+    ],
+    [
+     "2",
+     "C",
+     "C",
+     "2",
+     "+1"
+    ],
+    [
+     "2",
+     "c",
+     "C",
+     "3",
+     "-1"
+    ],
+    [
+     "3",
+     "<",
+     "<",
+     "I",
+     "+1"
+    ],
+    [
+     "I",
+     "B",
+     "B",
+     "4",
+     "+1"
+    ],
+    [
+     "4",
+     "B",
+     "B",
+     "4",
+     "+1"
+    ],
+    [
+     "4",
+     "C",
+     "C",
+     "4",
+     "+1"
+    ],
+    [
+     "4",
+     ">",
+     ">",
+     "F",
+     "0"
+    ],
+    [
+     "3",
+     "a",
+     "a",
+     "3",
+     "-1"
+    ],
+    [
+     "3",
+     "b",
+     "b",
+     "3",
+     "-1"
+    ],
+    [
+     "3",
+     "c",
+     "c",
+     "3",
+     "-1"
+    ],
+    [
+     "3",
+     "A",
+     "A",
+     "3",
+     "-1"
+    ],
+    [
+     "3",
+     "B",
+     "B",
+     "3",
+     "-1"
+    ],
+    [
+     "3",
+     "C",
+     "C",
+     "3",
+     "-1"
+    ]
+   ]
+  },
+  {
+   "id": "fig.lba-priebeh",
+   "title": "Priebeh LBA na slove aabbcc (vypočítaný)",
+   "caption": "Veľké písmená sú označené symboly; posledný riadok je páska pri prijatí.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.lba-anbncn"
+   ],
+   "sources": [],
+   "kind": "table",
+   "columns": [
+    "kolo",
+    "páska po návrate k ľavému okraju"
+   ],
+   "rows": [
+    [
+     "0",
+     "$\\vdash aabbcc\\dashv$"
+    ],
+    [
+     "1",
+     "$\\vdash AaBbCc\\dashv$"
+    ],
+    [
+     "2",
+     "$\\vdash AABBCC\\dashv$"
+    ],
+    [
+     "3",
+     "$\\vdash AABBCC\\dashv$"
+    ]
+   ]
+  },
+  {
+   "id": "fig.csg-lba-fazy",
+   "title": "Fázy konštrukcie gramatiky z LBA",
+   "caption": "Slajdy 10–20.",
+   "origin": "generated",
+   "illustrates": [
+    "alg.kontextova-z-lba"
+   ],
+   "sources": [],
+   "kind": "mermaid",
+   "code": "flowchart LR\n  A[\"1. generuj w a pásku\"] --> B[\"2. simuluj M pravidlami\"] --> C[\"3. po q_F vymaž pomocné dáta\"] --> D[\"slovo w\"]"
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.hranice-gramatik",
+   "title": "Hranice popisnej sily gramatík",
+   "summary": "Čo ešte kontextové gramatiky zvládnu.",
+   "scenario": "Návrhár jazyka potrebuje jazyk s rovnakými počtami troch skupín symbolov.",
+   "modelling": "Takéto jazyky sú kontextové, nie bezkontextové.",
+   "solution": "Kontextová gramatika $a^nb^nc^n$ alebo LBA to rozhodnú v lineárnej pamäti.",
+   "connects": [
+    "dfn.kontextova-gramatika",
+    "ex.kontextova-gramatika-anbncn"
+   ],
+   "figures": [],
+   "tags": [
+    "teória"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.lineárna-pamat",
+   "title": "Výpočty s lineárnou pamäťou",
+   "summary": "Charakterizácia triedy NSPACE(n).",
+   "scenario": "Algoritmus má používať pamäť úmernú vstupu a nedeterministicky hádať.",
+   "modelling": "LBA modeluje stroj s lineárnou pamäťou.",
+   "solution": "Ekvivalencia s kontextovými gramatikami dáva gramatickú charakterizáciu triedy.",
+   "connects": [
+    "dfn.lba",
+    "thm.kontextova-na-lba"
+   ],
+   "figures": [],
+   "tags": [
+    "zložitosť"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.clenstvo-csl",
+   "title": "Členský problém pre kontextové jazyky",
+   "summary": "Rozhodnutie, či slovo patrí do jazyka.",
+   "scenario": "Dané slovo a kontextová gramatika: patrí do jazyka?",
+   "modelling": "Spätné odvodzovanie na páske dĺžky $|w|$.",
+   "solution": "Všetky vetné formy majú dĺžku najviac $|w|$, preto je problém rozhodnuteľný (v lineárnej pamäti).",
+   "connects": [
+    "thm.kontextova-na-lba",
+    "dfn.kontextovy-jazyk"
+   ],
+   "figures": [],
+   "tags": [
+    "algoritmy"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.csl-1",
+   "kind": "mcq",
+   "prompt": "Čo vyžaduje kontextová gramatika od pravidla $\\alpha\\to\\beta$?",
+   "options": [
+    "$|\\alpha|\\le|\\beta|$",
+    "$|\\alpha|=1$",
+    "$\\beta\\in T^*$",
+    "$|\\alpha|\\ge|\\beta|$"
+   ],
+   "answer": 0,
+   "explanation": "Pravidlá neskracujú.",
+   "about": [
+    "dfn.kontextova-gramatika"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.csl-2",
+   "kind": "truefalse",
+   "prompt": "Hlava LBA sa môže dostať za pravú koncovú značku.",
+   "answer": false,
+   "explanation": "Je to jedno z obmedzení definície.",
+   "about": [
+    "dfn.lba"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.csl-3",
+   "kind": "mcq",
+   "prompt": "Kedy LBA slovo odmietne?",
+   "options": [
+    "len ak sa zastaví v nekoncovom stave",
+    "ak každý výpočet zastane v $\\neq q_F$ alebo sa nezastaví",
+    "ak ho nepozná",
+    "nikdy"
+   ],
+   "answer": 1,
+   "explanation": "Nezastavenie je odmietnutie.",
+   "about": [
+    "dfn.akceptovanie-lba"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.csl-4",
+   "kind": "mcq",
+   "prompt": "Ktoré tri stopy používa gramatika z LBA?",
+   "options": [
+    "archivovaná kópia vstupu, pracovná páska, stav a poloha hlavy",
+    "vstup, výstup, zásobník",
+    "iba pracovná páska",
+    "dve kópie vstupu"
+   ],
+   "answer": 0,
+   "explanation": "Slajd 11.",
+   "about": [
+    "alg.kontextova-z-lba"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.csl-5",
+   "kind": "truefalse",
+   "prompt": "Jazyk $\\{a^nb^nc^n\\}$ je kontextový.",
+   "answer": true,
+   "explanation": "Má kontextovú gramatiku aj LBA.",
+   "about": [
+    "ex.kontextova-gramatika-anbncn"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.csl-6",
+   "kind": "open",
+   "prompt": "Prečo stačí LBA lineárna pamäť na rozhodnutie $w\\in L(G)$ pre kontextovú $G$?",
+   "answer": "Vetné formy v odvodení nikdy nie sú kratšie než predošlé, takže všetky sú dlhé najviac $|w|$; spätné odvodzovanie sa zmestí na pásku dĺžky $O(|w|)$.",
+   "explanation": "Neskracujúce pravidlá.",
+   "about": [
+    "thm.kontextova-na-lba"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.csl-7",
+   "kind": "flashcard",
+   "prompt": "Aký je vzťah CFL, CSL, RE?",
+   "answer": "$\\text{CFL}\\subsetneq\\text{CSL}\\subsetneq\\text{RE}$.",
+   "explanation": "Oddeľujú ich $a^nb^nc^n$ a halting problém.",
+   "about": [
+    "dfn.kontextovy-jazyk"
+   ],
+   "difficulty": 1
+  }
+ ]
+}

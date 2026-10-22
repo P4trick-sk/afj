@@ -1,0 +1,1037 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "automaty-vystup",
+  "title": "Konečnostavové automaty s výstupom",
+  "course": "A",
+  "order": 2,
+  "sourceFiles": [
+   "Afja02_automaty_P.pdf"
+  ],
+  "summary": "Konečnostavový automat s výstupom číta vstupné slovo symbol po symbole, mení vnútorný stav a v každom kroku vydá výstupný symbol. Zavádzame prechodovú a výstupnú funkciu, ich rozšírenie na slová a základné lemy o rozšírených funkciách.",
+  "overview": "Prednáška otvára časť o automatoch. Najprv sa učíme automat ako stroj s konečnou pamäťou, ktorý prekladá vstupný reťazec na výstupný (Mealyho stroj), a ilustrujeme ho dvoma príkladmi: automatom pre mince a lístky a automatom, ktorý označuje každý druhý výskyt reťazca 001. Potom zavedieme rozšírené funkcie $f^*$ a $g^*$ pre celé slová a dokážeme dve lemy, ktoré sa používajú vo všetkých ďalších dôkazoch o ekvivalencii automatov a stavov. Pojmy z tejto prednášky sú základom pre redukciu automatov (prednášky 3–5) a pre akceptory (prednášky 6 a ďalej).",
+  "keyQuestions": [
+   "Čo je stav automatu a prečo stačí konečný počet stavov?",
+   "Ako sa z jednokrokových funkcií $f,g$ definujú funkcie $f^*,g^*$ pre celé slová?",
+   "Prečo platí $f^*(q,\\omega'\\omega'')=f^*(f^*(q,\\omega'),\\omega'')$?"
+  ],
+  "prerequisites": [
+   "gramatiky"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "dfn.konecnostavovy-automat",
+   "type": "definition",
+   "topic": "automaty-vystup",
+   "title": "Konečnostavový automat s výstupom",
+   "terms": [
+    {
+     "term": "konečnostavový automat",
+     "alt": "finite-state machine with output (Mealy machine)",
+     "symbol": "M=(Q,\\Sigma,\\Delta,q_I,f,g)"
+    },
+    {
+     "term": "stav",
+     "alt": "state"
+    },
+    {
+     "term": "prechodová funkcia",
+     "alt": "transition function",
+     "symbol": "f"
+    },
+    {
+     "term": "výstupná funkcia",
+     "alt": "output function",
+     "symbol": "g"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja02_automaty_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "**Konečnostavový automat** je usporiadaná šestica $M=(Q,\\Sigma,\\Delta,q_I,f,g)$, kde $Q$ je konečná množina vnútorných stavov, $\\Sigma$ je konečná [abeceda](dfn.abeceda) vstupných symbolov, $\\Delta$ je konečná abeceda výstupných symbolov, $q_I\\in Q$ je počiatočný stav, $f:Q\\times\\Sigma\\to Q$ je prechodová funkcia a $g:Q\\times\\Sigma\\to\\Delta$ je výstupná funkcia. Platí $q_{t+1}=f(q_t,a_{t+1})$, $b_{t+1}=g(q_t,a_{t+1})$ a $q_0=q_I$.",
+   "explanation": {
+    "intuition": "Automat si pamätá len konečne veľa informácie (stav). V každom kroku podľa stavu a prečítaného symbolu zmení stav a vydá výstupný symbol.",
+    "detailed": "Stav je celá pamäť automatu: o vstupe, ktorý už prečítal, vie iba to, čo sa zmestí do jedného z $|Q|$ stavov. Preto automat nedokáže napríklad porovnať počty dvoch skupín symbolov neobmedzenej dĺžky. Funkcie $f$ a $g$ sú totálne, teda pre každú dvojicu (stav, symbol) je krok určený jednoznačne, čo vyjadruje determinizmus. Výstup sa počíta z dvojice (stav pred krokom, prečítaný symbol).",
+    "pitfalls": [
+     "Výstup $b_{t+1}$ závisí od stavu $q_t$ pred čítaním $a_{t+1}$, nie od nového stavu $q_{t+1}$.",
+     "Funkcie $f$ a $g$ musia byť definované pre všetky dvojice $(q,a)$."
+    ],
+    "examples": [
+     "Automat s mincami: $Q=\\{0,\\dots,5\\}$, $\\Sigma=\\{1,2,5\\}$, $\\Delta=\\{0',6'\\}$, $q_I=0$."
+    ]
+   },
+   "uses": [
+    "dfn.abeceda",
+    "dfn.slovo",
+    "dfn.zretazenie-slov"
+   ],
+   "relations": [
+    {
+     "type": "specializes",
+     "target": "dfn.konecnostavovy-akceptor",
+     "note": "akceptor má namiesto výstupu množinu koncových stavov"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.automat-minci",
+   "type": "example",
+   "topic": "automaty-vystup",
+   "title": "Automat s mincami a lístkami",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja02_automaty_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "Automat dostáva na vstup mince v hodnote $1,2,5$ a na výstup dáva lístky v hodnote $6'$ (alebo nič: $0'$). Stavy $0,\\dots,5$ vyjadrujú doteraz vhodenú sumu. Platí $f(q,a)=(q+a)\\bmod 6$ a $g(q,a)=6'$ práve vtedy, keď $q+a\\ge6$. Na vstupe $1,2,2,2,5,5,5,5$ prejde automat stavmi $0,1,3,5,1,0,5,4,3$ a vydá $0',0',0',6',6',0',6',6'$.",
+   "explanation": {
+    "intuition": "Stav je zvyšok vhodenej sumy po delení $6$; po dosiahnutí $6$ sa vydá lístok a suma sa zníži.",
+    "detailed": "Tabuľky $f$ a $g$ zo slajdu majú tvar $f(q,a)=(q+a)\\bmod 6$ a výstup lístka, keď súčet dosiahne aspoň $6$. Všimnite si, že výstup sa vydáva v tom istom kroku, v ktorom sa mince vhodia, nie v nasledujúcom. Šestica stavov je nutná, lebo automat musí rozlíšiť všetky možné zvyšky.",
+    "pitfalls": [
+     "Pri hodnote $5$ v stave $4$ sa vydá lístok a nový stav je $3$ ($4+5-6$)."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.konecnostavovy-automat"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.automat-minci",
+    "fig.automat-minci-tabulky"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Tabuľky $f$ a $g$ prepísané zo slajdu 3 a overené výpočtom: $f(q,a)=(q+a)\\bmod 6$, $g=6'\\iff q+a\\ge6$."
+    ]
+   }
+  },
+  {
+   "id": "dfn.stavovy-diagram",
+   "type": "definition",
+   "topic": "automaty-vystup",
+   "title": "Grafická reprezentácia automatu",
+   "terms": [
+    {
+     "term": "stavový diagram",
+     "alt": "state diagram"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja02_automaty_P.pdf",
+     "page": 5
+    }
+   ],
+   "statement": "Automat sa znázorňuje orientovaným grafom: vrcholy sú stavy a pre každú dvojicu $(q,a)$ vedie hrana z $q$ do $q'=f(q,a)$ s označením $a/b$, kde $b=g(q,a)$. Počiatočný stav $q_I$ sa označí šípkou zvonku.",
+   "explanation": {
+    "intuition": "Diagram je prehľadnejší zápis tabuliek $f$ a $g$: z každého stavu vychádza práve jedna hrana pre každý vstupný symbol.",
+    "detailed": "Ak z $q$ do $q'$ vedie viac symbolov, kreslí sa jedna hrana s viacerými označeniami. Diagram automatu je súčasne grafom, preto sa naň aplikujú grafové pojmy: cesta, dosiahnuteľnosť, cyklus.",
+    "pitfalls": [
+     "V diagrame deterministického automatu nesmú z jedného stavu vychádzať dve hrany s rovnakým vstupným symbolom."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.konecnostavovy-automat"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.automat-minci"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.automat-001",
+   "type": "example",
+   "topic": "automaty-vystup",
+   "title": "Automat označujúci každý druhý výskyt reťazca 001",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja02_automaty_P.pdf",
+     "page": 6
+    }
+   ],
+   "statement": "Na binárnom vstupe automat lokalizuje každý druhý výskyt reťazca $001$: výstup je $+$ po prečítaní posledného znaku druhého, štvrtého, ... výskytu a inak $-$. Napr. pre vstup $01001010011100110100011$ sa $+$ objaví na 10. a 22. pozícii. Stavy možno chápať ako zhrnutie histórie vstupu: $A$ = začiatok bez rozpracovaného výskytu, $B$ = končí na $0$, $C$ = končí na $00$, $D$ = práve sa našiel prvý $001$, $E$ = potom $0$, $F$ = potom $00$. Mená stavov sú ľubovoľné, napr. aj $\\{这,是,一,台,机,器\\}$.",
+   "explanation": {
+    "intuition": "Automat si zapamätá, či práve nasleduje prvý alebo druhý výskyt $001$ a koľko znakov vzoru už videl.",
+    "detailed": "Stavy $A,B,C$ zodpovedajú prefixom $\\varepsilon,0,00$ vzoru $001$ v prvej fáze, stavy $D,E,F$ tým istým prefixom v druhej fáze (po prvom výskyte). Pri znaku $1$ v stave $F$ sa vydá $+$ a automat sa vráti do $A$. Takto vidno, že konečný automat dokáže počítať výskyty modulo $2$.",
+    "pitfalls": [
+     "Výskyty $001$ sa nemôžu prekrývať, preto po druhom výskyte stačí začať od stavu $A$."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.stavovy-diagram"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.automat-001"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Na slajde 6 je len obrázok; prechody automatu sú zrekonštruované tak, aby výstup súhlasil s ukážkovým priebehom (plus na 10. a 22. pozícii). Overené simuláciou."
+    ]
+   }
+  },
+  {
+   "id": "dfn.rozsirene-funkcie",
+   "type": "definition",
+   "topic": "automaty-vystup",
+   "title": "Zovšeobecnené prechodová a výstupná funkcia",
+   "terms": [
+    {
+     "term": "zovšeobecnená prechodová funkcia",
+     "alt": "extended transition function",
+     "symbol": "f^*"
+    },
+    {
+     "term": "zovšeobecnená výstupná funkcia",
+     "alt": "extended output function",
+     "symbol": "g^*"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja02_automaty_P.pdf",
+     "page": 7
+    }
+   ],
+   "statement": "K základným funkciám $f:Q\\times\\Sigma\\to Q$, $g:Q\\times\\Sigma\\to\\Delta$ definujeme zovšeobecnené $f^*:Q\\times\\Sigma^*\\to Q$ a $g^*:Q\\times\\Sigma^*\\to\\Delta^*$ rekurzívne: (1) $f^*(q,\\varepsilon)=q$, $g^*(q,\\varepsilon)=\\varepsilon$; (2) $f^*(q,\\omega a)=f(f^*(q,\\omega),a)$, $g^*(q,\\omega a)=g^*(q,\\omega)\\,g(f^*(q,\\omega),a)$ pre $q\\in Q$, $\\omega\\in\\Sigma^*$, $a\\in\\Sigma$.",
+   "explanation": {
+    "intuition": "$f^*(q,\\omega)$ je stav, v ktorom automat skončí po prečítaní celého $\\omega$ zo stavu $q$; $g^*(q,\\omega)$ je celé vydané [slovo](dfn.slovo).",
+    "detailed": "Rekurzia ide po poslednom symbole [slova](dfn.slovo): najprv automat prečíta $\\omega$, a potom ešte $a$. Vďaka tomu možno vlastnosti $f^*$ a $g^*$ dokazovať [indukciou](def.indukcia) podľa dĺžky slova. Výstupné slovo $g^*(q,\\omega)$ má vždy rovnakú dĺžku ako $\\omega$, lebo automat vydá práve jeden symbol za každý prečítaný.",
+    "pitfalls": [
+     "$g^*$ zreťazuje výstup z celej histórie, nielen z posledného kroku."
+    ],
+    "examples": [
+     "V automate s mincami: $f^*(0,1\\,2\\,2)=5$ a $g^*(0,1\\,2\\,2)=0'0'0'$."
+    ]
+   },
+   "uses": [
+    "dfn.konecnostavovy-automat",
+    "dfn.slovo",
+    "dfn.zretazenie-slov",
+    "def.indukcia"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.lema-2-1-jeden-symbol",
+   "type": "theorem",
+   "topic": "automaty-vystup",
+   "title": "Lema 2.1: f* a g* na slove dĺžky jedna",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja02_automaty_P.pdf",
+     "page": 8
+    }
+   ],
+   "statement": "Pre $q\\in Q$ a $a\\in\\Sigma$ platí $f^*(q,a)=f(q,a)$ a $g^*(q,a)=g(q,a)$.",
+   "explanation": {
+    "intuition": "Rozšírené funkcie sú naozaj rozšírením pôvodných.",
+    "detailed": "Lema zaručuje, že zápis $f^*(q,a)$ pre jeden symbol nie je v rozpore so základnou funkciou $f$. Dôkaz je priamym dosadením do definície.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Slovo $a$ zapíšeme ako $\\varepsilon a$. Z definície (2): $f^*(q,a)=f(f^*(q,\\varepsilon),a)$.",
+      "why": "Slovo dĺžky $1$ je prázdne slovo s jedným pripojeným symbolom.",
+      "uses": [
+       "dfn.rozsirene-funkcie"
+      ]
+     },
+     {
+      "text": "Z definície (1) je $f^*(q,\\varepsilon)=q$, teda $f^*(q,a)=f(q,a)$.",
+      "why": "Dosadíme základný prípad rekurzie.",
+      "uses": []
+     },
+     {
+      "text": "Analogicky $g^*(q,a)=g^*(q,\\varepsilon)\\,g(f^*(q,\\varepsilon),a)=\\varepsilon\\,g(q,a)=g(q,a)$.",
+      "why": "Prázdne slovo je neutrálny prvok zreťazenia.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.rozsirene-funkcie"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.lema-2-2-zretazenie",
+   "type": "theorem",
+   "topic": "automaty-vystup",
+   "title": "Lema 2.2: f* a g* na zreťazení slov",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja02_automaty_P.pdf",
+     "page": 9
+    }
+   ],
+   "statement": "Pre $q\\in Q$ a $\\omega',\\omega''\\in\\Sigma^*$ platí $f^*(q,\\omega'\\omega'')=f^*(f^*(q,\\omega'),\\omega'')$ a $g^*(q,\\omega'\\omega'')=g^*(q,\\omega')\\,g^*(f^*(q,\\omega'),\\omega'')$.",
+   "explanation": {
+    "intuition": "Prečítať $\\omega'\\omega''$ je to isté ako prečítať najprv $\\omega'$ a potom $\\omega''$ z toho stavu, v ktorom sme skončili.",
+    "detailed": "Táto lema je základným nástrojom: ak chceme analyzovať výpočet na dlhom [slove](dfn.slovo), môžeme ho rozdeliť na dve časti v ľubovoľnom bode. Používa sa pri dôkazoch o ekvivalencii stavov (prednáška 4) aj pri konštrukciách súčinových automatov. Slajd ilustruje tvrdenie obrázkom cesty $q\\to r\\to q'$ s označeniami $\\omega'$ a $\\omega''$.",
+    "pitfalls": [
+     "Výstupná časť: výstup druhej časti sa počíta od stavu $r=f^*(q,\\omega')$, nie od $q$."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "sketch",
+    "idea": "Slajd ukazuje dôkaz obrázkom: $f^*(q,\\omega'\\omega'')=q'$ prechádza cez medzistav $r=f^*(q,\\omega')$ a $q'=f^*(r,\\omega'')$; formálne ide o indukciu podľa $|\\omega''|$.",
+    "steps": [
+     {
+      "text": "Indukciou podľa $|\\omega''|$. Pre $\\omega''=\\varepsilon$: $f^*(q,\\omega')=f^*(f^*(q,\\omega'),\\varepsilon)$ platí, lebo $f^*(r,\\varepsilon)=r$.",
+      "why": "Základný prípad plynie z definície $f^*(\\cdot,\\varepsilon)$.",
+      "uses": [
+       "dfn.rozsirene-funkcie"
+      ]
+     },
+     {
+      "text": "Nech $\\omega''=\\omega_1a$ a tvrdenie platí pre $\\omega_1$. Označme $r=f^*(q,\\omega')$. Potom $f^*(q,\\omega'\\omega_1a)=f(f^*(q,\\omega'\\omega_1),a)=f(f^*(r,\\omega_1),a)=f^*(r,\\omega_1a)$.",
+      "why": "Najprv definícia, potom indukčný predpoklad, potom znovu definícia $f^*$.",
+      "uses": [
+       "def.indukcia"
+      ]
+     },
+     {
+      "text": "Pre $g^*$ analogicky: $g^*(q,\\omega'\\omega_1a)=g^*(q,\\omega'\\omega_1)\\,g(f^*(q,\\omega'\\omega_1),a)=g^*(q,\\omega')g^*(r,\\omega_1)\\,g(f^*(r,\\omega_1),a)=g^*(q,\\omega')\\,g^*(r,\\omega_1a)$.",
+      "why": "Výstup sa pri pridaní $a$ predĺži o $g(\\cdot,a)$ z aktuálneho stavu.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.rozsirene-funkcie",
+    "def.indukcia",
+    "dfn.slovo"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajd 9 dokazuje tvrdenie obrázkom (cesta cez medzistav); formálny indukčný dôkaz doplnený."
+    ]
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.automat-minci",
+   "title": "Automat s mincami a lístkami",
+   "caption": "Stav je hodnota vhodenej sumy modulo 6; hrany sú označené $a/b$.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.automat-minci",
+    "dfn.stavovy-diagram"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "0",
+     "x": 200,
+     "y": 40,
+     "label": "▸ 0"
+    },
+    {
+     "id": "1",
+     "x": 313,
+     "y": 105,
+     "label": "1"
+    },
+    {
+     "id": "2",
+     "x": 313,
+     "y": 235,
+     "label": "2"
+    },
+    {
+     "id": "3",
+     "x": 200,
+     "y": 300,
+     "label": "3"
+    },
+    {
+     "id": "4",
+     "x": 87,
+     "y": 235,
+     "label": "4"
+    },
+    {
+     "id": "5",
+     "x": 87,
+     "y": 105,
+     "label": "5"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "0",
+     "target": "1",
+     "label": "1/0'",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "0",
+     "target": "2",
+     "label": "2/0'",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "0",
+     "target": "5",
+     "label": "5/0'",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "1",
+     "target": "2",
+     "label": "1/0'",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "1",
+     "target": "3",
+     "label": "2/0'",
+     "directed": true
+    },
+    {
+     "id": "e5",
+     "source": "1",
+     "target": "0",
+     "label": "5/6'",
+     "directed": true
+    },
+    {
+     "id": "e6",
+     "source": "2",
+     "target": "3",
+     "label": "1/0'",
+     "directed": true
+    },
+    {
+     "id": "e7",
+     "source": "2",
+     "target": "4",
+     "label": "2/0'",
+     "directed": true
+    },
+    {
+     "id": "e8",
+     "source": "2",
+     "target": "1",
+     "label": "5/6'",
+     "directed": true
+    },
+    {
+     "id": "e9",
+     "source": "3",
+     "target": "4",
+     "label": "1/0'",
+     "directed": true
+    },
+    {
+     "id": "e10",
+     "source": "3",
+     "target": "5",
+     "label": "2/0'",
+     "directed": true
+    },
+    {
+     "id": "e11",
+     "source": "3",
+     "target": "2",
+     "label": "5/6'",
+     "directed": true
+    },
+    {
+     "id": "e12",
+     "source": "4",
+     "target": "5",
+     "label": "1/0'",
+     "directed": true
+    },
+    {
+     "id": "e13",
+     "source": "4",
+     "target": "0",
+     "label": "2/6'",
+     "directed": true
+    },
+    {
+     "id": "e14",
+     "source": "4",
+     "target": "3",
+     "label": "5/6'",
+     "directed": true
+    },
+    {
+     "id": "e15",
+     "source": "5",
+     "target": "0",
+     "label": "1/6'",
+     "directed": true
+    },
+    {
+     "id": "e16",
+     "source": "5",
+     "target": "1",
+     "label": "2/6'",
+     "directed": true
+    },
+    {
+     "id": "e17",
+     "source": "5",
+     "target": "4",
+     "label": "5/6'",
+     "directed": true
+    }
+   ],
+   "animations": [
+    {
+     "title": "Výpočet na vstupe 1 2 2 2 5 5 5 5",
+     "steps": [
+      {
+       "caption": "Začíname v stave 0.",
+       "highlight": [
+        "0"
+       ]
+      },
+      {
+       "caption": "Minca 1: 0→1, výstup 0'.",
+       "highlight": [
+        "0",
+        "1",
+        "e0"
+       ]
+      },
+      {
+       "caption": "Minca 2: 1→3, výstup 0'.",
+       "highlight": [
+        "1",
+        "3",
+        "e4"
+       ]
+      },
+      {
+       "caption": "Minca 2: 3→5, výstup 0'.",
+       "highlight": [
+        "3",
+        "5",
+        "e10"
+       ]
+      },
+      {
+       "caption": "Minca 2: 5→1, vydá sa lístok 6'.",
+       "highlight": [
+        "5",
+        "1",
+        "e16"
+       ]
+      },
+      {
+       "caption": "Minca 5: 1→0, vydá sa lístok 6'.",
+       "highlight": [
+        "1",
+        "0",
+        "e5"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fig.automat-minci-tabulky",
+   "title": "Tabuľky f a g pre automat s mincami",
+   "caption": "Prepísané zo slajdu 3 a overené výpočtom.",
+   "origin": "slides",
+   "illustrates": [
+    "ex.automat-minci"
+   ],
+   "sources": [
+    {
+     "file": "Afja02_automaty_P.pdf",
+     "page": 3
+    }
+   ],
+   "kind": "table",
+   "columns": [
+    "q",
+    "f(q,1)",
+    "f(q,2)",
+    "f(q,5)",
+    "g(q,1)",
+    "g(q,2)",
+    "g(q,5)"
+   ],
+   "rows": [
+    [
+     "0",
+     "1",
+     "2",
+     "5",
+     "0'",
+     "0'",
+     "0'"
+    ],
+    [
+     "1",
+     "2",
+     "3",
+     "0",
+     "0'",
+     "0'",
+     "6'"
+    ],
+    [
+     "2",
+     "3",
+     "4",
+     "1",
+     "0'",
+     "0'",
+     "6'"
+    ],
+    [
+     "3",
+     "4",
+     "5",
+     "2",
+     "0'",
+     "0'",
+     "6'"
+    ],
+    [
+     "4",
+     "5",
+     "0",
+     "3",
+     "0'",
+     "6'",
+     "6'"
+    ],
+    [
+     "5",
+     "0",
+     "1",
+     "4",
+     "6'",
+     "6'",
+     "6'"
+    ]
+   ]
+  },
+  {
+   "id": "fig.automat-001",
+   "title": "Automat pre každý druhý výskyt 001",
+   "caption": "Zrekonštruovaný automat: $+$ sa vydá pri druhom výskyte $001$.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.automat-001"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "A",
+     "x": 0,
+     "y": 60,
+     "label": "▸ A"
+    },
+    {
+     "id": "B",
+     "x": 130,
+     "y": 0,
+     "label": "B"
+    },
+    {
+     "id": "C",
+     "x": 260,
+     "y": 60,
+     "label": "C"
+    },
+    {
+     "id": "D",
+     "x": 390,
+     "y": 0,
+     "label": "D"
+    },
+    {
+     "id": "E",
+     "x": 520,
+     "y": 60,
+     "label": "E"
+    },
+    {
+     "id": "F",
+     "x": 650,
+     "y": 0,
+     "label": "F"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "A",
+     "target": "B",
+     "label": "0/-",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "A",
+     "target": "A",
+     "label": "1/-",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "B",
+     "target": "C",
+     "label": "0/-",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "B",
+     "target": "A",
+     "label": "1/-",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "C",
+     "target": "C",
+     "label": "0/-",
+     "directed": true
+    },
+    {
+     "id": "e5",
+     "source": "C",
+     "target": "D",
+     "label": "1/-",
+     "directed": true
+    },
+    {
+     "id": "e6",
+     "source": "D",
+     "target": "E",
+     "label": "0/-",
+     "directed": true
+    },
+    {
+     "id": "e7",
+     "source": "D",
+     "target": "D",
+     "label": "1/-",
+     "directed": true
+    },
+    {
+     "id": "e8",
+     "source": "E",
+     "target": "F",
+     "label": "0/-",
+     "directed": true
+    },
+    {
+     "id": "e9",
+     "source": "E",
+     "target": "D",
+     "label": "1/-",
+     "directed": true
+    },
+    {
+     "id": "e10",
+     "source": "F",
+     "target": "F",
+     "label": "0/-",
+     "directed": true
+    },
+    {
+     "id": "e11",
+     "source": "F",
+     "target": "A",
+     "label": "1/+",
+     "directed": true
+    }
+   ],
+   "animations": []
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.predajny-automat",
+   "title": "Predajný alebo parkovací automat",
+   "summary": "Konečný stav sumy a výdaj tovaru.",
+   "scenario": "Automat prijíma mince a po dosiahnutí ceny vydá lístok a vráti zvyšok.",
+   "modelling": "Stav kóduje doteraz vhodenú sumu, vstupné symboly sú hodnoty mincí a výstup je tovar alebo nič.",
+   "solution": "Prechodová funkcia $f$ pripočítava hodnotu a výstupná funkcia $g$ vydáva lístok, keď suma dosiahne cenu; presne ako automat s mincami.",
+   "connects": [
+    "ex.automat-minci",
+    "dfn.konecnostavovy-automat"
+   ],
+   "figures": [],
+   "tags": [
+    "riadenie"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.detekcia-vzorov",
+   "title": "Detekcia vzorov v dátovom prúde",
+   "summary": "Označovanie výskytov vzoru v sieťovom alebo senzorovom prúde.",
+   "scenario": "V bitovom prúde treba v reálnom čase hlásiť každý druhý výskyt hlavičky $001$.",
+   "modelling": "Stavy zapamätajú rozpracovaný prefix vzoru a paritu výskytov, výstup je značka $+/-$.",
+   "solution": "Stavový diagram umožní implementáciu s konštantnou pamäťou a časom $O(1)$ na symbol, ako v automate pre 001.",
+   "connects": [
+    "ex.automat-001",
+    "dfn.stavovy-diagram"
+   ],
+   "figures": [],
+   "tags": [
+    "siete"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.riadenie-semaforu",
+   "title": "Riadenie semaforov a výťahov",
+   "summary": "Sekvenčné riadenie s konečne veľa stavmi.",
+   "scenario": "Riadiaca jednotka semaforu mení farby podľa časovača a tlačidla chodcov.",
+   "modelling": "Stavy sú fázy cyklu, vstupy sú udalosti (tik hodín, tlačidlo), výstupy sú príkazy lampám.",
+   "solution": "Mealyho stroj s funkciami $f,g$ jednoznačne určuje správanie; zovšeobecnené funkcie $f^*,g^*$ popisujú správanie na celej postupnosti udalostí.",
+   "connects": [
+    "dfn.konecnostavovy-automat",
+    "dfn.rozsirene-funkcie"
+   ],
+   "figures": [],
+   "tags": [
+    "riadenie"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.aut-1",
+   "kind": "mcq",
+   "prompt": "Aký stav má automat s mincami po vstupe $1,2,2$ zo stavu $0$?",
+   "options": [
+    "3",
+    "4",
+    "5",
+    "6"
+   ],
+   "answer": 2,
+   "explanation": "$0\\to1\\to3\\to5$, teda $(0+1+2+2)\\bmod 6=5$.",
+   "about": [
+    "ex.automat-minci"
+   ],
+   "difficulty": 1,
+   "check": {
+    "verifier": "expr",
+    "expr": "(0+1+2+2)%6"
+   }
+  },
+  {
+   "id": "quiz.aut-2",
+   "kind": "mcq",
+   "prompt": "Čo je $g^*(q,\\varepsilon)$?",
+   "options": [
+    "$q$",
+    "$\\varepsilon$",
+    "$g(q,\\varepsilon)$",
+    "nedefinované"
+   ],
+   "answer": 1,
+   "explanation": "Podľa definície je $g^*(q,\\varepsilon)=\\varepsilon$ (prázdny výstup).",
+   "about": [
+    "dfn.rozsirene-funkcie"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.aut-3",
+   "kind": "truefalse",
+   "prompt": "Dĺžka výstupu $g^*(q,\\omega)$ sa rovná $|\\omega|$.",
+   "answer": true,
+   "explanation": "Automat vydá jeden výstupný symbol za každý prečítaný vstupný symbol.",
+   "about": [
+    "dfn.rozsirene-funkcie"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.aut-4",
+   "kind": "truefalse",
+   "prompt": "Funkcia $f$ v automate môže byť čiastočná (nedefinovaná pre niektoré dvojice $(q,a)$).",
+   "answer": false,
+   "explanation": "V definícii je $f:Q\\times\\Sigma\\to Q$ totálna funkcia, preto automat v každom kroku pokračuje.",
+   "about": [
+    "dfn.konecnostavovy-automat"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.aut-5",
+   "kind": "mcq",
+   "prompt": "Ktorá rovnosť vyjadruje Lemu 2.2 pre $f^*$?",
+   "options": [
+    "$f^*(q,\\omega'\\omega'')=f^*(q,\\omega')f^*(q,\\omega'')$",
+    "$f^*(q,\\omega'\\omega'')=f^*(f^*(q,\\omega'),\\omega'')$",
+    "$f^*(q,\\omega'\\omega'')=f(f(q,\\omega'),\\omega'')$",
+    "$f^*(q,\\omega'\\omega'')=f^*(q,\\omega'')$"
+   ],
+   "answer": 1,
+   "explanation": "Po prečítaní $\\omega'$ sme v stave $f^*(q,\\omega')$ a odtiaľ čítame $\\omega''$.",
+   "about": [
+    "thm.lema-2-2-zretazenie"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.aut-6",
+   "kind": "flashcard",
+   "prompt": "Definujte $f^*(q,\\omega a)$.",
+   "answer": "$f^*(q,\\omega a)=f(f^*(q,\\omega),a)$.",
+   "explanation": "Najprv prečítame $\\omega$, potom ešte symbol $a$.",
+   "about": [
+    "dfn.rozsirene-funkcie"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.aut-7",
+   "kind": "open",
+   "prompt": "Aký výstup vydá automat s mincami na vstupe $5,5$ zo stavu $0$?",
+   "answer": "$0'\\,6'$: po prvej minci je stav $5$ a výstup $0'$; druhá minca $5$ dá $5+5=10\\ge6$, vydá sa $6'$ a stav je $4$.",
+   "explanation": "$g(0,5)=0'$, $g(5,5)=6'$.",
+   "about": [
+    "ex.automat-minci"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.aut-8",
+   "kind": "mcq",
+   "prompt": "Koľko stavov má automat s mincami?",
+   "options": [
+    "3",
+    "5",
+    "6",
+    "12"
+   ],
+   "answer": 2,
+   "explanation": "Stavy $0,\\dots,5$ zodpovedajú zvyškom sumy po delení $6$.",
+   "about": [
+    "ex.automat-minci"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.aut-9",
+   "kind": "truefalse",
+   "prompt": "Mená stavov automatu môžu byť ľubovoľné, o jeho správaní rozhodujú iba $f$, $g$ a $q_I$.",
+   "answer": true,
+   "explanation": "Premenovanie stavov nezmení správanie automatu (ide o izomorfizmus).",
+   "about": [
+    "dfn.konecnostavovy-automat"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.aut-10",
+   "kind": "open",
+   "prompt": "Dokážte, že $f^*(q,a)=f(q,a)$ pre $a\\in\\Sigma$.",
+   "answer": "$f^*(q,a)=f^*(q,\\varepsilon a)=f(f^*(q,\\varepsilon),a)=f(q,a)$ z definície rekurzie.",
+   "explanation": "Slovo $a$ je $\\varepsilon a$.",
+   "about": [
+    "thm.lema-2-1-jeden-symbol"
+   ],
+   "difficulty": 2
+  }
+ ]
+}

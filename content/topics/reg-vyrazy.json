@@ -1,0 +1,923 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "reg-vyrazy",
+  "title": "Regulárne výrazy I: základné vlastnosti",
+  "course": "A",
+  "order": 11,
+  "sourceFiles": [
+   "Afja11_reg_vyrazy_zakl_P.pdf"
+  ],
+  "summary": "Regulárny výraz je zápis jazyka pomocou symbolov, $\\varepsilon$, $\\emptyset$ a operácií zjednotenia, zreťazenia a iterácie. Každý regulárny výraz sa dá prepísať na ε-akceptor (Thompsonova konštrukcia), a teda popisuje regulárny jazyk.",
+  "overview": "Prednáška zavádza regulárne výrazy ako konečný, algebraický zápis jazykov. Základné výrazy $a$, $\\varepsilon$, $\\emptyset$ sa skladajú operáciami $+$, zreťazenie a $*$. Veta 11.1 ukazuje, že každý regulárny výraz opisuje regulárny jazyk: konštrukcia ε-akceptora postupuje podľa štruktúry výrazu a má vždy jeden počiatočný stav bez vstupných hrán a jeden koncový stav bez výstupných hrán, čo uľahčuje skladanie. Opačný smer (z akceptora na výraz) je v nasledujúcej prednáške.",
+  "keyQuestions": [
+   "Aké sú základné výrazy a operácie?",
+   "Ako sa regulárny výraz prevedie na akceptor?",
+   "Prečo má výsledný akceptor jeden počiatočný a jeden koncový stav?"
+  ],
+  "prerequisites": [
+   "eps-akceptory",
+   "reg-gramatiky"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "dfn.regularny-vyraz",
+   "type": "definition",
+   "topic": "reg-vyrazy",
+   "title": "Regulárny výraz",
+   "terms": [
+    {
+     "term": "regulárny výraz",
+     "alt": "regular expression"
+    },
+    {
+     "term": "iterácia",
+     "alt": "Kleene star",
+     "symbol": "\\alpha^*"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja11_reg_vyrazy_zakl_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "Nech $\\Sigma$ je [abeceda](dfn.abeceda). **Regulárne výrazy** nad $\\Sigma$ sú definované takto: $a\\in\\Sigma$ je regulárny výraz označujúci [jazyk](dfn.jazyk) $L(a)=\\{a\\}$, $\\varepsilon$ je regulárny výraz označujúci $L(\\varepsilon)=\\{\\varepsilon\\}$ a $\\emptyset$ je regulárny výraz označujúci $L(\\emptyset)=\\emptyset$. Ak sú $\\alpha,\\beta$ regulárne výrazy, tak aj $\\alpha+\\beta$ je regulárny výraz označujúci $L(\\alpha+\\beta)=\\{x\\in\\Sigma^*:x\\in L(\\alpha)\\vee x\\in L(\\beta)\\}$, $\\alpha\\beta$ je regulárny výraz označujúci $L(\\alpha\\beta)=\\{xy\\in\\Sigma^*:x\\in L(\\alpha)\\wedge y\\in L(\\beta)\\}$ a $\\alpha^*$ označuje $L(\\alpha^*)=\\{x_1x_2\\dots x_n\\in\\Sigma^*:n\\ge0\\wedge x_1,\\dots,x_n\\in L(\\alpha)\\}$. Priorita operátorov (od najnižšej po najvyššiu) je $+$, [zreťazenie](dfn.zretazenie-slov), $*$; možno ju upraviť zátvorkami.",
+   "explanation": {
+    "intuition": "Výraz je recept na [jazyk](dfn.jazyk): základné stavebné kamene sa skladajú výberom ($+$), [zreťazením](dfn.zretazenie-slov) a opakovaním ($*$).",
+    "detailed": "Definícia je induktívna podľa štruktúry výrazu, preto sa vlastnosti výrazov dokazujú štrukturálnou [indukciou](def.indukcia). Operátor $+$ zodpovedá zjednoteniu [jazykov](dfn.jazyk), nie sčítaniu čísel. Výraz $\\varepsilon$ označuje jazyk s jediným prázdnym [slovom](dfn.slovo), kým $\\emptyset$ jazyk bez slov.",
+    "pitfalls": [
+     "$\\varepsilon$ a $\\emptyset$ sú rôzne výrazy: $L(\\varepsilon)=\\{\\varepsilon\\}\\ne\\emptyset=L(\\emptyset)$.",
+     "Priorita: $ab+c$ znamená $(ab)+c$, nie $a(b+c)$; $ab^*$ je $a(b^*)$."
+    ],
+    "examples": [
+     "$(01+0)^*$ označuje ľubovoľne dlhú postupnosť blokov $01$ alebo $0$."
+    ]
+   },
+   "uses": [
+    "dfn.abeceda",
+    "dfn.jazyk",
+    "dfn.zretazenie-slov",
+    "dfn.slovo",
+    "def.indukcia"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.jazyk-vyrazu",
+   "type": "definition",
+   "topic": "reg-vyrazy",
+   "title": "Jazyk označený regulárnym výrazom",
+   "terms": [
+    {
+     "term": "jazyk výrazu",
+     "alt": "language of a regular expression",
+     "symbol": "L(\\alpha)"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja11_reg_vyrazy_zakl_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "[Jazyk](dfn.jazyk) $L(\\alpha)$ označený [regulárnym výrazom](dfn.regularny-vyraz) $\\alpha$ je určený induktívne podľa definície výrazu: $L(a)=\\{a\\}$, $L(\\varepsilon)=\\{\\varepsilon\\}$, $L(\\emptyset)=\\emptyset$, $L(\\alpha+\\beta)=L(\\alpha)\\cup L(\\beta)$, $L(\\alpha\\beta)=\\{xy:x\\in L(\\alpha),y\\in L(\\beta)\\}$, $L(\\alpha^*)=\\{x_1\\dots x_n:n\\ge0,x_i\\in L(\\alpha)\\}$.",
+   "explanation": {
+    "intuition": "$L(\\alpha)$ je množina všetkých slov, ktoré výraz $\\alpha$ „popisuje“.",
+    "detailed": "Výraz je syntax a $L(\\alpha)$ jeho sémantika. Rôzne výrazy môžu označovať ten istý [jazyk](dfn.jazyk); o rovnosti výrazov hovorí prednáška 12.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "dfn.regularny-vyraz",
+    "dfn.jazyk"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.priklady-vyrazov",
+   "type": "example",
+   "topic": "reg-vyrazy",
+   "title": "Príklady regulárnych výrazov a ich jazykov",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja11_reg_vyrazy_zakl_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "$0$ označuje $\\{0\\}$; $01+0$ označuje $\\{01,0\\}$; $(01+0)^*$ označuje ľubovoľne dlhé postupnosti blokov $01$ alebo $0$; $010(0+1)^*$ označuje množinu binárnych reťazcov, ktoré sa začínajú na $010$; $(0+1)(0+1)$ označuje $\\{00,01,10,11\\}$; $((0+1)(0+1))^*$ označuje všetky binárne reťazce párnej dĺžky; $(0+1)^*(00(\\varepsilon+010+00(11)^*00)00)(0+1)^*$ označuje binárne reťazce, ktoré vnútri obsahujú buď $00\\,00$, alebo $00\\,010\\,00$, alebo dva bloky $00\\dots00$, medzi ktorými sú vložené ďalšie dva bloky $0000\\dots0000$ a medzi nimi párny počet jednotiek.",
+   "explanation": {
+    "intuition": "Z krátkych výrazov sa dajú skladať zložité [jazyky](dfn.jazyk).",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "dfn.jazyk-vyrazu"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.jazyk"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Posledný výraz zo slajdu 3 je pri extrakcii poškodený (chýbajú symboly); zápis je rekonštrukcia podľa slovného popisu."
+    ]
+   }
+  },
+  {
+   "id": "alg.thompsonova-konstrukcia",
+   "type": "algorithm",
+   "topic": "reg-vyrazy",
+   "title": "Konštrukcia ε-akceptora z regulárneho výrazu",
+   "terms": [
+    {
+     "term": "Thompsonova konštrukcia",
+     "alt": "Thompson's construction"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja11_reg_vyrazy_zakl_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "Konštrukcia [ε-akceptora](dfn.eps-akceptor) $M_\\alpha$ prebieha cez štruktúru výrazu $\\alpha$. Elementárne výrazy: pre $a$ jeden prechod $i\\xrightarrow{a}f$, pre $\\varepsilon$ jeden ε-prechod $i\\xrightarrow{\\varepsilon}f$, pre $\\emptyset$ dva stavy bez hrán. Zložené: pre $\\alpha+\\beta$ nový počiatočný stav s ε-hranami do počiatkov $M_\\alpha,M_\\beta$ a ε-hranami z ich koncov do nového koncového stavu; pre $\\alpha\\beta$ ε-hrana z konca $M_\\alpha$ do počiatku $M_\\beta$; pre $\\alpha^*$ nový počiatok a koniec, ε-hrany nový počiatok $\\to$ počiatok $M_\\alpha$, koniec $M_\\alpha\\to$ nový koniec, koniec $M_\\alpha\\to$ počiatok $M_\\alpha$ a nový počiatok $\\to$ nový koniec. Každý $M_\\alpha$ má jediný počiatočný stav bez vstupných hrán a jediný koncový stav bez výstupných hrán.",
+   "explanation": {
+    "intuition": "Zo stavebných kameňov (jeden symbol) skladáme akceptor presne podľa tvaru výrazu.",
+    "detailed": "Invariant (jeden počiatok bez vstupov, jeden koniec bez výstupov) zaručuje, že sa komponenty dajú spájať ε-hranami bez nechcených interakcií. Počet stavov je lineárny od dĺžky výrazu (najviac $2$ na každý operátor a symbol).",
+    "pitfalls": [
+     "Pri iterácii nezabudnite na ε-hranu z nového počiatku do nového konca (pre prázdne slovo) a na spätnú hranu (pre opakovanie)."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Korektnosť sa dokazuje štrukturálnou indukciou podľa výrazu: $L(M_\\alpha)=L(\\alpha)$ a invariant platí pre každú z konštrukcií; pozri Vetu 11.1.",
+    "steps": []
+   },
+   "uses": [
+    "dfn.regularny-vyraz",
+    "dfn.eps-akceptor"
+   ],
+   "relations": [
+    {
+     "type": "algorithm-for",
+     "target": "thm.veta-11-1-vyraz-na-eps-akceptor",
+     "note": "Veta 11.1 dokazuje korektnosť"
+    },
+    {
+     "type": "analogue",
+     "target": "alg.gramatika-na-eps-akceptor",
+     "note": "skladanie ε-akceptorov"
+    }
+   ],
+   "figures": [
+    "fig.thompson-elementarne"
+   ],
+   "attribution": "Ken Thompson",
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.veta-11-1-vyraz-na-eps-akceptor",
+   "type": "theorem",
+   "topic": "reg-vyrazy",
+   "title": "Veta 11.1: každý regulárny výraz sa dá nahradiť ε-akceptorom",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja11_reg_vyrazy_zakl_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "Každý [regulárny výraz](dfn.regularny-vyraz) $\\alpha$ sa dá nahradiť $\\varepsilon$-akceptorom $M$ takým, že $L(M)=L(\\alpha)$. Navyše, $M$ má jediný počiatočný stav, do ktorého žiadne hrany nevchádzajú, a jediný koncový stav, z ktorého žiadne hrany nevychádzajú.",
+   "explanation": {
+    "intuition": "Každý [regulárny výraz](dfn.regularny-vyraz) popisuje [regulárny jazyk](dfn.regularny-jazyk).",
+    "detailed": "Dôkaz je štrukturálna [indukcia](def.indukcia): báza sú výrazy $a$, $\\varepsilon$, $\\emptyset$, krok sú operácie $+$, [zreťazenie](dfn.zretazenie-slov) a $*$. V každom kroku sa overí rovnosť [jazykov](dfn.jazyk) a invariant jediného počiatku a konca.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Báza: pre $\\alpha=a$, $\\varepsilon$, $\\emptyset$ akceptory $M_a$, $M_\\varepsilon$, $M_\\emptyset$ (jedna hrana $a$, jedna hrana $\\varepsilon$, resp. žiadna hrana) majú jazyky $\\{a\\}$, $\\{\\varepsilon\\}$, $\\emptyset$ a spĺňajú invariant.",
+      "why": "Priama kontrola.",
+      "uses": []
+     },
+     {
+      "text": "Zjednotenie: $M_{\\alpha+\\beta}$ má nový počiatočný stav s ε-hranami do počiatkov $M_\\alpha,M_\\beta$ a ε-hranami z koncov oboch do nového konca. Prijímajúca cesta musí prejsť práve jedným z komponentov, teda $L(M_{\\alpha+\\beta})=L(\\alpha)\\cup L(\\beta)$.",
+      "why": "Vstup do práve jednej vetvy.",
+      "uses": [
+       "dfn.jazyk-vyrazu"
+      ]
+     },
+     {
+      "text": "Zreťazenie: ε-hrana z konca $M_\\alpha$ do počiatku $M_\\beta$. Prijímajúca cesta prejde cez $M_\\alpha$ (slovo $x\\in L(\\alpha)$) a potom $M_\\beta$ ($y\\in L(\\beta)$), teda $L=L(\\alpha)L(\\beta)$.",
+      "why": "Jediná cesta z $M_\\alpha$ do $M_\\beta$ vedie cez tú ε-hranu.",
+      "uses": []
+     },
+     {
+      "text": "Iterácia: nové krajné stavy, ε-hrany $i\\to i_\\alpha$, $f_\\alpha\\to f$, $f_\\alpha\\to i_\\alpha$ a $i\\to f$. Cesta môže obiehať $M_\\alpha$ ľubovoľne veľakrát (aj nikdy), takže $L(M_{\\alpha^*})=L(\\alpha)^*$.",
+      "why": "Spätná hrana dovoľuje opakovať, hrana $i\\to f$ dovoľuje nula opakovaní.",
+      "uses": []
+     },
+     {
+      "text": "V každej konštrukcii sú nový počiatok a nový koniec bez vstupných, resp. výstupných hrán, takže invariant platí.",
+      "why": "Podľa konštrukcie.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "alg.thompsonova-konstrukcia",
+    "dfn.jazyk-vyrazu",
+    "dfn.jazyk-eps-akceptora",
+    "dfn.regularny-vyraz",
+    "dfn.regularny-jazyk",
+    "dfn.zretazenie-slov",
+    "dfn.jazyk",
+    "def.indukcia"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.thompson-priklad",
+   "type": "example",
+   "topic": "reg-vyrazy",
+   "title": "ε-akceptor pre (aab+ca*c)*(c+ε)",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja11_reg_vyrazy_zakl_P.pdf",
+     "page": 6
+    }
+   ],
+   "statement": "Aplikáciou konštrukcie na výraz $(aab+ca^*c)^*(c+\\varepsilon)$ postupujeme zdola: najprv akceptory pre symboly, potom pre $aab$ a $ca^*c$ ([zreťazenie](dfn.zretazenie-slov)), $aab+ca^*c$ (zjednotenie), $(\\dots)^*$ (iterácia), $c+\\varepsilon$ a nakoniec zreťazenie. Výsledný $\\varepsilon$-akceptor má 24 stavov a jediný počiatočný $16$ a koncový $23$ stav.",
+   "explanation": {
+    "intuition": "Každý podvýraz dá svoj akceptor; ε-hrany ich spoja podľa operátorov.",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "alg.thompsonova-konstrukcia"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.zretazenie-slov"
+    }
+   ],
+   "figures": [
+    "fig.thompson-priklad"
+   ],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Obrázok slajdu 6 je nečitateľný; akceptor je vygenerovaný konštrukciou a overený na všetkých slovách nad $\\{a,b,c\\}$ do dĺžky 7."
+    ]
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.thompson-priklad",
+   "title": "ε-akceptor pre (aab+ca*c)*(c+ε)",
+   "caption": "Vygenerovaný Thompsonovou konštrukciou.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.thompson-priklad"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "q0",
+     "x": 0,
+     "y": 0,
+     "label": "q0"
+    },
+    {
+     "id": "q1",
+     "x": 110,
+     "y": 0,
+     "label": "q1"
+    },
+    {
+     "id": "q2",
+     "x": 220,
+     "y": 0,
+     "label": "q2"
+    },
+    {
+     "id": "q3",
+     "x": 330,
+     "y": 0,
+     "label": "q3"
+    },
+    {
+     "id": "q4",
+     "x": 440,
+     "y": 0,
+     "label": "q4"
+    },
+    {
+     "id": "q5",
+     "x": 550,
+     "y": 0,
+     "label": "q5"
+    },
+    {
+     "id": "q6",
+     "x": 0,
+     "y": 90,
+     "label": "q6"
+    },
+    {
+     "id": "q7",
+     "x": 110,
+     "y": 90,
+     "label": "q7"
+    },
+    {
+     "id": "q8",
+     "x": 220,
+     "y": 90,
+     "label": "q8"
+    },
+    {
+     "id": "q9",
+     "x": 330,
+     "y": 90,
+     "label": "q9"
+    },
+    {
+     "id": "q10",
+     "x": 440,
+     "y": 90,
+     "label": "q10"
+    },
+    {
+     "id": "q11",
+     "x": 550,
+     "y": 90,
+     "label": "q11"
+    },
+    {
+     "id": "q12",
+     "x": 0,
+     "y": 180,
+     "label": "q12"
+    },
+    {
+     "id": "q13",
+     "x": 110,
+     "y": 180,
+     "label": "q13"
+    },
+    {
+     "id": "q14",
+     "x": 220,
+     "y": 180,
+     "label": "q14"
+    },
+    {
+     "id": "q15",
+     "x": 330,
+     "y": 180,
+     "label": "q15"
+    },
+    {
+     "id": "q16",
+     "x": 440,
+     "y": 180,
+     "label": "▸ q16"
+    },
+    {
+     "id": "q17",
+     "x": 550,
+     "y": 180,
+     "label": "q17"
+    },
+    {
+     "id": "q18",
+     "x": 0,
+     "y": 270,
+     "label": "q18"
+    },
+    {
+     "id": "q19",
+     "x": 110,
+     "y": 270,
+     "label": "q19"
+    },
+    {
+     "id": "q20",
+     "x": 220,
+     "y": 270,
+     "label": "q20"
+    },
+    {
+     "id": "q21",
+     "x": 330,
+     "y": 270,
+     "label": "q21"
+    },
+    {
+     "id": "q22",
+     "x": 440,
+     "y": 270,
+     "label": "q22"
+    },
+    {
+     "id": "q23",
+     "x": 550,
+     "y": 270,
+     "label": "q23 ◉"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "q0",
+     "target": "q1",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "q2",
+     "target": "q3",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "q4",
+     "target": "q5",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "q6",
+     "target": "q7",
+     "label": "c",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "q8",
+     "target": "q9",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e5",
+     "source": "q12",
+     "target": "q13",
+     "label": "c",
+     "directed": true
+    },
+    {
+     "id": "e6",
+     "source": "q18",
+     "target": "q19",
+     "label": "c",
+     "directed": true
+    },
+    {
+     "id": "e7",
+     "source": "q1",
+     "target": "q2",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e8",
+     "source": "q3",
+     "target": "q4",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e9",
+     "source": "q10",
+     "target": "q8",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e10",
+     "source": "q10",
+     "target": "q11",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e11",
+     "source": "q9",
+     "target": "q8",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e12",
+     "source": "q9",
+     "target": "q11",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e13",
+     "source": "q7",
+     "target": "q10",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e14",
+     "source": "q11",
+     "target": "q12",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e15",
+     "source": "q14",
+     "target": "q0",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e16",
+     "source": "q14",
+     "target": "q6",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e17",
+     "source": "q5",
+     "target": "q15",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e18",
+     "source": "q13",
+     "target": "q15",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e19",
+     "source": "q16",
+     "target": "q17",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e20",
+     "source": "q16",
+     "target": "q14",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e21",
+     "source": "q15",
+     "target": "q17",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e22",
+     "source": "q15",
+     "target": "q14",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e23",
+     "source": "q20",
+     "target": "q21",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e24",
+     "source": "q22",
+     "target": "q18",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e25",
+     "source": "q22",
+     "target": "q20",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e26",
+     "source": "q19",
+     "target": "q23",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e27",
+     "source": "q21",
+     "target": "q23",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e28",
+     "source": "q17",
+     "target": "q22",
+     "label": "ε",
+     "directed": true
+    }
+   ],
+   "animations": []
+  },
+  {
+   "id": "fig.thompson-elementarne",
+   "title": "Elementárne konštrukcie",
+   "caption": "Slajdy 4–5.",
+   "origin": "slides",
+   "illustrates": [
+    "alg.thompsonova-konstrukcia"
+   ],
+   "sources": [
+    {
+     "file": "Afja11_reg_vyrazy_zakl_P.pdf",
+     "page": 4
+    }
+   ],
+   "kind": "table",
+   "columns": [
+    "výraz",
+    "akceptor"
+   ],
+   "rows": [
+    [
+     "$a$",
+     "$i\\xrightarrow{a}f$"
+    ],
+    [
+     "$\\varepsilon$",
+     "$i\\xrightarrow{\\varepsilon}f$"
+    ],
+    [
+     "$\\emptyset$",
+     "$i$ a $f$ bez hrán"
+    ],
+    [
+     "$\\alpha+\\beta$",
+     "nový $i$, $f$ s ε-hranami do/z $M_\\alpha,M_\\beta$"
+    ],
+    [
+     "$\\alpha\\beta$",
+     "ε-hrana z $f_\\alpha$ do $i_\\beta$"
+    ],
+    [
+     "$\\alpha^*$",
+     "nový $i,f$; $i\\to i_\\alpha$, $f_\\alpha\\to f$, $f_\\alpha\\to i_\\alpha$, $i\\to f$"
+    ]
+   ]
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.grep",
+   "title": "Vyhľadávanie v texte (grep, editory)",
+   "summary": "Regulárne výrazy ako dopytovací jazyk.",
+   "scenario": "Používateľ hľadá v súboroch reťazce určitého tvaru.",
+   "modelling": "Vzor je regulárny výraz, súbor je vstupné slovo.",
+   "solution": "Výraz sa prevedie na akceptor (Veta 11.1) a text sa prejde raz.",
+   "connects": [
+    "dfn.regularny-vyraz",
+    "thm.veta-11-1-vyraz-na-eps-akceptor"
+   ],
+   "figures": [],
+   "tags": [
+    "vyhľadávanie"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.validacia-formularov",
+   "title": "Validácia vstupu vo formulároch",
+   "summary": "Formát telefónneho čísla, e-mailu, PSČ.",
+   "scenario": "Webový formulár musí rýchlo odmietnuť zlé vstupy.",
+   "modelling": "Povolené reťazce sú regulárny jazyk zapísaný výrazom.",
+   "solution": "Výraz je automaticky preložený na akceptor.",
+   "connects": [
+    "dfn.regularny-vyraz",
+    "dfn.jazyk-vyrazu"
+   ],
+   "figures": [],
+   "tags": [
+    "validácia"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.tokenizacia",
+   "title": "Tokenizácia v kompilátoroch",
+   "summary": "Každý typ tokenu má regulárny výraz.",
+   "scenario": "Lexer rozdeľuje zdrojový kód na tokeny.",
+   "modelling": "Zjednotenie výrazov pre tokeny sa prevedie na jeden akceptor.",
+   "solution": "Thompsonova konštrukcia, determinizácia a minimalizácia dajú rýchly lexer.",
+   "connects": [
+    "alg.thompsonova-konstrukcia",
+    "dfn.regularny-vyraz"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.routovanie-url",
+   "title": "Mapovanie URL a smerovanie",
+   "summary": "Vzory ciest v webových frameworkoch.",
+   "scenario": "Server vyberá obsluhu podľa tvaru adresy.",
+   "modelling": "Cesta je slovo nad abecedou znakov, vzory sú regulárne výrazy.",
+   "solution": "Akceptor rozhodne, ktorý vzor sedí.",
+   "connects": [
+    "dfn.regularny-vyraz"
+   ],
+   "figures": [],
+   "tags": [
+    "web"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.rv-1",
+   "kind": "mcq",
+   "prompt": "Aký jazyk označuje výraz $(0+1)(0+1)$?",
+   "options": [
+    "$\\{00,11\\}$",
+    "$\\{00,01,10,11\\}$",
+    "$\\{0,1\\}^*$",
+    "$\\{01\\}$"
+   ],
+   "answer": 1,
+   "explanation": "Zreťazenie dvoch výberov symbolu.",
+   "about": [
+    "ex.priklady-vyrazov"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.rv-2",
+   "kind": "truefalse",
+   "prompt": "$L(\\varepsilon)=L(\\emptyset)$.",
+   "answer": false,
+   "explanation": "$L(\\varepsilon)=\\{\\varepsilon\\}$, $L(\\emptyset)=\\emptyset$.",
+   "about": [
+    "dfn.regularny-vyraz"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.rv-3",
+   "kind": "mcq",
+   "prompt": "Ako sa interpretuje $ab+c$?",
+   "options": [
+    "$a(b+c)$",
+    "$(ab)+c$",
+    "$(a+c)b$",
+    "$ab^*+c$"
+   ],
+   "answer": 1,
+   "explanation": "Zreťazenie má vyššiu prioritu ako $+$.",
+   "about": [
+    "dfn.regularny-vyraz"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.rv-4",
+   "kind": "mcq",
+   "prompt": "Koľko stavov má Thompsonov akceptor pre $a$?",
+   "options": [
+    "1",
+    "2",
+    "3",
+    "4"
+   ],
+   "answer": 1,
+   "explanation": "Počiatočný a koncový stav a hrana medzi nimi.",
+   "about": [
+    "alg.thompsonova-konstrukcia"
+   ],
+   "difficulty": 1,
+   "check": {
+    "verifier": "expr",
+    "expr": "2"
+   }
+  },
+  {
+   "id": "quiz.rv-5",
+   "kind": "flashcard",
+   "prompt": "Akú vlastnosť majú počiatočný a koncový stav akceptora z Vety 11.1?",
+   "answer": "Počiatočný je jediný a nevchádzajú doň žiadne hrany; koncový je jediný a nevychádzajú z neho žiadne hrany.",
+   "explanation": "Invariant konštrukcie.",
+   "about": [
+    "thm.veta-11-1-vyraz-na-eps-akceptor"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.rv-6",
+   "kind": "open",
+   "prompt": "Nakreslite (opíšte) akceptor pre $\\alpha^*$ z akceptora pre $\\alpha$.",
+   "answer": "Nové stavy $i,f$; ε-hrany $i\\to i_\\alpha$, $f_\\alpha\\to f$, $f_\\alpha\\to i_\\alpha$, $i\\to f$.",
+   "explanation": "Hrana $i\\to f$ pre prázdne slovo.",
+   "about": [
+    "alg.thompsonova-konstrukcia"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.rv-7",
+   "kind": "truefalse",
+   "prompt": "Slovo $aab\\,aab$ patrí do $L((aab+ca^*c)^*(c+\\varepsilon))$.",
+   "answer": true,
+   "explanation": "Dva bloky $aab$ z prvej časti a prázdne slovo z druhej.",
+   "about": [
+    "ex.thompson-priklad"
+   ],
+   "difficulty": 1
+  }
+ ]
+}

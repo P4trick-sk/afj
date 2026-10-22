@@ -1,0 +1,635 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "zas-prevodniky",
+  "title": "Zásobníkové automaty s výstupom",
+  "course": "B",
+  "order": 23,
+  "sourceFiles": [
+   "Afjb10_ZasPrevodnik_P.pdf"
+  ],
+  "summary": "Deterministický zásobníkový prevodník je zásobníkový automat, ktorý v každom kroku vydáva aj výstupný reťazec. Typická aplikácia: prevod aritmetického výrazu z infixového zápisu do zadného poľského (postfixového) zápisu.",
+  "overview": "Zásobníkový prevodník rozširuje deterministický PDA o výstup: prechodová funkcia $\\delta(q,a,A)=(q',B_1\\dots B_k,c_1\\dots c_l)$ vracia aj reťazec výstupných symbolov. Ukážeme to na preklade výrazov do postfixu: automat z prednášky 2 doplníme o výstup tak, že operandy vydávajú pri čítaní a operátory pri odstránení značky zo zásobníka (po spracovaní druhého operandu). Výsledné slová zodpovedajú pochôdzke derivačného stromu v poradí zdola-hore.",
+  "keyQuestions": [
+   "Čo pridáva výstup k deterministickému PDA?",
+   "Ako vznikne postfixový zápis výrazu?",
+   "Ako súvisí výstup s derivačným stromom?"
+  ],
+  "prerequisites": [
+   "det-zas-automaty",
+   "bezkontextove-gramatiky"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "dfn.zasobnikovy-prevodnik",
+   "type": "definition",
+   "topic": "zas-prevodniky",
+   "title": "Deterministický zásobníkový prevodník",
+   "terms": [
+    {
+     "term": "zásobníkový prevodník",
+     "alt": "pushdown transducer"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb10_ZasPrevodnik_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "**Deterministický zásobníkový prevodník** je $M=(Q,\\Sigma,\\Gamma,\\Delta,\\delta,q_I,z_I,F)$, kde $Q,\\Sigma,\\Gamma,q_I,z_I,F$ majú rovnaký význam ako u [deterministických zásobníkových automatov](dfn.dpda), $\\Delta$ je výstupná [abeceda](dfn.abeceda) a $\\delta:Q\\times(\\Sigma\\cup\\{\\varepsilon\\})\\times\\Gamma\\to(Q\\times\\Gamma^*\\times\\Delta^*)\\cup\\{\\text{undef}\\}$ je [prechodová funkcia](dfn.konecnostavovy-automat). Zápis $\\delta(q,a,A)=(q',B_1\\dots B_k,c_1\\dots c_l)$: ak $a=\\varepsilon$, $M$ sa po vstupe nehýbe (potom $\\delta(q,x,A)=\\text{undef}$ pre $x\\in\\Sigma$, prípadne sa používa „else“); ak $c_1\\dots c_l=\\varepsilon$, nedáva na výstup nič; $\\delta(q,a,A)=\\text{undef}$ znamená, že sa výpočet zasekne.",
+   "explanation": {
+    "intuition": "[DPDA](dfn.dpda), ktorý popri čítaní aj „píše“ výstup.",
+    "detailed": "Výstup je [zreťazením](dfn.zretazenie-slov) výstupných reťazcov z jednotlivých krokov. Prevodník realizuje „syntaxou riadený preklad“: zároveň rozoberá vstup a generuje výstup.",
+    "pitfalls": [
+     "Výstupný reťazec môže byť prázdny alebo aj dlhší než jeden symbol."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.dpda",
+    "dfn.konecnostavovy-automat",
+    "dfn.abeceda",
+    "dfn.zretazenie-slov"
+   ],
+   "relations": [
+    {
+     "type": "specializes",
+     "target": "dfn.dpda",
+     "note": "pridáva výstupný reťazec ku každému kroku"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "def.zadny-polsky-zapis",
+   "type": "concept",
+   "topic": "zas-prevodniky",
+   "title": "Zadný poľský zápis",
+   "terms": [
+    {
+     "term": "zadný poľský zápis",
+     "alt": "reverse Polish notation, postfix notation"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb10_ZasPrevodnik_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "**Zadný poľský zápis** (postfixový zápis) výrazu zapisuje operátor za jeho operandy, takže zátvorky nie sú potrebné: $a_1*(a_2+(a_3-a_4)*a_5/a_6)+a_7*a_8$ sa prevedie na $a_1a_2a_3a_4-a_5*a_6/+*a_7a_8*+$.",
+   "explanation": {
+    "intuition": "Najprv operandy, potom operátor — vyhodnocuje sa jednoduchým zásobníkom.",
+    "detailed": "Postfixový zápis vznikne prechodom [derivačného stromu](dfn.derivacny-strom): pre uzol s operátorom sa najprv vypíšu podstromy oboch operandov a potom operátor. Vyhodnotenie výrazu v postfixe sa deje zásobníkom: operand sa vloží, operátor zoberie dva vrchné operandy a vloží výsledok.",
+    "pitfalls": [
+     "Poradie operandov je rovnaké ako v infixovom zápise; mení sa iba poloha operátorov."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.bezkontextova-gramatika",
+    "dfn.derivacny-strom"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.strom-postfix"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.preklad-do-postfix",
+   "type": "example",
+   "topic": "zas-prevodniky",
+   "title": "Preklad aritmetického výrazu do zadného poľského zápisu",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb10_ZasPrevodnik_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "Prevodník vznikne z [DPDA](dfn.dpda) pre aritmetické výrazy pridaním výstupu: pri čítaní operandu $a$ (pravidlo $(q,a,E)\\to(q,\\varepsilon,a)$) sa vydá $a$; pre operátor sa pri $+$ vloží na zásobník $M\\,{+}\\,P$ (značka $+$ sa vydá, keď sa odstráni zo zásobníka po spracovaní $M$): $(q,+,P)\\to(q,M{+}P,\\varepsilon)$, $(q,\\varepsilon,{+})\\to(q,\\varepsilon,{+})$; analogicky pre $-,*,/$. Výpočet pre $a*(a+a-a)$ vydá $aaa+a-*$. Výraz $a_1*(a_2+(a_3-a_4)*a_5/a_6)+a_7*a_8$ sa preloží na $a_1a_2a_3a_4-a_5*a_6/+*a_7a_8*+$ (v našom automate bez indexov $aaaa-a*a/+*aa*+$).",
+   "explanation": {
+    "intuition": "Operátor sa vypíše až vtedy, keď sa zo zásobníka odstráni jeho značka, t.j. po vypísaní oboch operandov.",
+    "detailed": "Pre $a_1*(a_2+a_3-a_4)$ (slajdy 7–9) je výstup $a_1a_2a_3+a_4-*$. Tento postup zodpovedá prechodu [derivačného stromu](dfn.derivacny-strom) zdola nahor.",
+    "pitfalls": [
+     "Ľavá asociatívnosť: $a+a+a$ sa prevedie na $aa+a+$, nie na $aaa++$."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.zasobnikovy-prevodnik",
+    "def.zadny-polsky-zapis"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.dpda"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.derivacny-strom"
+    }
+   ],
+   "figures": [
+    "fig.prevodnik-pravidla"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Tabuľka prechodov a stavy na slajdoch 5–10 sú pri extrakcii poškodené; prevodník je zrekonštruovaný z gramatiky a výstupu na slajdoch a overený: výstup sa zhoduje s referenčným prekladom do postfixu na všetkých slovách nad $\\{a,+,-,*,/,(,)\\}$ do dĺžky 7 a ukážkový výraz dá $aaaa-a*a/+*aa*+$."
+    ]
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.prevodnik-pravidla",
+   "title": "Pravidlá prevodníka na postfix",
+   "caption": "Rekonštruované a overené simuláciou.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.preklad-do-postfix"
+   ],
+   "sources": [],
+   "kind": "table",
+   "columns": [
+    "vrch",
+    "vstup",
+    "nový vrch",
+    "výstup"
+   ],
+   "rows": [
+    [
+     "$S$",
+     "$\\varepsilon$",
+     "$MP$",
+     "—"
+    ],
+    [
+     "$P$",
+     "$+$",
+     "$M{+}P$",
+     "—"
+    ],
+    [
+     "$P$",
+     "$-$",
+     "$M{-}P$",
+     "—"
+    ],
+    [
+     "$P$",
+     "$\\varepsilon$ (else)",
+     "$\\varepsilon$",
+     "—"
+    ],
+    [
+     "$M$",
+     "$\\varepsilon$",
+     "$ET$",
+     "—"
+    ],
+    [
+     "$T$",
+     "$*$",
+     "$E{*}T$",
+     "—"
+    ],
+    [
+     "$T$",
+     "$/$",
+     "$E{/}T$",
+     "—"
+    ],
+    [
+     "$T$",
+     "$\\varepsilon$ (else)",
+     "$\\varepsilon$",
+     "—"
+    ],
+    [
+     "$E$",
+     "$a$",
+     "$\\varepsilon$",
+     "$a$"
+    ],
+    [
+     "$E$",
+     "$($",
+     "$S)$",
+     "—"
+    ],
+    [
+     "$)$",
+     "$)$",
+     "$\\varepsilon$",
+     "—"
+    ],
+    [
+     "značka $o$",
+     "$\\varepsilon$",
+     "$\\varepsilon$",
+     "$o$"
+    ]
+   ]
+  },
+  {
+   "id": "fig.strom-postfix",
+   "title": "Derivačný strom výrazu a+a*a",
+   "caption": "Postfix $aaa*+$ vznikne prechodom stromu zdola-hore: operandy, potom operátor.",
+   "origin": "generated",
+   "illustrates": [
+    "def.zadny-polsky-zapis"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": false,
+   "vertices": [
+    {
+     "id": "n3",
+     "x": 0,
+     "y": 210,
+     "label": "a"
+    },
+    {
+     "id": "n2",
+     "x": 0,
+     "y": 140,
+     "label": "E"
+    },
+    {
+     "id": "n5",
+     "x": 60,
+     "y": 210,
+     "label": "ε"
+    },
+    {
+     "id": "n4",
+     "x": 60,
+     "y": 140,
+     "label": "T"
+    },
+    {
+     "id": "n1",
+     "x": 30,
+     "y": 70,
+     "label": "M"
+    },
+    {
+     "id": "n7",
+     "x": 120,
+     "y": 140,
+     "label": "+"
+    },
+    {
+     "id": "n10",
+     "x": 180,
+     "y": 280,
+     "label": "a"
+    },
+    {
+     "id": "n9",
+     "x": 180,
+     "y": 210,
+     "label": "E"
+    },
+    {
+     "id": "n12",
+     "x": 240,
+     "y": 280,
+     "label": "*"
+    },
+    {
+     "id": "n14",
+     "x": 300,
+     "y": 350,
+     "label": "a"
+    },
+    {
+     "id": "n13",
+     "x": 300,
+     "y": 280,
+     "label": "E"
+    },
+    {
+     "id": "n16",
+     "x": 360,
+     "y": 350,
+     "label": "ε"
+    },
+    {
+     "id": "n15",
+     "x": 360,
+     "y": 280,
+     "label": "T"
+    },
+    {
+     "id": "n11",
+     "x": 300,
+     "y": 210,
+     "label": "T"
+    },
+    {
+     "id": "n8",
+     "x": 240,
+     "y": 140,
+     "label": "M"
+    },
+    {
+     "id": "n18",
+     "x": 420,
+     "y": 210,
+     "label": "ε"
+    },
+    {
+     "id": "n17",
+     "x": 420,
+     "y": 140,
+     "label": "P"
+    },
+    {
+     "id": "n6",
+     "x": 260,
+     "y": 70,
+     "label": "P"
+    },
+    {
+     "id": "n0",
+     "x": 145,
+     "y": 0,
+     "label": "S"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "n2",
+     "target": "n3",
+     "directed": false
+    },
+    {
+     "id": "e1",
+     "source": "n4",
+     "target": "n5",
+     "directed": false
+    },
+    {
+     "id": "e2",
+     "source": "n1",
+     "target": "n2",
+     "directed": false
+    },
+    {
+     "id": "e3",
+     "source": "n1",
+     "target": "n4",
+     "directed": false
+    },
+    {
+     "id": "e4",
+     "source": "n9",
+     "target": "n10",
+     "directed": false
+    },
+    {
+     "id": "e5",
+     "source": "n13",
+     "target": "n14",
+     "directed": false
+    },
+    {
+     "id": "e6",
+     "source": "n15",
+     "target": "n16",
+     "directed": false
+    },
+    {
+     "id": "e7",
+     "source": "n11",
+     "target": "n12",
+     "directed": false
+    },
+    {
+     "id": "e8",
+     "source": "n11",
+     "target": "n13",
+     "directed": false
+    },
+    {
+     "id": "e9",
+     "source": "n11",
+     "target": "n15",
+     "directed": false
+    },
+    {
+     "id": "e10",
+     "source": "n8",
+     "target": "n9",
+     "directed": false
+    },
+    {
+     "id": "e11",
+     "source": "n8",
+     "target": "n11",
+     "directed": false
+    },
+    {
+     "id": "e12",
+     "source": "n17",
+     "target": "n18",
+     "directed": false
+    },
+    {
+     "id": "e13",
+     "source": "n6",
+     "target": "n7",
+     "directed": false
+    },
+    {
+     "id": "e14",
+     "source": "n6",
+     "target": "n8",
+     "directed": false
+    },
+    {
+     "id": "e15",
+     "source": "n6",
+     "target": "n17",
+     "directed": false
+    },
+    {
+     "id": "e16",
+     "source": "n0",
+     "target": "n1",
+     "directed": false
+    },
+    {
+     "id": "e17",
+     "source": "n0",
+     "target": "n6",
+     "directed": false
+    }
+   ],
+   "animations": []
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.rpn-kompilatory",
+   "title": "Prevod infixu na postfix v kompilátoroch",
+   "summary": "Prvý krok generovania kódu pre zásobníkový stroj.",
+   "scenario": "Kompilátor preloží $a*(b+c)$ do postupnosti inštrukcií pre zásobníkový stroj.",
+   "modelling": "Prevodník pri čítaní vydáva operandy a operátory v poradí vyhodnocovania.",
+   "solution": "Výstup sa vykoná zásobníkovým strojom (operand → push, operátor → pop,pop,push).",
+   "connects": [
+    "dfn.zasobnikovy-prevodnik",
+    "def.zadny-polsky-zapis"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.syntaxou-riadeny-preklad",
+   "title": "Syntaxou riadený preklad",
+   "summary": "Rozbor a generovanie kódu naraz.",
+   "scenario": "Parser má popri overení syntaxe vyrobiť aj výstup (napr. cieľový kód alebo AST).",
+   "modelling": "Ku každému pravidlu gramatiky pridáme výstupnú akciu.",
+   "solution": "Deterministický zásobníkový prevodník vykoná preklad v jednom prechode.",
+   "connects": [
+    "dfn.zasobnikovy-prevodnik",
+    "ex.preklad-do-postfix"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.kalkulacka",
+   "title": "Kalkulačka s postfixovou vstupnou notáciou",
+   "summary": "Jednoduchý zásobníkový vyhodnocovač.",
+   "scenario": "Kalkulačka s notáciou RPN nepotrebuje zátvorky.",
+   "modelling": "Postfixový výraz sa čítať zľava doprava so zásobníkom hodnôt.",
+   "solution": "Prevodník môže preložiť infixový vstup používateľa na RPN.",
+   "connects": [
+    "def.zadny-polsky-zapis"
+   ],
+   "figures": [],
+   "tags": [
+    "výpočty"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.prev-1",
+   "kind": "mcq",
+   "prompt": "Čo pridáva prevodník k DPDA?",
+   "options": [
+    "výstupný reťazec v každom kroku",
+    "druhý zásobník",
+    "nedeterminizmus",
+    "pásku"
+   ],
+   "answer": 0,
+   "explanation": "$\\delta$ vracia aj reťazec z $\\Delta^*$.",
+   "about": [
+    "dfn.zasobnikovy-prevodnik"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.prev-2",
+   "kind": "open",
+   "prompt": "Prevedte $a*(a+a)$ do zadného poľského zápisu.",
+   "answer": "$aaa+*$.",
+   "explanation": "Najprv operandy, potom operátor.",
+   "about": [
+    "def.zadny-polsky-zapis"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.prev-3",
+   "kind": "mcq",
+   "prompt": "Aký je postfix výrazu $a+a+a$ (ľavá asociatívnosť)?",
+   "options": [
+    "aaa++",
+    "aa+a+",
+    "a+aa+",
+    "aa++a"
+   ],
+   "answer": 1,
+   "explanation": "$((a+a)+a)$ dáva $aa+a+$.",
+   "about": [
+    "ex.preklad-do-postfix"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.prev-4",
+   "kind": "truefalse",
+   "prompt": "Zadný poľský zápis vyžaduje zátvorky.",
+   "answer": false,
+   "explanation": "Poradie vyhodnotenia je zrejmé z polohy operátorov.",
+   "about": [
+    "def.zadny-polsky-zapis"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.prev-5",
+   "kind": "open",
+   "prompt": "Kedy sa operátor $+$ vydáva na výstup v prevodníku?",
+   "answer": "Keď sa jeho značka odstráni zo zásobníka, t.j. po spracovaní druhého operandu.",
+   "explanation": "Značka $+$ sa vkladá spolu s $M$.",
+   "about": [
+    "ex.preklad-do-postfix"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.prev-6",
+   "kind": "truefalse",
+   "prompt": "Prevodník zo slajdu dáva výstup bez čítania vstupu v niektorých krokoch.",
+   "answer": true,
+   "explanation": "ε-kroky (rozbalenie $S,M$ atď. a výstup značiek) výstup produkujú bez čítania.",
+   "about": [
+    "dfn.zasobnikovy-prevodnik"
+   ],
+   "difficulty": 1
+  }
+ ]
+}

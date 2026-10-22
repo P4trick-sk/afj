@@ -1,0 +1,851 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "optimalnost",
+  "title": "Redukcia automatov III: korektnosť a optimálnosť",
+  "course": "A",
+  "order": 5,
+  "sourceFiles": [
+   "Afja05_redukcia_optim_P.pdf"
+  ],
+  "summary": "Dokazuje sa, že algoritmus rozkladu stavov je korektný a vždy sa zastaví, že odstránenie ekvivalentných stavov zachová správanie, a že ekvivalentné automaty bez nedosiahnuteľných a ekvivalentných stavov sú izomorfné. Z toho plynie, že takto zredukovaný automat je minimálny.",
+  "overview": "Prednáška uzatvára tému redukcie automatov. Tri lemy (5.1–5.3) ukazujú, že algoritmus z minulej prednášky počíta presne rozklad na $k$-ekvivalentné stavy, že sa vždy zastaví a že výstupný rozklad zodpovedá plnej ekvivalencii stavov. Veta 5.4 zaručuje, že zlepenie ekvivalentných stavov zachová správanie. Ústrednou je Veta 5.5: dva ekvivalentné automaty bez nedosiahnuteľných a ekvivalentných stavov sú izomorfné, z čoho vyplýva Dôsledok 5.6 (taký automat je optimálny) a algoritmus na testovanie ekvivalencie dvoch automatov.",
+  "keyQuestions": [
+   "Prečo sa algoritmus zjemňovania rozkladu vždy zastaví?",
+   "Prečo zlepenie ekvivalentných stavov nemení správanie automatu?",
+   "Prečo je zredukovaný automat jednoznačne určený až na premenovanie stavov?"
+  ],
+  "prerequisites": [
+   "ekv-stavy",
+   "nedosiahnutelne",
+   "automaty-vystup"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "thm.lema-5-1-rozklady-k-ekvivalencie",
+   "type": "theorem",
+   "topic": "optimalnost",
+   "title": "Lema 5.1: rozklady na k-ekvivalentné stavy sú počítané korektne",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja05_redukcia_optim_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "Ak $A_k=\\{A_{k,1},\\dots,A_{k,n_k}\\}$ je rozklad $Q$ získaný [algoritmom](alg.rozklad-ekvivalentnych-stavov) pre nejaké $k=1,2,3,\\dots$, tak pre $q,q'\\in Q$ platí: $q,q'$ patria do tej istej množiny rozkladu $A_k$ práve vtedy, keď $q\\sim_kq'$.",
+   "explanation": {
+    "intuition": "Algoritmus naozaj počíta to, čo sľubuje: $k$-ty rozklad zodpovedá $k$-ekvivalencii.",
+    "detailed": "Dôkaz ide [indukciou](def.indukcia) podľa $k$ a v kroku využíva Vetu 4.3, ktorá je presne tvarom kroku 2 algoritmu.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Báza $k=1$: stavy $q,q'$ sú v kroku 1 zaradené do jednej množiny práve vtedy, keď $g(q,a)=g(q',a)$ pre všetky $a$, čo je $q\\sim_1q'$.",
+      "why": "Krok 1 algoritmu je presne definícia $1$-ekvivalencie.",
+      "uses": [
+       "dfn.k-ekvivalentne-stavy"
+      ]
+     },
+     {
+      "text": "Indukčný krok: nech je $A_k$ korektný. Podľa kroku 2 sú $q,q'$ v jednej množine $A_{k+1}$ práve vtedy, keď (a) sú v jednej množine $A_k$ a (b) $f(q,a),f(q',a)$ sú pre všetky $a$ v jednej množine $A_k$.",
+      "why": "Opis kroku 2 algoritmu.",
+      "uses": []
+     },
+     {
+      "text": "Podľa indukčného predpokladu je to ekvivalentné s: (a) $q\\sim_kq'$ a (b) $f(q,a)\\sim_kf(q',a)$ pre všetky $a$.",
+      "why": "Použijeme korektnosť $A_k$.",
+      "uses": []
+     },
+     {
+      "text": "Podľa Vety 4.3 to nastáva práve vtedy, keď $q\\sim_{k+1}q'$.",
+      "why": "Veta 4.3.",
+      "uses": [
+       "thm.veta-4-3-rekurzia-k-ekvivalencie"
+      ]
+     }
+    ]
+   },
+   "uses": [
+    "dfn.k-ekvivalentne-stavy",
+    "thm.veta-4-3-rekurzia-k-ekvivalencie",
+    "thm.lema-4-2-monotonnost",
+    "def.indukcia",
+    "alg.rozklad-ekvivalentnych-stavov",
+    "dfn.rozklad-stavov"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.lema-5-2-zastavenie-rozkladu",
+   "type": "theorem",
+   "topic": "optimalnost",
+   "title": "Lema 5.2: algoritmus rozkladu sa vždy zastaví",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja05_redukcia_optim_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "Pre každý automat $M=(Q,\\Sigma,\\Delta,q_I,f,g)$ existuje $k_0\\ge1$ také, že nastane zhoda medzi $A_{k_0}$ a $A_{k_0+1}$, t.j. medzi rozkladmi na $k_0$- a $(k_0+1)$-[ekvivalentné stavy](dfn.ekvivalentne-stavy) (pozri krok 3 algoritmu).",
+   "explanation": {
+    "intuition": "Počet rozlíšených dvojíc stavov rastie a je ohraničený, takže sa raz prestane meniť.",
+    "detailed": "Označme $r_k$ počet usporiadaných dvojíc $[q,q']$ s $q\\not\\sim_kq'$. Postupnosť $r_1\\le r_2\\le\\dots$ je neklesajúca (Lema 4.2) a ohraničená $|Q|^2-|Q|$, preto sa ustáli. Že sa po ustálení počtu ustália aj samotné rozklady, ukáže argument [sporom](def.dokaz-sporom).",
+    "pitfalls": [
+     "Zhoda počtov $r_{k_0}=r_{k_0+1}$ musí dať zhodu množín dvojíc, nie iba ich počtov; to zaručuje inklúzia z Lemy 4.2."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Platí $r_1\\le r_2\\le r_3\\le\\dots$, lebo $q\\not\\sim_kq'$ implikuje $q\\not\\sim_{k+1}q'$ (Lema 4.2(1)), a $r_k\\le|Q|^2-|Q|$.",
+      "why": "Neklesajúca postupnosť celých čísel ohraničená zhora sa musí ustáliť.",
+      "uses": [
+       "thm.lema-4-2-monotonnost"
+      ]
+     },
+     {
+      "text": "Preto existuje $k_0$ s $r_{k_0}=r_{k_0+1}$.",
+      "why": "Postupnosť nemôže rásť donekonečna.",
+      "uses": []
+     },
+     {
+      "text": "Predpokladajme sporom, že pre nejaké $q,q'$ platí $q\\sim_{k_0}q'$ a zároveň $q\\not\\sim_{k_0+1}q'$. Keďže $r_{k_0}=r_{k_0+1}$, musí existovať iná dvojica $q'',q'''$ s $q''\\not\\sim_{k_0}q'''$ a $q''\\sim_{k_0+1}q'''$.",
+      "why": "Počet $k_0+1$-nerozlíšených dvojíc je rovnaký, a jedna pribudla.",
+      "uses": [
+       "def.dokaz-sporom"
+      ]
+     },
+     {
+      "text": "To odporuje Leme 4.2(1): $q''\\not\\sim_{k_0}q'''$ implikuje $q''\\not\\sim_{k_0+1}q'''$. Takže pre $k_0$ neexistujú $q,q'$ s $q\\sim_{k_0}q'$ a $q\\not\\sim_{k_0+1}q'$, a naopak podľa Lemy 4.2(1) neexistujú ani s $q\\not\\sim_{k_0}q'$ a $q\\sim_{k_0+1}q'$.",
+      "why": "Obe inklúzie sú vylúčené.",
+      "uses": []
+     },
+     {
+      "text": "Teda $q\\sim_{k_0}q'\\iff q\\sim_{k_0+1}q'$ pre všetky $q,q'$ a rozklady $A_{k_0}$ a $A_{k_0+1}$ sú zhodné.",
+      "why": "Rozklad je určený reláciou.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.k-ekvivalentne-stavy",
+    "thm.veta-4-3-rekurzia-k-ekvivalencie",
+    "thm.lema-4-2-monotonnost",
+    "def.indukcia",
+    "alg.rozklad-ekvivalentnych-stavov",
+    "def.dokaz-sporom",
+    "dfn.ekvivalentne-stavy"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.lema-5-3-korektnost-rozkladu",
+   "type": "theorem",
+   "topic": "optimalnost",
+   "title": "Lema 5.3: výstup algoritmu je rozklad na plne ekvivalentné stavy",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja05_redukcia_optim_P.pdf",
+     "page": 6
+    }
+   ],
+   "statement": "Ak $A$ je posledný získaný rozklad $Q$ v automate $M$, tak pre $q,q'\\in Q$ platí: $q,q'$ patria do tej istej množiny rozkladu $A$ práve vtedy, keď $q\\sim q'$.",
+   "explanation": {
+    "intuition": "Po ustálení rozkladu nič ďalšie sa už nezmení, takže ustálený rozklad je ekvivalencia stavov.",
+    "detailed": "Kľúčovým pomocným tvrdením je, že ak sa v kroku $k_0$ rozklad nezmenil, nezmení sa ani v žiadnom neskoršom kroku: $q\\sim_{k_0}q'$ implikuje $q\\sim_{k_0+h}q'$ pre každé $h\\ge1$.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Podľa Lemy 5.2 algoritmus skončí s $A=A_{k_0}=A_{k_0+1}$ a podľa Lemy 5.1 je $A$ korektný rozklad na $k_0$-ekvivalentné stavy: $q,q'$ sú v jednej množine práve vtedy, keď $q\\sim_{k_0}q'$.",
+      "why": "Lemy 5.1 a 5.2.",
+      "uses": [
+       "thm.lema-5-1-rozklady-k-ekvivalencie",
+       "thm.lema-5-2-zastavenie-rozkladu"
+      ]
+     },
+     {
+      "text": "Pomocné tvrdenie: $q\\sim_{k_0}q'$ implikuje $q\\sim_{k_0+h}q'$ pre každé $h\\ge1$. Indukciou podľa $h$: pre $h=1$ plynie z $A_{k_0}=A_{k_0+1}$.",
+      "why": "Zhoda rozkladov znamená zhodu relácií.",
+      "uses": [
+       "def.indukcia"
+      ]
+     },
+     {
+      "text": "Krok: z $q\\sim_{k_0}q'$ plynie $q\\sim_{k_0+1}q'$, čo je podľa Vety 4.3 ekvivalentné s $q\\sim_{k_0}q'$ a $f(q,a)\\sim_{k_0}f(q',a)$ pre všetky $a$. Podľa indukčného predpokladu je to $q\\sim_{k_0+h}q'$ a $f(q,a)\\sim_{k_0+h}f(q',a)$, čo je podľa Vety 4.3 $q\\sim_{k_0+h+1}q'$.",
+      "why": "Veta 4.3 použitá dvakrát.",
+      "uses": [
+       "thm.veta-4-3-rekurzia-k-ekvivalencie"
+      ]
+     },
+     {
+      "text": "Spolu s Lemou 4.2(1) máme: $q\\sim_{k_0}q'$ implikuje $q\\sim_kq'$ pre všetky $k\\ge0$ (pre $k\\le k_0$ z monotónnosti, pre $k>k_0$ z pomocného tvrdenia). Opačná implikácia je dosadenie $k=k_0$.",
+      "why": "Pokrytie všetkých $k$.",
+      "uses": [
+       "thm.lema-4-2-monotonnost"
+      ]
+     },
+     {
+      "text": "Podľa Lemy 4.2(2) je $q\\sim_kq'$ pre všetky $k$ práve vtedy, keď $q\\sim q'$. Teda $q,q'$ sú v jednej množine $A=A_{k_0}$ práve vtedy, keď $q\\sim q'$.",
+      "why": "Charakterizácia ekvivalencie.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "thm.lema-5-1-rozklady-k-ekvivalencie",
+    "thm.lema-5-2-zastavenie-rozkladu",
+    "dfn.ekvivalentne-stavy",
+    "dfn.k-ekvivalentne-stavy",
+    "thm.veta-4-3-rekurzia-k-ekvivalencie",
+    "thm.lema-4-2-monotonnost",
+    "def.indukcia"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.veta-5-4-redukcia-zachovava-ekvivalenciu",
+   "type": "theorem",
+   "topic": "optimalnost",
+   "title": "Veta 5.4: odstránenie ekvivalentných stavov zachová ekvivalenciu automatu",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja05_redukcia_optim_P.pdf",
+     "page": 9
+    }
+   ],
+   "statement": "Automat $M'=(Q',\\Sigma,\\Delta,q_I,f',g')$, ktorý vznikne z pôvodného $M$ [odstránením ekvivalentných stavov](alg.odstranenie-ekvivalentnych-stavov) a presmerovaním hrán do vybraných reprezentantov, je ekvivalentný s $M$.",
+   "explanation": {
+    "intuition": "Správanie sa nezmení, lebo presmerujeme hrany iba do stavov, ktoré sa správajú rovnako.",
+    "detailed": "Kľúčové tvrdenie: pre reprezentantov $q_i\\in Q'$ platí $g'^*(q_i,\\omega)=g^*(q_i,\\omega)$ pre každé $\\omega$. Pretože počiatočný stav je reprezentant, z toho vyplýva ekvivalencia.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Pripomeňme konštrukciu: ak je $A=\\{A_1,\\dots,A_n\\}$ rozklad na triedy ekvivalencie, $Q'=\\{q_1,\\dots,q_n\\}$ s $q_i\\in A_i$ a $q_I\\in Q'$, $f'(q_i,a)=q_j$ taký, že $f(q_i,a)\\in A_j$, $g'(q_i,a)=g(q_i,a)$.",
+      "why": "Definícia $M'$.",
+      "uses": []
+     },
+     {
+      "text": "Tvrdenie: pre každé $q_i\\in Q'$ a $\\omega\\in\\Sigma^*$ platí $g'^*(q_i,\\omega)=g^*(q_i,\\omega)$. Indukciou podľa $|\\omega|$; pre $\\omega=a$ je $g'^*(q_i,a)=g'(q_i,a)=g(q_i,a)=g^*(q_i,a)$.",
+      "why": "Báza z definície $g'$ a Lemy 2.1.",
+      "uses": [
+       "thm.lema-2-1-jeden-symbol"
+      ]
+     },
+     {
+      "text": "Pre $\\omega=a\\omega'$: $g'^*(q_i,a\\omega')=g'(q_i,a)\\,g'^*(f'(q_i,a),\\omega')=g(q_i,a)\\,g'^*(q_j,\\omega')=g(q_i,a)\\,g^*(q_j,\\omega')$ podľa indukčného predpokladu.",
+      "why": "Rozpis podľa definície a indukčný predpoklad pre kratšie slovo $\\omega'$.",
+      "uses": [
+       "thm.lema-2-2-zretazenie"
+      ]
+     },
+     {
+      "text": "Keďže $f(q_i,a)\\in A_j$ a $q_j\\in A_j$, sú stavy $f(q_i,a)$ a $q_j$ ekvivalentné, teda $g^*(q_j,\\omega')=g^*(f(q_i,a),\\omega')$ a pokračujeme: $g(q_i,a)\\,g^*(f(q_i,a),\\omega')=g^*(q_i,a\\omega')$.",
+      "why": "Stavy tej istej triedy sú ekvivalentné (Lema 5.3).",
+      "uses": [
+       "thm.lema-5-3-korektnost-rozkladu"
+      ]
+     },
+     {
+      "text": "Pretože $q_I\\in Q'$, platí $g'^*(q_I,\\omega)=g^*(q_I,\\omega)$ pre každé $\\omega$, takže $M'$ je ekvivalentný s $M$.",
+      "why": "Definícia ekvivalencie automatov.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "alg.odstranenie-ekvivalentnych-stavov",
+    "dfn.ekvivalentne-automaty",
+    "thm.lema-5-3-korektnost-rozkladu",
+    "def.indukcia"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.izomorfizmus-automatov",
+   "type": "definition",
+   "topic": "optimalnost",
+   "title": "Izomorfizmus automatov",
+   "terms": [
+    {
+     "term": "izomorfizmus automatov",
+     "alt": "isomorphism of automata",
+     "symbol": "T"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja05_redukcia_optim_P.pdf",
+     "page": 11
+    }
+   ],
+   "statement": "Automaty $M_1=(Q_1,\\Sigma,\\Delta,q_{I,1},f_1,g_1)$ a $M_2=(Q_2,\\Sigma,\\Delta,q_{I,2},f_2,g_2)$ sú **izomorfné**, ak existuje bijekcia $T:Q_1\\to Q_2$ taká, že (1) $q_1\\ne q_1'\\Rightarrow T(q_1)\\ne T(q_1')$, (2) pre každé $q_2\\in Q_2$ existuje $q_1\\in Q_1$ s $T(q_1)=q_2$, (3) $T(q_{I,1})=q_{I,2}$, (4) $T(f_1(q_1,a))=f_2(T(q_1),a)$, (5) $g_1(q_1,a)=g_2(T(q_1),a)$. Dôsledok: $|Q_1|=|Q_2|$.",
+   "explanation": {
+    "intuition": "Izomorfné automaty sú to isté, len s inak pomenovanými stavmi.",
+    "detailed": "Body (1) a (2) hovoria, že $T$ je prostá a na (bijekcia). Body (3)–(5) vyžadujú, aby $T$ zachovávala počiatočný stav, prechody a výstupy. Slajd ilustruje premenovanie $T(A)=台$, $T(C)=机$, $T(F)=器$.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "dfn.konecnostavovy-automat"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.izomorfizmus"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.veta-5-5-izomorfizmus",
+   "type": "theorem",
+   "topic": "optimalnost",
+   "title": "Veta 5.5: ekvivalentné redukované automaty sú izomorfné",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja05_redukcia_optim_P.pdf",
+     "page": 11
+    }
+   ],
+   "statement": "Ak sú dva automaty $M_1,M_2$ [ekvivalentné](dfn.ekvivalentne-automaty), pričom žiaden z nich nemá nedosiahnuteľné ani [ekvivalentné stavy](dfn.ekvivalentne-stavy), tak sú [izomorfné](dfn.izomorfizmus-automatov). Dôsledok: $|Q_1|=|Q_2|$.",
+   "explanation": {
+    "intuition": "Minimálny popis správania je jediný: kto odstráni všetko nadbytočné, dostane (až na mená stavov) ten istý automat.",
+    "detailed": "Dôkaz zostrojí automat $M$ z disjunktného zjednotenia $M_1,M_2$ a na ňom spočíta triedy ekvivalencie. Vďaka ekvivalencii automatov a absencii ne[dosiahnuteľných stavov](dfn.dosiahnutelny-stav) má každá trieda aspoň jedného zástupcu z $M_1$ aj z $M_2$ a vďaka absencii [ekvivalentných stavov](dfn.ekvivalentne-stavy) práve jedného z každého. Priradenie zástupcov je hľadaný izomorfizmus.",
+    "pitfalls": [
+     "Obe podmienky (bez nedosiahnuteľných aj bez ekvivalentných stavov) sú nutné: bez prvej môže mať automat nadbytočné nedosiahnuteľné stavy, bez druhej duplicity."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Zostrojíme $M=(Q_1\\cup Q_2,\\Sigma,\\Delta,q_{I,1},f,g)$ ako disjunktné zjednotenie: $f,g$ sa na $Q_i$ zhodujú s $f_i,g_i$. Algoritmom rozkladu získame triedy ekvivalencie $A=\\{A_1,\\dots,A_n\\}$ na $Q_1\\cup Q_2$.",
+      "why": "Chceme porovnávať stavy oboch automatov v jednom stroji.",
+      "uses": [
+       "alg.rozklad-ekvivalentnych-stavov"
+      ]
+     },
+     {
+      "text": "Keďže ani $M_1$ ani $M_2$ neobsahuje dvojicu ekvivalentných stavov, každá $A_j$ je tvaru $\\{r_{1,j},r_{2,j}\\}$, $\\{r_{1,j}\\}$ alebo $\\{r_{2,j}\\}$ s $r_{i,j}\\in Q_i$.",
+      "why": "Dve ekvivalentné stavy z jedného automatu by v jednej triede boli.",
+      "uses": [
+       "thm.lema-5-3-korektnost-rozkladu"
+      ]
+     },
+     {
+      "text": "Nech $A_j\\ni r_{1,j}\\in Q_1$. Keďže $M_1$ nemá nedosiahnuteľné stavy, existuje $\\omega_j$ s $f_1^*(q_{I,1},\\omega_j)=r_{1,j}$. Nech $f_2^*(q_{I,2},\\omega_j)=r_{2,j}$.",
+      "why": "Dosiahnuteľnosť $r_{1,j}$ v $M_1$.",
+      "uses": []
+     },
+     {
+      "text": "Z ekvivalencie $M_1,M_2$ pre každé $\\omega'$: $g_1^*(q_{I,1},\\omega_j\\omega')=g_2^*(q_{I,2},\\omega_j\\omega')$. Rozpísaním podľa Lemy 2.2 a skrátením rovnakých prefixov: $g^*(r_{1,j},\\omega')=g^*(r_{2,j},\\omega')$, teda $r_{1,j}\\sim r_{2,j}$ v $M$.",
+      "why": "Lema 2.2 rozloží výstup na prefix a zvyšok.",
+      "uses": [
+       "thm.lema-2-2-zretazenie"
+      ]
+     },
+     {
+      "text": "Preto $r_{2,j}\\in A_j$: každá trieda s prvkom z $Q_1$ obsahuje aj prvok z $Q_2$ (vylúčený typ $\\{r_{1,j}\\}$). Symetricky, každá s prvkom z $Q_2$ aj z $Q_1$. Všetky triedy sú tvaru $\\{r_{1,j},r_{2,j}\\}$.",
+      "why": "Symetria úloh $M_1$ a $M_2$.",
+      "uses": []
+     },
+     {
+      "text": "Definujeme $T(r_{1,j})=r_{2,j}$. $T$ je bijekcia $Q_1\\to Q_2$ (vlastnosti 1, 2). Počiatočné stavy $q_{I,1},q_{I,2}$ sú ekvivalentné (ekvivalencia $M_1,M_2$), preto sú v jednej triede a $T(q_{I,1})=q_{I,2}$ (3).",
+      "why": "Definícia $T$ a ekvivalencia automatov.",
+      "uses": []
+     },
+     {
+      "text": "Pre $q_1\\in Q_1$ je $q_1\\sim T(q_1)$, teda $g^*(q_1,a\\omega')=g^*(T(q_1),a\\omega')$. Rozpisom: $g_1(q_1,a)=g_2(T(q_1),a)$ (5) a $f_1(q_1,a)\\sim f_2(T(q_1),a)$ v $M$.",
+      "why": "Prvý symbol rozlíši výstup, zvyšok nasledovníkov.",
+      "uses": []
+     },
+     {
+      "text": "Keďže $f_1(q_1,a)\\sim T(f_1(q_1,a))$, je $T(f_1(q_1,a))\\sim f_2(T(q_1),a)$, obe z $Q_2$. Podľa (neexistencie ekvivalentných stavov v $M_2$) sa rovnajú: $T(f_1(q_1,a))=f_2(T(q_1),a)$ (4).",
+      "why": "Dve ekvivalentné stavy z $Q_2$ musia byť rovnaké.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.izomorfizmus-automatov",
+    "dfn.ekvivalentne-automaty",
+    "dfn.dosiahnutelny-stav",
+    "thm.lema-5-3-korektnost-rozkladu",
+    "alg.rozklad-ekvivalentnych-stavov",
+    "thm.lema-2-2-zretazenie",
+    "dfn.ekvivalentne-stavy"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.zavislosti-lem"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.dosledok-5-6-optimalnost",
+   "type": "theorem",
+   "topic": "optimalnost",
+   "title": "Dôsledok 5.6: automat bez nedosiahnuteľných a ekvivalentných stavov je optimálny",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja05_redukcia_optim_P.pdf",
+     "page": 16
+    }
+   ],
+   "statement": "Ak automat $M=(Q,\\Sigma,\\Delta,q_I,f,g)$ nemá nedosiahnuteľné ani [ekvivalentné stavy](dfn.ekvivalentne-stavy), tak je [optimálny](dfn.minimalny-automat): $M$ sa nedá nahradiť žiadnym [ekvivalentným automatom](dfn.ekvivalentne-automaty) s menším počtom stavov.",
+   "explanation": {
+    "intuition": "Keď sú odstránené obe nadbytočnosti, menšie automatom už nenájdeme.",
+    "detailed": "Spolu s algoritmami z prednášok 3 a 4 dostávame postup minimalizácie: odstrániť ne[dosiahnuteľné stavy](dfn.dosiahnutelny-stav), potom ekvivalentné. Výsledok je jednoznačný až na izomorfizmus.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Nech $M'$ je automat s najmenším možným počtom stavov, ekvivalentný s $M$. Predpokladajme sporom $|Q'|<|Q|$.",
+      "why": "Chceme vyvrátiť existenciu menšieho ekvivalentu.",
+      "uses": [
+       "def.dokaz-sporom"
+      ]
+     },
+     {
+      "text": "$M'$ nemôže mať nedosiahnuteľné ani ekvivalentné stavy, inak by sa dal nahradiť ešte menším automatom $M''$, a $M'$ by nebol najmenší.",
+      "why": "Odstránením nadbytočných stavov sa počet stavov zmenší (a automat ostane ekvivalentný).",
+      "uses": []
+     },
+     {
+      "text": "Podľa Vety 5.5 sú $M$ a $M'$ izomorfné, teda $|Q'|=|Q|$, spor.",
+      "why": "Veta 5.5.",
+      "uses": [
+       "thm.veta-5-5-izomorfizmus"
+      ]
+     }
+    ]
+   },
+   "uses": [
+    "thm.veta-5-5-izomorfizmus",
+    "dfn.minimalny-automat",
+    "def.dokaz-sporom",
+    "alg.odstranenie-nedosiahnutelnych",
+    "alg.odstranenie-ekvivalentnych-stavov",
+    "dfn.ekvivalentne-stavy",
+    "dfn.ekvivalentne-automaty",
+    "dfn.dosiahnutelny-stav"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.test-ekvivalencie-automatov",
+   "type": "algorithm",
+   "topic": "optimalnost",
+   "title": "Testovanie ekvivalencie dvoch automatov",
+   "terms": [
+    {
+     "term": "test ekvivalencie automatov",
+     "alt": "equivalence test"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja05_redukcia_optim_P.pdf",
+     "page": 17
+    }
+   ],
+   "statement": "Dané sú automaty $M_1,M_2$. (1) Zostrojíme $M=(Q_1\\cup Q_2,\\Sigma,\\Delta,q_{I,1},f,g)$ z Vety 5.5 ($f,g$ sa zhodujú s $f_i,g_i$ na $Q_i$). (2) Algoritmom pre rozklad zostrojíme rozklad $Q_1\\cup Q_2$ na triedy [ekvivalentných stavov](dfn.ekvivalentne-stavy). (3) Ak $q_{I,1},q_{I,2}$ patria do tej istej množiny rozkladu, $M_1,M_2$ sú ekvivalentné, inak nie.",
+   "explanation": {
+    "intuition": "Spojíme oba automaty do jedného a pozrieme sa, či sú ich počiatočné stavy ekvivalentné.",
+    "detailed": "Test beží v polynomiálnom čase, hoci ekvivalencia sa týka nekonečne veľa vstupov. Používa sa aj na overenie, že minimalizácia nezmenila správanie.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Automaty $M_1,M_2$ sú ekvivalentné práve vtedy, keď $g_1^*(q_{I,1},\\omega)=g_2^*(q_{I,2},\\omega)$ pre všetky $\\omega$, čo je práve $q_{I,1}\\sim q_{I,2}$ v disjunktnom zjednotení. Správnosť algoritmu vyplýva z Lemy 5.3.",
+    "steps": []
+   },
+   "uses": [
+    "alg.rozklad-ekvivalentnych-stavov",
+    "thm.veta-5-5-izomorfizmus",
+    "dfn.ekvivalentne-automaty",
+    "dfn.ekvivalentne-stavy"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.izomorfizmus",
+   "title": "Izomorfizmus T: M2 a premenovaný M2",
+   "caption": "Slajd 11: $T(A)=台$, $T(C)=机$, $T(F)=器$; izomorfizmus iba premenúva stavy.",
+   "origin": "slides",
+   "illustrates": [
+    "dfn.izomorfizmus-automatov"
+   ],
+   "sources": [
+    {
+     "file": "Afja05_redukcia_optim_P.pdf",
+     "page": 11
+    }
+   ],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "A",
+     "x": 0,
+     "y": 0,
+     "label": "A"
+    },
+    {
+     "id": "C",
+     "x": 0,
+     "y": 90,
+     "label": "C"
+    },
+    {
+     "id": "F",
+     "x": 0,
+     "y": 180,
+     "label": "F"
+    },
+    {
+     "id": "台",
+     "x": 260,
+     "y": 0,
+     "label": "台"
+    },
+    {
+     "id": "机",
+     "x": 260,
+     "y": 90,
+     "label": "机"
+    },
+    {
+     "id": "器",
+     "x": 260,
+     "y": 180,
+     "label": "器"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "A",
+     "target": "台",
+     "label": "T",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "C",
+     "target": "机",
+     "label": "T",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "F",
+     "target": "器",
+     "label": "T",
+     "directed": true
+    }
+   ],
+   "animations": []
+  },
+  {
+   "id": "fig.zavislosti-lem",
+   "title": "Závislosti medzi tvrdeniami o redukcii",
+   "caption": "Poradie dôkazov v prednáške.",
+   "origin": "generated",
+   "illustrates": [
+    "thm.veta-5-5-izomorfizmus"
+   ],
+   "sources": [],
+   "kind": "mermaid",
+   "code": "flowchart TD\n  V43[\"Veta 4.3\"] --> L51[\"Lema 5.1\"]\n  L42[\"Lema 4.2\"] --> L52[\"Lema 5.2\"]\n  L51 --> L53[\"Lema 5.3\"]\n  L52 --> L53\n  V43 --> L53\n  L53 --> V54[\"Veta 5.4\"]\n  L53 --> V55[\"Veta 5.5\"]\n  V55 --> D56[\"Dôsledok 5.6\"]\n  V55 --> T[\"Test ekvivalencie\"]"
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.jednoznacna-minimalna-forma",
+   "title": "Jednoznačná minimálna reprezentácia",
+   "summary": "Porovnávanie podľa kanonickej formy.",
+   "scenario": "Dve špecifikácie protokolu majú porovnať, či popisujú to isté správanie.",
+   "modelling": "Každá špecifikácia je automat; zminimalizujeme ich.",
+   "solution": "Podľa Vety 5.5 sú minimálne ekvivalentné automaty izomorfné, takže stačí porovnať minimálne tvary (až na pomenovanie stavov).",
+   "connects": [
+    "thm.veta-5-5-izomorfizmus",
+    "thm.dosledok-5-6-optimalnost"
+   ],
+   "figures": [],
+   "tags": [
+    "verifikácia"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.overovanie-implementacii",
+   "title": "Overovanie, že dve implementácie robia to isté",
+   "summary": "Automatizovaná kontrola ekvivalencie.",
+   "scenario": "Optimalizovaná verzia stavového stroja nahradila starú; treba overiť, že správanie ostalo rovnaké.",
+   "modelling": "Obe verzie sú automaty s výstupom; spojíme ich do disjunktného zjednotenia.",
+   "solution": "Algoritmus testovania ekvivalencie zjemní rozklad a skontroluje, či sú počiatočné stavy v jednej triede.",
+   "connects": [
+    "alg.test-ekvivalencie-automatov",
+    "alg.rozklad-ekvivalentnych-stavov"
+   ],
+   "figures": [],
+   "tags": [
+    "testovanie"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.porovnanie-modelov",
+   "title": "Porovnávanie modelov protokolov",
+   "summary": "Rovnaký protokol, rôzne modely.",
+   "scenario": "Dva modelovacie tímy opísali ten istý komunikačný protokol rôznym množstvom stavov.",
+   "modelling": "Modely sú automaty; zredukujeme ich.",
+   "solution": "Ak sú ekvivalentné, ich minimálne automaty majú rovnaký počet stavov (Dôsledok Vety 5.5).",
+   "connects": [
+    "thm.veta-5-5-izomorfizmus",
+    "dfn.izomorfizmus-automatov"
+   ],
+   "figures": [],
+   "tags": [
+    "protokoly"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.opt-1",
+   "kind": "mcq",
+   "prompt": "Čo dokazuje Lema 5.1?",
+   "options": [
+    "rozklad $A_k$ zodpovedá $k$-ekvivalencii",
+    "algoritmus sa zastaví",
+    "rozklad je minimálny",
+    "automaty sú izomorfné"
+   ],
+   "answer": 0,
+   "explanation": "Lema 5.1 je o korektnosti rozkladov pre každé $k$; zastavenie je Lema 5.2.",
+   "about": [
+    "thm.lema-5-1-rozklady-k-ekvivalencie"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.opt-2",
+   "kind": "mcq",
+   "prompt": "Prečo sa algoritmus zjemňovania zastaví?",
+   "options": [
+    "počet dvojíc nerozlíšených stavov klesá",
+    "počet dvojíc rozlíšených stavov neklesá a je ohraničený $|Q|^2-|Q|$",
+    "$\\Sigma$ je konečná",
+    "$f$ je totálna"
+   ],
+   "answer": 1,
+   "explanation": "Neklesajúca ohraničená postupnosť celých čísel sa ustáli.",
+   "about": [
+    "thm.lema-5-2-zastavenie-rozkladu"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.opt-3",
+   "kind": "truefalse",
+   "prompt": "Ak sa rozklady $A_{k_0}$ a $A_{k_0+1}$ zhodujú, tak $A_{k_0+2}$ je od nich odlišný.",
+   "answer": false,
+   "explanation": "Zhoda sa už nikdy nezmení (pomocné tvrdenie v Leme 5.3).",
+   "about": [
+    "thm.lema-5-3-korektnost-rozkladu"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.opt-4",
+   "kind": "flashcard",
+   "prompt": "Sformulujte Vetu 5.5.",
+   "answer": "Ekvivalentné automaty bez nedosiahnuteľných a ekvivalentných stavov sú izomorfné.",
+   "explanation": "Dôsledok: majú rovnaký počet stavov.",
+   "about": [
+    "thm.veta-5-5-izomorfizmus"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.opt-5",
+   "kind": "mcq",
+   "prompt": "Ktoré podmienky musí splniť bijekcia $T$ medzi automatmi?",
+   "options": [
+    "zachovať počiatočný stav, prechody aj výstupy",
+    "iba počiatočný stav",
+    "iba počet stavov",
+    "iba výstupy"
+   ],
+   "answer": 0,
+   "explanation": "Body (3)–(5) definície izomorfizmu.",
+   "about": [
+    "dfn.izomorfizmus-automatov"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.opt-6",
+   "kind": "truefalse",
+   "prompt": "Automat bez nedosiahnuteľných stavov, ale s dvoma ekvivalentnými stavmi, môže byť optimálny.",
+   "answer": false,
+   "explanation": "Ekvivalentné stavy možno zlepiť, čím vznikne menší ekvivalentný automat.",
+   "about": [
+    "thm.dosledok-5-6-optimalnost"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.opt-7",
+   "kind": "open",
+   "prompt": "Načrtnite dôkaz Dôsledku 5.6.",
+   "answer": "Predpokladajme menší ekvivalentný automat $M'$ s najmenším počtom stavov. Ten nemá nedosiahnuteľné ani ekvivalentné stavy; podľa Vety 5.5 je izomorfný s $M$, teda má rovnaký počet stavov, spor.",
+   "explanation": "Využite Vetu 5.5.",
+   "about": [
+    "thm.dosledok-5-6-optimalnost"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.opt-8",
+   "kind": "mcq",
+   "prompt": "Kedy sú automaty $M_1,M_2$ podľa testu ekvivalentné?",
+   "options": [
+    "keď majú rovnaký počet stavov",
+    "keď sú $q_{I,1}$ a $q_{I,2}$ v jednej triede rozkladu zjednotenia",
+    "keď sú izomorfné",
+    "keď majú rovnaké abecedy"
+   ],
+   "answer": 1,
+   "explanation": "Test ekvivalencie z časti 5.",
+   "about": [
+    "alg.test-ekvivalencie-automatov"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.opt-9",
+   "kind": "open",
+   "prompt": "Prečo je vo Vete 5.4 dôležité, aby $q_I$ patril medzi reprezentantov?",
+   "answer": "Dôkaz používa rovnosť $g'^*(q_i,\\omega)=g^*(q_i,\\omega)$ pre reprezentantov; pre $q_i=q_I$ z toho vyplýva ekvivalencia $M'$ s $M$.",
+   "explanation": "Počiatočný stav $q_I$ určuje, z ktorého stavu sa výstup porovnáva.",
+   "about": [
+    "thm.veta-5-4-redukcia-zachovava-ekvivalenciu"
+   ],
+   "difficulty": 2
+  }
+ ]
+}

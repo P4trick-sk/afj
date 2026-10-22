@@ -1,0 +1,816 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "uzaver-bezk",
+  "title": "Uzáverové vlastnosti bezkontextových jazykov",
+  "course": "B",
+  "order": 20,
+  "sourceFiles": [
+   "Afjb07_UzBezJazyky_P.pdf"
+  ],
+  "summary": "Bezkontextové jazyky nie sú uzavreté na prienik ani doplnok, ale sú uzavreté na zjednotenie, zreťazenie, iteráciu a zrkadlenie; prienik s regulárnym jazykom je bezkontextový. Protipríklady dáva jazyk $\\{a^nb^nc^n\\}$, ktorý je prienikom dvoch deterministických bezkontextových jazykov a súčasne doplnkom bezkontextového jazyka.",
+  "overview": "Po pumping leme sa dá ukázať, čo bezkontextové jazyky nezvládnu. Jazyky $L_1=\\{a^nb^nc^k\\}$ a $L_2=\\{a^kb^nc^n\\}$ sú deterministické bezkontextové, no ich prienik $\\{a^nb^nc^n\\}$ nie je bezkontextový; teda trieda nie je uzavretá na prienik. Z toho (cez de Morganove zákony) vyplýva neuzavretosť na doplnok, ale priamo sa dá ukázať, že doplnok $\\{a^nb^nc^n\\}$ je bezkontextový, zatiaľ čo jeho doplnok nie. Uzavretosť na zjednotenie, zreťazenie, iteráciu a zrkadlenie sa dokazuje jednoduchými konštrukciami gramatík. Prienik s regulárnym jazykom je bezkontextový: súčinová konštrukcia PDA a DFA.",
+  "keyQuestions": [
+   "Prečo bezkontextové jazyky nie sú uzavreté na prienik a doplnok?",
+   "Aké operácie zachovávajú bezkontextovosť?",
+   "Prečo je prienik s regulárnym jazykom bezpečný?"
+  ],
+  "prerequisites": [
+   "pumping2",
+   "zas-bezgram"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "thm.cfl-nie-uzavrete-prienik",
+   "type": "theorem",
+   "topic": "uzaver-bezk",
+   "title": "Bezkontextové jazyky nie sú uzavreté na prienik",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb07_UzBezJazyky_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "Existujú [bezkontextové jazyky](dfn.bezkontextovy-jazyk) $L_1$ a $L_2$ (dokonca deterministické bezkontextové), že ich prienik $L_1\\cap L_2$ nie je bezkontextový. Teda trieda bez[kontextových jazykov](dfn.kontextovy-jazyk) nie je [uzavretá](def.uzavretost) na prienik. Príklad: $L_1=\\{a^nb^nc^k:n\\ge1,k\\ge1\\}$, $L_2=\\{a^kb^nc^n:k\\ge1,n\\ge1\\}$, $L_1\\cap L_2=\\{a^nb^nc^n:n\\ge1\\}$.",
+   "explanation": {
+    "intuition": "Jeden zásobník vie porovnať dva bloky, nie tri; prienik dvoch porovnaní trojicu vyžaduje.",
+    "detailed": "$L_1$ vyžaduje rovnaký počet $a$ a $b$ (zásobník) a ľubovoľne veľa $c$; $L_2$ vyžaduje rovnaký počet $b$ a $c$ a ľubovoľne veľa $a$. Prienik obsahuje práve slová $a^nb^nc^n$, čo podľa [pumping lemy](thm.pumping-lema-bezkontextove) nie je [bezkontextový jazyk](dfn.bezkontextovy-jazyk).",
+    "pitfalls": [
+     "Obe $L_1,L_2$ sú dokonca deterministické bezkontextové; neuzavretosť teda platí aj pre túto menšiu triedu."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "$L_1=\\{a^nb^nc^k\\}$ a $L_2=\\{a^kb^nc^n\\}$ rozpoznávajú deterministické zásobníkové automaty $M_1$ a $M_2$: $M_1$ ukladá $a$ do zásobníka, pri čítaní $b$ ich vyberá a $c$ čítajú ľubovoľne; $M_2$ ignoruje $a$, ukladá $b$ a vyberá ich pri čítaní $c$.",
+      "why": "Slajd 3 zobrazuje oba automaty obrázkom.",
+      "uses": []
+     },
+     {
+      "text": "Teda $L_1,L_2$ sú deterministické bezkontextové, ale $L_1\\cap L_2=\\{a^nb^nc^n:n\\ge1\\}$.",
+      "why": "Slovo je v obidvoch, iba ak rovnaký počet $a$, $b$, $c$.",
+      "uses": []
+     },
+     {
+      "text": "Podľa pumping lemy (prednáška 6) $\\{a^nb^nc^n\\}$ nie je bezkontextový. Preto bezkontextové jazyky nie sú uzavreté na prienik.",
+      "why": "Pozri vetu o $a^nb^nc^n$.",
+      "uses": [
+       "thm.anbncn-nie-je-bezkontextovy"
+      ]
+     }
+    ]
+   },
+   "uses": [
+    "thm.anbncn-nie-je-bezkontextovy",
+    "dfn.dpda",
+    "dfn.bezkontextovy-jazyk",
+    "thm.pumping-lema-bezkontextove"
+   ],
+   "relations": [
+    {
+     "type": "counterexample-to",
+     "target": "def.uzavretost",
+     "note": "na prienik"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.kontextovy-jazyk"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Automaty $M_1,M_2$ boli zostrojené podľa slajdu 3 a overené: $M_1$ prijíma $L_1$ na slovách do dĺžky 8; $L_1\\cap L_2=\\{a^nb^nc^n\\}$ overené brute-force."
+    ]
+   }
+  },
+  {
+   "id": "thm.cfl-nie-uzavrete-doplnok",
+   "type": "theorem",
+   "topic": "uzaver-bezk",
+   "title": "Bezkontextové jazyky nie sú uzavreté na doplnok",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb07_UzBezJazyky_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "Existuje [bezkontextový jazyk](dfn.bezkontextovy-jazyk) $L$ taký, že jeho doplnok $L^c$ nie je bezkontextový. Teda trieda bez[kontextových jazykov](dfn.kontextovy-jazyk) nie je [uzavretá](def.uzavretost) na doplnok. Príklad: $L=\\{w\\in\\{a,b,c\\}^*:w$ nie je v tvare $a^nb^nc^n$ pre nejaké $n\\ge1\\}$.",
+   "explanation": {
+    "intuition": "Chybný reťazec je „ľahké“ nájsť (stačí jedna chyba), správny je „ťažký“ (treba porovnať tri bloky).",
+    "detailed": "Gramatika pre $L$ rozlišuje, že [slovo](dfn.slovo) buď (a) nemá tvar $a^*b^*c^*$ (obsahuje podreťazec $ba$, $ca$ alebo $cb$), alebo (b) má tvar $a^ib^jc^k$ s $i\\ne j$, alebo (c) $j\\ne k$. Chyba sa „hádá“ nedeterministicky; zásobník porovná iba dva bloky naraz.",
+    "pitfalls": [
+     "Z neuzavretosti na prienik plynie neuzavretosť na doplnok (de Morgan), ale tu je ukázaný explicitný jazyk."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Gramatika pre $L$: $S\\to\\varepsilon\\mid HbaH\\mid HcaH\\mid HcbH\\mid X_{ab}C\\mid AX_{bc}$, $H\\to aH\\mid bH\\mid cH\\mid\\varepsilon$, $X_{ab}\\to aX_{ab}b\\mid aA\\mid bB$, $X_{bc}\\to bX_{bc}c\\mid bB\\mid cC$, $A\\to aA\\mid\\varepsilon$, $B\\to bB\\mid\\varepsilon$, $C\\to cC\\mid\\varepsilon$.",
+      "why": "Slajdy 5–6 popisujú význam jednotlivých pravidiel.",
+      "uses": []
+     },
+     {
+      "text": "$S\\to HbaH\\mid HcaH\\mid HcbH$ generuje slová s podslovom $ba$, $ca$ alebo $cb$ (nemajú tvar $a^*b^*c^*$). $S\\to X_{ab}C$ generuje $a^ib^jc^k$ s $i\\ne j$, $S\\to AX_{bc}$ generuje $a^ib^jc^k$ s $j\\ne k$; $S\\to\\varepsilon$ pridáva $\\varepsilon$.",
+      "why": "Ak $i=j$ aj $j=k$, tak $a^ib^jc^k$ má tvar $a^nb^nc^n$.",
+      "uses": []
+     },
+     {
+      "text": "$X_{ab}$ generuje $a^ib^j$ s $i\\ne j$: pre $i>j$ cez $a^jX_{ab}b^j\\Rightarrow a^jaAb^j\\Rightarrow a^{j+1+r}b^j$, pre $i<j$ cez $bB$. Teda $L$ je bezkontextový (overené: $L(G)=\\{a,b,c\\}^*-\\{a^nb^nc^n\\}$ do dĺžky 8).",
+      "why": "Nepotrebujeme generovať $a^ib^jc^k$ pre $i\\ne k$, lebo $i\\ne k$ implikuje $i\\ne j$ alebo $j\\ne k$.",
+      "uses": []
+     },
+     {
+      "text": "Doplnok $L^c=\\{a^nb^nc^n:n\\ge1\\}$ nie je bezkontextový podľa pumping lemy.",
+      "why": "Pozri vetu o $a^nb^nc^n$.",
+      "uses": [
+       "thm.anbncn-nie-je-bezkontextovy"
+      ]
+     }
+    ]
+   },
+   "uses": [
+    "thm.anbncn-nie-je-bezkontextovy",
+    "dfn.bezkontextova-gramatika",
+    "dfn.bezkontextovy-jazyk",
+    "def.uzavretost",
+    "dfn.slovo"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.kontextovy-jazyk"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.gramatika-doplnku",
+   "type": "example",
+   "topic": "uzaver-bezk",
+   "title": "Gramatika pre doplnok jazyka a^n b^n c^n",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb07_UzBezJazyky_P.pdf",
+     "page": 5
+    }
+   ],
+   "statement": "Gramatika $G$: $S\\to\\varepsilon\\mid HbaH\\mid HcaH\\mid HcbH\\mid X_{ab}C\\mid AX_{bc}$, $H\\to aH\\mid bH\\mid cH\\mid\\varepsilon$, $X_{ab}\\to aX_{ab}b\\mid aA\\mid bB$, $X_{bc}\\to bX_{bc}c\\mid bB\\mid cC$, $A\\to aA\\mid\\varepsilon$, $B\\to bB\\mid\\varepsilon$, $C\\to cC\\mid\\varepsilon$ generuje [jazyk](dfn.jazyk) všetkých slov nad $\\{a,b,c\\}$, ktoré nemajú tvar $a^nb^nc^n$, $n\\ge1$.",
+   "explanation": {
+    "intuition": "Pre ľubovoľné [slovo](dfn.slovo) stačí nájsť jednu „chybu“ — preto je doplnok jednoduchší ako pôvodný [jazyk](dfn.jazyk).",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "thm.cfl-nie-uzavrete-doplnok"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.jazyk"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.slovo"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Pravidlá prepísané zo slajdov 5–6 a overené: $L(G)$ sa rovná doplnku $\\{a^nb^nc^n\\}$ na všetkých slovách nad $\\{a,b,c\\}$ do dĺžky 8."
+    ]
+   }
+  },
+  {
+   "id": "thm.cfl-uzavrete-zjednotenie-zretazenie-iteracia-zrkadlo",
+   "type": "theorem",
+   "topic": "uzaver-bezk",
+   "title": "Uzavretosť CFL na zjednotenie, zreťazenie, iteráciu a zrkadlenie",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb07_UzBezJazyky_P.pdf",
+     "page": 8
+    }
+   ],
+   "statement": "Ak $L_1$ a $L_2$ sú [bezkontextové jazyky](dfn.bezkontextovy-jazyk), tak aj $L_1\\cup L_2$, $L_1L_2$, $L_1^*$ a $L_1^R$ sú bezkontextové. Teda trieda bez[kontextových jazykov](dfn.kontextovy-jazyk) je [uzavretá](def.uzavretost) na zjednotenie, [zreťazenie](dfn.zretazenie-slov), iteráciu (Kleenyho uzáver) a zrkadlenie.",
+   "explanation": {
+    "intuition": "S gramatikami sa dajú [jazyky](dfn.jazyk) zložiť jedným novým štartovacím neterminálom.",
+    "detailed": "Pre [gramatiky](dfn.gramatika) $G_1,G_2$ s disjunktnými neterminálmi: zjednotenie $S\\to S_1\\mid S_2$, [zreťazenie](dfn.zretazenie-slov) $S\\to S_1S_2$, iterácia $S\\to S_1S\\mid\\varepsilon$ a zrkadlo obrátením pravých strán pravidiel.",
+    "pitfalls": [
+     "Neterminály oboch gramatík musia byť disjunktné; inak by sa pravidlá nechcene miešali."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Nech $G_1=(N_1,T_1,P_1,S_1)$, $G_2=(N_2,T_2,P_2,S_2)$ sú gramatiky s $N_1\\cap N_2=\\emptyset$ (prípadne sa neterminály premenujú).",
+      "why": "Zabráni miešaniu pravidiel.",
+      "uses": []
+     },
+     {
+      "text": "Zjednotenie: $G=(\\{S\\}\\cup N_1\\cup N_2,T_1\\cup T_2,P,S)$, $P=\\{S\\to S_1,S\\to S_2\\}\\cup P_1\\cup P_2$. Zreťazenie: $P=\\{S\\to S_1S_2\\}\\cup P_1\\cup P_2$; odvodenie $S\\Rightarrow S_1S_2\\Rightarrow^*w_1S_2\\Rightarrow^*w_1w_2$.",
+      "why": "Odvodenia $S_1$ a $S_2$ sú nezávislé.",
+      "uses": []
+     },
+     {
+      "text": "Iterácia: $G=(\\{S\\}\\cup N_1,T_1,P,S)$, $P=\\{S\\to S_1S,S\\to\\varepsilon\\}\\cup P_1$; odvodenie $S\\Rightarrow\\dots\\Rightarrow S_1S_1\\dots S_1\\Rightarrow^*w_1w_2\\dots w_k$, $w_i\\in L_1$, $k\\ge0$.",
+      "why": "$k$-krát použijeme $S\\to S_1S$ a nakoniec $S\\to\\varepsilon$.",
+      "uses": []
+     },
+     {
+      "text": "Zrkadlo: $G=(N_1,T_1,P,S_1)$, $P=\\{A\\to x_k\\dots x_1:A\\to x_1\\dots x_k\\in P_1\\}$; odvodenia sú zrkadlový obraz odvodení v $G_1$: $S_1\\Rightarrow^*w$ v $G$ práve vtedy, keď $S_1\\Rightarrow^*w^R$ v $G_1$.",
+      "why": "Obrátenie poradia každej pravej strany.",
+      "uses": []
+     },
+     {
+      "text": "Overené výpočtom na gramatikách pre $\\{a^nb^n\\}$ a $\\{c^nd^n\\}$: jazyky $G$ sa rovnajú $L_1\\cup L_2$, $L_1L_2$, $L_1^*$, $L_1^R$ na slovách do dĺžky 8.",
+      "why": "Kontrola konštrukcií.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.bezkontextova-gramatika",
+    "def.uzavretost",
+    "dfn.bezkontextovy-jazyk",
+    "dfn.zretazenie-slov",
+    "dfn.jazyk",
+    "dfn.gramatika"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.kontextovy-jazyk"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.sucin-pda-dfa",
+   "type": "algorithm",
+   "topic": "uzaver-bezk",
+   "title": "Súčinová konštrukcia PDA a DFA",
+   "terms": [
+    {
+     "term": "súčin PDA a DFA",
+     "alt": "product of a PDA and a DFA"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb07_UzBezJazyky_P.pdf",
+     "page": 11
+    }
+   ],
+   "statement": "Pre [zásobníkový automat](dfn.zasobnikovy-automat) $M_1=(Q_1,\\Sigma,\\Gamma,\\delta_1,q_{I,1},z_I,F_1)$ pre $L_1$ a deterministický [konečnostavový akceptor](dfn.konecnostavovy-akceptor) $M_2=(Q_2,\\Sigma,f_2,q_{I,2},F_2)$ pre $L_2$ zostrojíme $M=(Q_1\\times Q_2,\\Sigma,\\Gamma,\\delta,[q_{I,1},q_{I,2}],z_I,F_1\\times F_2)$: ak $(p_1',\\gamma)\\in\\delta_1(p_1,a,A)$ a $f_2(p_2,a)=p_2'$, tak $([p_1',p_2'],\\gamma)\\in\\delta([p_1,p_2],a,A)$ pre $a\\in\\Sigma$; ak $(p_1',\\gamma)\\in\\delta_1(p_1,\\varepsilon,A)$, tak pre každé $p_2\\in Q_2$ je $([p_1',p_2],\\gamma)\\in\\delta([p_1,p_2],\\varepsilon,A)$.",
+   "explanation": {
+    "intuition": "Zásobníkový automat si navyše pamätá stav konečného automatu, ktorý číta ten istý vstup.",
+    "detailed": "Pri $\\varepsilon$-prechodoch PDA sa druhá zložka nemení, lebo [DFA](dfn.konecnostavovy-akceptor) nič nečíta. Ak je $M_1$ deterministický, je aj $M$ deterministický. Koncové stavy $F_1\\times F_2$ dávajú prienik.",
+    "pitfalls": [
+     "Pri $\\varepsilon$-prechodoch sa musí druhý stav ponechať nezmenený."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Výpočet $M$ je dvojica výpočtu $M_1$ a výpočtu $M_2$ na tom istom vstupe; slovo je prijaté, ak sú obe zložky koncové. Overené simuláciou: súčin PDA pre $ww^R$ a DFA „párny počet $a$“ prijíma práve slová z prieniku do dĺžky 10.",
+    "steps": []
+   },
+   "uses": [
+    "dfn.zasobnikovy-automat",
+    "dfn.konecnostavovy-akceptor",
+    "alg.sucinova-konstrukcia"
+   ],
+   "relations": [
+    {
+     "type": "analogue",
+     "target": "alg.sucinova-konstrukcia",
+     "note": "rovnaká myšlienka ako súčin dvoch akceptorov"
+    }
+   ],
+   "figures": [
+    "fig.pda-x-dfa"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.cfl-regularny-prienik",
+   "type": "theorem",
+   "topic": "uzaver-bezk",
+   "title": "Prienik CFL s regulárnym jazykom je bezkontextový",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb07_UzBezJazyky_P.pdf",
+     "page": 11
+    }
+   ],
+   "statement": "Ak $L_1$ je bezkontextový a $L_2$ [regulárny jazyk](dfn.regularny-jazyk), tak [jazyk](dfn.jazyk) $L_1\\cap L_2$ je bezkontextový. Teda trieda [bezkontextových jazykov](dfn.bezkontextovy-jazyk) je [uzavretá](def.uzavretost) na prienik s regulárnymi jazykmi. Navyše, ak $M_1$ je deterministický, je aj $M$ deterministický.",
+   "explanation": {
+    "intuition": "Regulárne obmedzenie môžeme „vložiť“ do automatu bez straty bezkontextovosti.",
+    "detailed": "Používa sa napr. na filtrovanie: z [bezkontextového jazyka](dfn.bezkontextovy-jazyk) vyberieme slová s regulárnou vlastnosťou (napr. dĺžka, parita). Naopak, prienik dvoch bez[kontextových jazykov](dfn.kontextovy-jazyk) takto zostrojiť nejde, lebo druhý automat by tiež potreboval zásobník.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Nech $M_1$ je PDA pre $L_1$ a $M_2$ deterministický akceptor pre $L_2$. Zostrojíme súčinový PDA $M$.",
+      "why": "Konštrukcia z predošlého algoritmu.",
+      "uses": [
+       "alg.sucin-pda-dfa"
+      ]
+     },
+     {
+      "text": "Konfigurácia $M$ je $([p_1,p_2],\\omega,\\gamma)$; kroky $M$ zodpovedajú krokom $M_1$ a súčasne čítaniu $M_2$.",
+      "why": "Prvá zložka sa mení ako v $M_1$, druhá ako v $M_2$.",
+      "uses": []
+     },
+     {
+      "text": "Slovo $w$ je prijaté $M$ práve vtedy, keď $M_1$ aj $M_2$ po prečítaní $w$ skončia v koncových stavoch, t.j. $w\\in L_1\\cap L_2$.",
+      "why": "$F=F_1\\times F_2$.",
+      "uses": []
+     },
+     {
+      "text": "Ak je $M_1$ deterministický, je aj $M$ deterministický, lebo $M_2$ je deterministický.",
+      "why": "Žiadna nová voľba nevzniká.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "alg.sucin-pda-dfa",
+    "dfn.regularny-jazyk",
+    "dfn.bezkontextovy-jazyk",
+    "dfn.jazyk",
+    "def.uzavretost"
+   ],
+   "relations": [
+    {
+     "type": "analogue",
+     "target": "thm.dcfl-regularny-prienik-zjednotenie"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.kontextovy-jazyk"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "def.prehlad-uzavretosti-cfl",
+   "type": "concept",
+   "topic": "uzaver-bezk",
+   "title": "Prehľad uzavretosti: bezkontextové a regulárne jazyky",
+   "terms": [
+    {
+     "term": "prehľad uzavretosti CFL",
+     "alt": "closure summary for CFL"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb07_UzBezJazyky_P.pdf",
+     "page": 14
+    }
+   ],
+   "statement": "Uzavretosť tried [jazykov](dfn.jazyk) na operácie: doplnok (bezkontextové: nie, regulárne: áno), prienik (nie, áno), zjednotenie (áno, áno), [zreťazenie](dfn.zretazenie-slov) (áno, áno), iterácia (áno, áno), zrkadlo (áno, áno), prienik s [regulárnym jazykom](dfn.regularny-jazyk) (áno, áno).",
+   "explanation": {
+    "intuition": "Bez[kontextové jazyky](dfn.kontextovy-jazyk) stratili oproti regulárnym dve operácie: prienik a doplnok.",
+    "detailed": "Tieto dve chýbajúce operácie sú navzájom súvisiace (de Morgan), a súvisia s tým, že [zásobníkový automat](dfn.zasobnikovy-automat) má iba jeden zásobník a nie je deterministický.",
+    "pitfalls": [
+     "Prienik s regulárnym jazykom je výnimka z neuzavretosti na prienik."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "thm.cfl-nie-uzavrete-prienik",
+    "thm.cfl-nie-uzavrete-doplnok",
+    "thm.cfl-uzavrete-zjednotenie-zretazenie-iteracia-zrkadlo",
+    "thm.cfl-regularny-prienik",
+    "dfn.regularny-jazyk",
+    "dfn.zretazenie-slov",
+    "dfn.jazyk",
+    "dfn.zasobnikovy-automat"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.kontextovy-jazyk"
+    }
+   ],
+   "figures": [
+    "fig.uzavretost-cfl-reg"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.uzavretost-cfl-reg",
+   "title": "Uzavretosť: CFL a regulárne jazyky",
+   "caption": "Slajd 14.",
+   "origin": "slides",
+   "illustrates": [
+    "def.prehlad-uzavretosti-cfl"
+   ],
+   "sources": [
+    {
+     "file": "Afjb07_UzBezJazyky_P.pdf",
+     "page": 14
+    }
+   ],
+   "kind": "table",
+   "columns": [
+    "operácia",
+    "bezkontextové",
+    "regulárne"
+   ],
+   "rows": [
+    [
+     "doplnok",
+     "nie",
+     "áno"
+    ],
+    [
+     "prienik",
+     "nie",
+     "áno"
+    ],
+    [
+     "zjednotenie",
+     "áno",
+     "áno"
+    ],
+    [
+     "zreťazenie",
+     "áno",
+     "áno"
+    ],
+    [
+     "iterácia",
+     "áno",
+     "áno"
+    ],
+    [
+     "zrkadlo",
+     "áno",
+     "áno"
+    ],
+    [
+     "prienik s regulárnym",
+     "áno",
+     "áno"
+    ]
+   ]
+  },
+  {
+   "id": "fig.pda-x-dfa",
+   "title": "Súčin PDA pre ww^R a DFA pre párny počet a (stavy)",
+   "caption": "Skrátený diagram: prechody medzi dvojicami stavov; zásobníkové operácie sú vynechané.",
+   "origin": "generated",
+   "illustrates": [
+    "alg.sucin-pda-dfa"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "q,e",
+     "x": 0,
+     "y": 0,
+     "label": "▸ q,e"
+    },
+    {
+     "id": "q,o",
+     "x": 0,
+     "y": 100,
+     "label": "q,o"
+    },
+    {
+     "id": "r,e",
+     "x": 200,
+     "y": 0,
+     "label": "r,e"
+    },
+    {
+     "id": "r,o",
+     "x": 200,
+     "y": 100,
+     "label": "r,o"
+    },
+    {
+     "id": "s,e",
+     "x": 400,
+     "y": 0,
+     "label": "s,e ◉"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "q,e",
+     "target": "q,o",
+     "label": "a, a, a",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "q,o",
+     "target": "q,e",
+     "label": "a, a, a",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "q,e",
+     "target": "q,e",
+     "label": "b, b, b",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "q,o",
+     "target": "q,o",
+     "label": "b, b, b",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "q,e",
+     "target": "r,e",
+     "label": "ε, ε, ε",
+     "directed": true
+    },
+    {
+     "id": "e5",
+     "source": "q,o",
+     "target": "r,o",
+     "label": "ε, ε, ε",
+     "directed": true
+    },
+    {
+     "id": "e6",
+     "source": "r,e",
+     "target": "r,o",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e7",
+     "source": "r,o",
+     "target": "r,e",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e8",
+     "source": "r,e",
+     "target": "r,e",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e9",
+     "source": "r,o",
+     "target": "r,o",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e10",
+     "source": "r,e",
+     "target": "s,e",
+     "label": "ε",
+     "directed": true
+    }
+   ],
+   "animations": []
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.nekombinovatelne-gramatiky",
+   "title": "Prečo nemožno kombinovať dve syntaxe prienikom",
+   "summary": "Požiadavky z dvoch špecifikácií naraz.",
+   "scenario": "Chceme jazyk, ktorý spĺňa dve bezkontextové špecifikácie súčasne.",
+   "modelling": "Prienik dvoch CFL.",
+   "solution": "Nemusí byť bezkontextový (príklad $a^nb^nc^n$); treba špecializované nástroje.",
+   "connects": [
+    "thm.cfl-nie-uzavrete-prienik",
+    "ex.gramatika-doplnku"
+   ],
+   "figures": [],
+   "tags": [
+    "teória"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.filtrovanie-regularnym",
+   "title": "Filtrovanie bezkontextového jazyka regulárnym obmedzením",
+   "summary": "Napr. obmedzenie dĺžky alebo tvaru.",
+   "scenario": "Z jazyka platných výrazov chceme iba tie bez zátvoriek hlbších než regulárne zakázané vzory.",
+   "modelling": "Súčin zásobníkového automatu a DFA.",
+   "solution": "Výsledok je opäť bezkontextový a deterministický, ak bol pôvodný.",
+   "connects": [
+    "thm.cfl-regularny-prienik",
+    "alg.sucin-pda-dfa"
+   ],
+   "figures": [],
+   "tags": [
+    "analýza"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.spajanie-syntaxi",
+   "title": "Spájanie syntaxí zjednotením a zreťazením",
+   "summary": "Modulárna gramatika.",
+   "scenario": "Jazyk sa skladá z modulov (výrazy, príkazy).",
+   "modelling": "Zjednotenie a zreťazenie gramatík.",
+   "solution": "Nový štartovací symbol spojí moduly; zostane bezkontextová.",
+   "connects": [
+    "thm.cfl-uzavrete-zjednotenie-zretazenie-iteracia-zrkadlo"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.uzb-1",
+   "kind": "truefalse",
+   "prompt": "Bezkontextové jazyky sú uzavreté na prienik.",
+   "answer": false,
+   "explanation": "Protipríklad: $\\{a^nb^nc^k\\}\\cap\\{a^kb^nc^n\\}=\\{a^nb^nc^n\\}$.",
+   "about": [
+    "thm.cfl-nie-uzavrete-prienik"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.uzb-2",
+   "kind": "mcq",
+   "prompt": "Ktorá operácia zachováva bezkontextovosť?",
+   "options": [
+    "doplnok",
+    "prienik dvoch CFL",
+    "zreťazenie",
+    "rozdiel dvoch CFL"
+   ],
+   "answer": 2,
+   "explanation": "Zreťazenie: $S\\to S_1S_2$.",
+   "about": [
+    "thm.cfl-uzavrete-zjednotenie-zretazenie-iteracia-zrkadlo"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.uzb-3",
+   "kind": "mcq",
+   "prompt": "Prečo je doplnok $\\{a^nb^nc^n\\}$ bezkontextový?",
+   "options": [
+    "stačí nájsť jednu „chybu“ v slove",
+    "lebo je regulárny",
+    "lebo je konečný",
+    "nie je bezkontextový"
+   ],
+   "answer": 0,
+   "explanation": "Gramatika nedeterministicky uhádne typ chyby.",
+   "about": [
+    "thm.cfl-nie-uzavrete-doplnok"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.uzb-4",
+   "kind": "truefalse",
+   "prompt": "Z neuzavretosti na prienik a uzavretosti na zjednotenie plynie neuzavretosť CFL na doplnok.",
+   "answer": true,
+   "explanation": "Keby boli uzavreté na doplnok, boli by (de Morgan) uzavreté aj na prienik.",
+   "about": [
+    "thm.cfl-nie-uzavrete-doplnok"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.uzb-5",
+   "kind": "mcq",
+   "prompt": "Aké koncové stavy má súčin PDA a DFA pre prienik?",
+   "options": [
+    "$F_1\\times F_2$",
+    "$F_1\\cup F_2$",
+    "$Q_1\\times Q_2$",
+    "$F_1$"
+   ],
+   "answer": 0,
+   "explanation": "Obe zložky musia byť koncové.",
+   "about": [
+    "alg.sucin-pda-dfa"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.uzb-6",
+   "kind": "open",
+   "prompt": "Ako sa zostrojí gramatika pre $L_1^*$?",
+   "answer": "K gramatike $G_1$ pridáme nový štart $S$ a pravidlá $S\\to S_1S\\mid\\varepsilon$.",
+   "explanation": "$k$-krát $S\\to S_1S$.",
+   "about": [
+    "thm.cfl-uzavrete-zjednotenie-zretazenie-iteracia-zrkadlo"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.uzb-7",
+   "kind": "flashcard",
+   "prompt": "Ako sa zostrojí gramatika pre zrkadlo?",
+   "answer": "Každá pravá strana pravidla sa obráti: $A\\to x_k\\dots x_1$ pre $A\\to x_1\\dots x_k$.",
+   "explanation": "Odvodenia sú zrkadlom.",
+   "about": [
+    "thm.cfl-uzavrete-zjednotenie-zretazenie-iteracia-zrkadlo"
+   ],
+   "difficulty": 1
+  }
+ ]
+}

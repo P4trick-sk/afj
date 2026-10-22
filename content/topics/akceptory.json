@@ -1,0 +1,771 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "akceptory",
+  "title": "Deterministické konečnostavové akceptory",
+  "course": "A",
+  "order": 6,
+  "sourceFiles": [
+   "Afja06_akceptory_P.pdf"
+  ],
+  "summary": "Konečnostavový akceptor je automat bez výstupu, ktorý slovo prijme alebo odmietne podľa toho, či skončí v koncovom stave. Všetky pojmy a výsledky o ekvivalencii stavov a redukcii automatov s výstupom sa prenášajú aj na akceptory, s jedinou zmenou: rozklad sa začína delením na koncové a nekoncové stavy.",
+  "overview": "Prednáška presúva myšlienky z automatov s výstupom na akceptory, ktoré rozhodujú o príslušnosti slova do jazyka. Zavedieme akceptor $M=(Q,\\Sigma,q_I,f,F)$ a jazyk $L(M)$, ukážeme príklad s jazykom „končí na $abb$ alebo obsahuje $abba$“ a pripomenieme, že tvrdenia o ekvivalencii stavov platia aj tu. Minimalizácia akceptora je rovnaká ako minimalizácia automatu s výstupom, iba východiskový rozklad je $\\{F,Q-F\\}$. Akceptory sú základom všetkých ďalších prednášok o regulárnych jazykoch.",
+  "keyQuestions": [
+   "Čo je jazyk rozpoznávaný akceptorom?",
+   "Čo znamená ekvivalencia stavov akceptora?",
+   "Ako sa minimalizuje akceptor?"
+  ],
+  "prerequisites": [
+   "automaty-vystup",
+   "nedosiahnutelne",
+   "ekv-stavy",
+   "optimalnost"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "dfn.konecnostavovy-akceptor",
+   "type": "definition",
+   "topic": "akceptory",
+   "title": "Konečnostavový akceptor",
+   "terms": [
+    {
+     "term": "konečnostavový akceptor",
+     "alt": "deterministic finite automaton, DFA",
+     "symbol": "M=(Q,\\Sigma,q_I,f,F)"
+    },
+    {
+     "term": "koncový stav",
+     "alt": "accepting state",
+     "symbol": "F"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja06_akceptory_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "**Konečnostavový akceptor** je usporiadaná päťica $M=(Q,\\Sigma,q_I,f,F)$, kde $Q$ je konečná množina vnútorných stavov, $\\Sigma$ je konečná [abeceda](dfn.abeceda) vstupných symbolov, $q_I\\in Q$ je počiatočný stav, $f:Q\\times\\Sigma\\to Q$ je [prechodová funkcia](dfn.konecnostavovy-automat) a $F\\subseteq Q$ je množina koncových (akceptujúcich) stavov. Funkcia $f^*$ je definovaná rovnako ako u automatov s výstupom: $f^*(q,\\varepsilon)=q$, $f^*(q,\\omega a)=f(f^*(q,\\omega),a)$.",
+   "explanation": {
+    "intuition": "Akceptor len odpovedá áno/nie: po prečítaní celého [slova](dfn.slovo) sa pozrieme, či sme v koncovom stave.",
+    "detailed": "Akceptory sú základnou štruktúrou pre rozpoznávanie [jazykov](dfn.jazyk). Namiesto výstupnej funkcie majú množinu koncových stavov. Vlastnosti stavov (dosiahnuteľnosť, ekvivalencia) sa odvádzajú od automatov s výstupom.",
+    "pitfalls": [
+     "Počiatočný stav môže byť zároveň koncový; vtedy akceptor prijme prázdne slovo."
+    ],
+    "examples": [
+     "Akceptor pre jazyk $\\{w\\in\\{a,b\\}^*: w$ končí na $abb$ alebo obsahuje $abba\\}$ má päť stavov."
+    ]
+   },
+   "uses": [
+    "dfn.abeceda",
+    "dfn.slovo",
+    "dfn.rozsirene-funkcie",
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "specializes",
+     "target": "dfn.konecnostavovy-automat",
+     "note": "akceptor je automat s výstupom $\\{$áno, nie$\\}$ iba na konci"
+    },
+    {
+     "type": "generalizes",
+     "target": "dfn.nfa",
+     "note": "nedeterministický akceptor je zovšeobecnenie"
+    }
+   ],
+   "figures": [
+    "fig.akceptor-abb"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.jazyk-akceptora",
+   "type": "definition",
+   "topic": "akceptory",
+   "title": "Jazyk rozpoznávaný akceptorom",
+   "terms": [
+    {
+     "term": "jazyk rozpoznávaný akceptorom",
+     "alt": "language recognized by an automaton",
+     "symbol": "L(M)"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja06_akceptory_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "[Jazyk](dfn.jazyk) rozpoznávaný [akceptorom](dfn.konecnostavovy-akceptor) $M=(Q,\\Sigma,q_I,f,F)$ je množina $L(M)=\\{w\\in\\Sigma^*: f^*(q_I,w)\\in F\\}$.",
+   "explanation": {
+    "intuition": "Do [jazyka](dfn.jazyk) patria práve tie slová, po ktorých prečítaní akceptor skončí v koncovom stave.",
+    "detailed": "Akceptor „prijíma“ [slovo](dfn.slovo), ak zodpovedajúci výpočet skončí v koncovom stave, a „odmieta“ ho inak. Keďže $f$ je totálna, výpočet na každom slove skončí a výsledok je jednoznačný.",
+    "pitfalls": [
+     "Dôležité je skončiť v koncovom stave po prečítaní celého slova; prechod cez koncový stav počas čítania nestačí."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.konecnostavovy-akceptor",
+    "dfn.jazyk",
+    "dfn.slovo"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.akceptor-abb",
+   "type": "example",
+   "topic": "akceptory",
+   "title": "Akceptor pre slová končiace na abb alebo obsahujúce abba",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja06_akceptory_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "Jazyk $L=\\{w\\in\\{a,b\\}^*: w$ končí na $abb$ alebo obsahuje $abba\\}$ rozpoznáva akceptor s piatimi stavmi $0,\\dots,4$: stav $i$ zodpovedá najdlhšiemu prefixu $\\varepsilon,a,ab,abb,abba$ vzoru, ktorý je sufixom doteraz prečítaného [slova](dfn.slovo); $4$ je absorbujúci. Koncové stavy sú $3$ a $4$. Na vstupe $bbaaabab\\,bbaabbaa$ akceptor prejde stavmi $0,0,0,1,1,1,2,1,2,3,0,1,1,2,3,4,4$ a slovo prijme.",
+   "explanation": {
+    "intuition": "Stav si pamätá, koľko z hľadaného vzoru $abb$ (prípadne $abba$) práve vidíme na konci čítaného [slova](dfn.slovo).",
+    "detailed": "Po nájdení $abba$ je akceptor v stave $4$ navždy, lebo [slovo](dfn.slovo) už obsahuje $abba$. Stav $3$ je koncový, lebo slovo končí na $abb$; ďalším $a$ sa prejde do $4$, ďalším $b$ späť do $0$.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "dfn.jazyk-akceptora"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.slovo"
+    }
+   ],
+   "figures": [
+    "fig.akceptor-abb"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Obrázok slajdu 3 je zo zdroja nečitateľný; prechody sú zrekonštruované a overené výpočtom na všetkých slovách do dĺžky 12 (zhoda s podmienkou „končí na $abb$ alebo obsahuje $abba$“)."
+    ]
+   }
+  },
+  {
+   "id": "dfn.ekvivalentne-stavy-akceptora",
+   "type": "definition",
+   "topic": "akceptory",
+   "title": "Ekvivalentné a k-ekvivalentné stavy akceptora",
+   "terms": [
+    {
+     "term": "ekvivalentné stavy akceptora",
+     "alt": "equivalent states of an acceptor"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja06_akceptory_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "Dva stavy $q_1,q_2\\in Q$ v akceptore $M=(Q,\\Sigma,q_I,f,F)$ sú **ekvivalentné** ($q_1\\sim q_2$), ak pre každé $\\omega\\in\\Sigma^*$ platí $f^*(q_1,\\omega)\\in F\\iff f^*(q_2,\\omega)\\in F$. Pre $k\\ge0$ sú **$k$-ekvivalentné** ($q_1\\sim_kq_2$), ak podmienka platí pre každé $\\omega$ s $|\\omega|\\le k$. Pre $k=0$: $q_1\\sim_0q_2$ práve vtedy, keď $q_1\\in F\\iff q_2\\in F$.",
+   "explanation": {
+    "intuition": "Z oboch stavov sa dá rovnako dôjsť do koncového stavu na každom [slove](dfn.slovo).",
+    "detailed": "Namiesto rovnosti výstupov sa porovnáva príslušnosť výsledného stavu do $F$. Nultá ekvivalencia už rozlišuje koncové od nekoncových stavov, preto algoritmus začína rozkladom $\\{F,Q-F\\}$.",
+    "pitfalls": [
+     "$0$-ekvivalencia v akceptoroch nie je triviálna (na rozdiel od automatov s výstupom)."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.konecnostavovy-akceptor",
+    "dfn.ekvivalentne-stavy",
+    "dfn.slovo"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.ekvivalencia-stavov-akceptora",
+   "type": "theorem",
+   "topic": "akceptory",
+   "title": "Tvrdenia o ekvivalencii stavov platia pre akceptory",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja06_akceptory_P.pdf",
+     "page": 5
+    }
+   ],
+   "statement": "Pre akceptory platia všetky podstatné tvrdenia o ekvivalencii odvodené pre automaty s výstupom: Lema 4.1 (ekvivalencia aj $k$-ekvivalencia sú reflexívne, symetrické, tranzitívne), Lema 4.2(1) ($k$-neekvivalencia implikuje $(k+1)$-neekvivalenciu), Lema 4.2(2) (dva stavy sú ekvivalentné práve vtedy, keď sú $k$-ekvivalentné pre každé $k\\ge0$; pôvodne $k\\ge1$) a Veta 4.3 (pre každé $k\\ge0$: $q_1\\sim_{k+1}q_2$ práve vtedy, keď $q_1\\sim_kq_2$ a $f(q_1,a)\\sim_kf(q_2,a)$ pre všetky $a$). Stav $q$ je dosiahnuteľný, ak $f^*(q_I,\\omega)=q$ pre nejaké $\\omega$.",
+   "explanation": {
+    "intuition": "To, čo platilo pre automaty s výstupom, platí aj pre akceptory, iba s ťažiskom v $F$.",
+    "detailed": "Zmena oproti výstupnému automatu: Veta 4.3 platí už pre $k=0$, lebo $\\sim_1$ sa rozlišuje vďaka $\\sim_0$ (príslušnosť do $F$) a nasledovníkom. Dôkazy sa zopakujú rovnako, výstup $g$ nahradí charakteristická funkcia množiny $F$.",
+    "pitfalls": [
+     "Slajd uvádza „$k\\ge1$“ pre Lemu 4.2(2) v pôvodnom znení a „$k\\ge0$“ po oprave; pre akceptory správne platí $k\\ge0$."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Akceptor $M=(Q,\\Sigma,q_I,f,F)$ je automat s výstupom $\\{0,1\\}$ s $g(q,a)=[f(q,a)\\in F]$ a dodatočným rozlíšením $\\varepsilon$ (výstup „$q\\in F$“). Dôkazy Lemy 4.1, 4.2, Vety 4.3 sa prepíšu doslovne, pričom $g^*(q,\\omega)=g^*(q',\\omega)$ nahradíme podmienkou $f^*(q,\\omega)\\in F\\iff f^*(q',\\omega)\\in F$; $0$-ekvivalencia je rozdelenie na $F$ a $Q-F$.",
+    "steps": []
+   },
+   "uses": [
+    "dfn.ekvivalentne-stavy-akceptora",
+    "thm.lema-4-1-ekvivalencie",
+    "thm.lema-4-2-monotonnost",
+    "thm.veta-4-3-rekurzia-k-ekvivalencie"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajd 5 len konštatuje platnosť tvrdení bez dôkazu; v texte slajdu je pri Leme 4.2(2) poznámka ‚pôvodné znenie: pre k≥1‘, čo zodpovedá oprave na $k\\ge0$."
+    ]
+   }
+  },
+  {
+   "id": "alg.minimalizacia-akceptora",
+   "type": "algorithm",
+   "topic": "akceptory",
+   "title": "Minimalizácia konečnostavového akceptora",
+   "terms": [
+    {
+     "term": "minimalizácia akceptora",
+     "alt": "DFA minimization"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja06_akceptory_P.pdf",
+     "page": 6
+    }
+   ],
+   "statement": "1. Odstránime [nedosiahnuteľné stavy](alg.odstranenie-nedosiahnutelnych), rovnako ako u automatov s výstupom. 2. Rozložíme $Q$ na triedy [ekvivalentných stavov](dfn.ekvivalentne-stavy): najprv na triedy $0$-ekvivalentných stavov, t.j. $A_{0,1}=F$, $A_{0,2}=Q-F$; potom rozklad na triedy $(k+1)$-ekvivalentných stavov z rozkladu $k$-ekvivalentných, pre $k=0,1,2,\\dots$, až kým nenastane zhoda medzi $(k+1)$- a $k$-ekvivalenciou (rovnako ako u automatov s výstupom). 3. V každej triede vyberieme reprezentanta (aj počiatočný stav) a presmerujeme hrany.",
+   "explanation": {
+    "intuition": "Rozdelíme stavy na koncové a nekoncové a potom ich zjemňujeme podľa nasledovníkov, až kým sa nič nemení; zvyšok je zlepenie rovnakých tried.",
+    "detailed": "Okrem východiskového rozkladu je postup rovnaký ako u automatov s výstupom. Výsledok je minimálny akceptor (jednoznačný až na izomorfizmus); tento Hopcroftov–Moorov typ minimalizácie sa používa v praxi pri generovaní lexerov.",
+    "pitfalls": [
+     "Pozor: na rozdiel od automatov s výstupom sa začína $0$-ekvivalenciou, nie $1$-ekvivalenciou."
+    ],
+    "examples": [
+     "Akceptor pre párny počet $a$ so štyrmi stavmi $0\\overset{a}{\\to}1\\overset{a}{\\to}2\\overset{a}{\\to}3\\overset{a}{\\to}0$ a $F=\\{0,2\\}$: $A_0=\\{\\{0,2\\},\\{1,3\\}\\}$ sa už nezjemní, takže minimálny akceptor má $2$ stavy."
+    ]
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Správnosť plynie z prenosu Lem 5.1–5.3 a Viet 5.4–5.5 na akceptory: východiskový rozklad $\\{F,Q-F\\}$ zodpovedá $\\sim_0$, každý ďalší krok je Veta 4.3, výsledné triedy sú ekvivalencia stavov a zlepenie ekvivalentných stavov zachová jazyk a vedie k minimálnemu akceptoru.",
+    "steps": []
+   },
+   "uses": [
+    "alg.rozklad-ekvivalentnych-stavov",
+    "alg.odstranenie-nedosiahnutelnych",
+    "alg.odstranenie-ekvivalentnych-stavov",
+    "dfn.ekvivalentne-stavy-akceptora",
+    "dfn.ekvivalentne-stavy"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.akceptor-parny-pocet-a",
+    "fig.minimalizacia-parny-pocet-a"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.akceptor-abb",
+   "title": "Akceptor pre „končí na abb alebo obsahuje abba“",
+   "caption": "Zrekonštruovaný akceptor; ▸ počiatočný, ◉ koncový stav.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.akceptor-abb",
+    "dfn.konecnostavovy-akceptor"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "0",
+     "x": 0,
+     "y": 60,
+     "label": "▸ 0"
+    },
+    {
+     "id": "1",
+     "x": 140,
+     "y": 0,
+     "label": "1"
+    },
+    {
+     "id": "2",
+     "x": 280,
+     "y": 0,
+     "label": "2"
+    },
+    {
+     "id": "3",
+     "x": 420,
+     "y": 0,
+     "label": "3 ◉"
+    },
+    {
+     "id": "4",
+     "x": 560,
+     "y": 60,
+     "label": "4 ◉"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "0",
+     "target": "1",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "0",
+     "target": "0",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "1",
+     "target": "1",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "1",
+     "target": "2",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "2",
+     "target": "1",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e5",
+     "source": "2",
+     "target": "3",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e6",
+     "source": "3",
+     "target": "4",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e7",
+     "source": "3",
+     "target": "0",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e8",
+     "source": "4",
+     "target": "4",
+     "label": "a, b",
+     "directed": true
+    }
+   ],
+   "animations": [
+    {
+     "title": "Výpočet na slove bbaaabab bbaabbaa (skrátene)",
+     "steps": [
+      {
+       "caption": "Začíname v 0; čítame b, b: ostávame v 0.",
+       "highlight": [
+        "0",
+        "e1"
+       ]
+      },
+      {
+       "caption": "a: 0→1.",
+       "highlight": [
+        "0",
+        "1",
+        "e0"
+       ]
+      },
+      {
+       "caption": "b: 1→2.",
+       "highlight": [
+        "1",
+        "2",
+        "e3"
+       ]
+      },
+      {
+       "caption": "b: 2→3; pokračuje ďalej a: 3→4 — slovo obsahuje abba a ostane akceptované.",
+       "highlight": [
+        "2",
+        "3",
+        "4",
+        "e5",
+        "e6"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fig.akceptor-parny-pocet-a",
+   "title": "Akceptor so štyrmi stavmi pre párny počet a",
+   "caption": "Stavy $0,2$ a $1,3$ sú ekvivalentné; minimálny akceptor má dva stavy.",
+   "origin": "generated",
+   "illustrates": [
+    "alg.minimalizacia-akceptora"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "0",
+     "x": 0,
+     "y": 0,
+     "label": "▸ 0 ◉"
+    },
+    {
+     "id": "1",
+     "x": 150,
+     "y": 0,
+     "label": "1"
+    },
+    {
+     "id": "2",
+     "x": 150,
+     "y": 150,
+     "label": "2 ◉"
+    },
+    {
+     "id": "3",
+     "x": 0,
+     "y": 150,
+     "label": "3"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "0",
+     "target": "1",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "0",
+     "target": "0",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "1",
+     "target": "2",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "1",
+     "target": "1",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "2",
+     "target": "3",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e5",
+     "source": "2",
+     "target": "2",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e6",
+     "source": "3",
+     "target": "0",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e7",
+     "source": "3",
+     "target": "3",
+     "label": "b",
+     "directed": true
+    }
+   ],
+   "animations": []
+  },
+  {
+   "id": "fig.minimalizacia-parny-pocet-a",
+   "title": "Rozklady pri minimalizácii",
+   "caption": "Overené výpočtom.",
+   "origin": "generated",
+   "illustrates": [
+    "alg.minimalizacia-akceptora"
+   ],
+   "sources": [],
+   "kind": "table",
+   "columns": [
+    "krok",
+    "rozklad"
+   ],
+   "rows": [
+    [
+     "$A_0$",
+     "$\\{0,2\\},\\{1,3\\}$ ($F$ a $Q-F$)"
+    ],
+    [
+     "$A_1$",
+     "$\\{0,2\\},\\{1,3\\}$ (zhoda, koniec)"
+    ]
+   ]
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.lexikalna-analyza",
+   "title": "Lexikálna analýza a vyhľadávanie vzorov",
+   "summary": "Akceptory rozpoznávajú tokeny.",
+   "scenario": "Kompilátor musí v zdrojovom texte rozpoznať identifikátory, čísla a kľúčové slová.",
+   "modelling": "Každý druh tokenu je jazyk nad abecedou znakov; stavy akceptora zodpovedajú rozpracovanej časti tokenu.",
+   "solution": "Minimálny akceptor čítaním znakov zľava doprava rozhodne v lineárnom čase a konštantnej pamäti.",
+   "connects": [
+    "dfn.konecnostavovy-akceptor",
+    "alg.minimalizacia-akceptora"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.validacia-formatov",
+   "title": "Validácia formátov (čísla, dátumy, kódy)",
+   "summary": "Overenie vstupu v používateľskom rozhraní.",
+   "scenario": "Formulár má prijať iba správne zapísané kódy.",
+   "modelling": "Povolené kódy tvoria regulárny jazyk, ktorý rozpoznáva akceptor.",
+   "solution": "Akceptor spracuje jeden znak za druhým, výsledok je v koncovom stave po poslednom.",
+   "connects": [
+    "dfn.jazyk-akceptora",
+    "ex.akceptor-abb"
+   ],
+   "figures": [],
+   "tags": [
+    "validácia"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.protokolove-automaty",
+   "title": "Jednoduché protokolové automaty",
+   "summary": "Správnosť poradia správ.",
+   "scenario": "Sieťový protokol povoľuje iba určité poradia správ.",
+   "modelling": "Správy sú symboly, povolené konverzácie jazyk; stav kóduje fázu protokolu.",
+   "solution": "Akceptor odmietne akékoľvek nepovolené poradie; minimalizácia zníži počet stavov v implementácii.",
+   "connects": [
+    "dfn.konecnostavovy-akceptor"
+   ],
+   "figures": [],
+   "tags": [
+    "siete"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.akc-1",
+   "kind": "mcq",
+   "prompt": "Kedy akceptor prijme slovo $w$?",
+   "options": [
+    "keď prechádza cez koncový stav",
+    "keď $f^*(q_I,w)\\in F$",
+    "keď $q_I\\in F$",
+    "keď $w$ je neprázdne"
+   ],
+   "answer": 1,
+   "explanation": "Rozhoduje stav po prečítaní celého slova.",
+   "about": [
+    "dfn.jazyk-akceptora"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.akc-2",
+   "kind": "truefalse",
+   "prompt": "Ak $q_I\\in F$, tak akceptor prijme prázdne slovo.",
+   "answer": true,
+   "explanation": "$f^*(q_I,\\varepsilon)=q_I\\in F$.",
+   "about": [
+    "dfn.jazyk-akceptora"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.akc-3",
+   "kind": "mcq",
+   "prompt": "Aký je východiskový rozklad pri minimalizácii akceptora?",
+   "options": [
+    "$\\{Q\\}$",
+    "$\\{F,Q-F\\}$",
+    "jednoprvkové množiny",
+    "$\\{\\{q_I\\},Q-\\{q_I\\}\\}$"
+   ],
+   "answer": 1,
+   "explanation": "$0$-ekvivalencia rozlišuje koncové a nekoncové stavy.",
+   "about": [
+    "alg.minimalizacia-akceptora"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.akc-4",
+   "kind": "mcq",
+   "prompt": "Koľko stavov má minimálny akceptor pre „párny počet $a$“?",
+   "options": [
+    "1",
+    "2",
+    "3",
+    "4"
+   ],
+   "answer": 1,
+   "explanation": "Stačí pamätať paritu.",
+   "about": [
+    "alg.minimalizacia-akceptora"
+   ],
+   "difficulty": 1,
+   "check": {
+    "verifier": "expr",
+    "expr": "2"
+   }
+  },
+  {
+   "id": "quiz.akc-5",
+   "kind": "truefalse",
+   "prompt": "$k$-ekvivalencia stavov akceptora pre $k=0$ je triviálna (každé dva stavy sú $0$-ekvivalentné).",
+   "answer": false,
+   "explanation": "$q_1\\sim_0q_2$ práve vtedy, keď $q_1\\in F\\iff q_2\\in F$.",
+   "about": [
+    "dfn.ekvivalentne-stavy-akceptora"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.akc-6",
+   "kind": "mcq",
+   "prompt": "Ktorý z nasledujúcich stavov je v akceptore z príkladu absorbujúci?",
+   "options": [
+    "0",
+    "2",
+    "3",
+    "4"
+   ],
+   "answer": 3,
+   "explanation": "Stav $4$ zodpovedá „slovo už obsahuje $abba$“.",
+   "about": [
+    "ex.akceptor-abb"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.akc-7",
+   "kind": "open",
+   "prompt": "Zistite, či akceptor z príkladu prijme slovo $abbb$.",
+   "answer": "Prejde stavmi $0\\to1\\to2\\to3\\to0$, teda končí v $0\\notin F$ a slovo neprijme.",
+   "explanation": "Pozor: slovo $abbb$ nekončí na $abb$.",
+   "about": [
+    "ex.akceptor-abb"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.akc-8",
+   "kind": "flashcard",
+   "prompt": "Kedy sú dva stavy akceptora ekvivalentné?",
+   "answer": "Keď pre každé slovo $\\omega$ platí $f^*(q_1,\\omega)\\in F\\iff f^*(q_2,\\omega)\\in F$.",
+   "explanation": "Zhodná dosiahnuteľnosť koncových stavov.",
+   "about": [
+    "dfn.ekvivalentne-stavy-akceptora"
+   ],
+   "difficulty": 1
+  }
+ ]
+}

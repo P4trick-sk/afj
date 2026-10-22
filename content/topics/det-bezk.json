@@ -1,0 +1,577 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "det-bezk",
+  "title": "Deterministické bezkontextové jazyky",
+  "course": "B",
+  "order": 22,
+  "sourceFiles": [
+   "Afjb09_DetBezJazyky_P.pdf"
+  ],
+  "summary": "Deterministické bezkontextové jazyky (DCFL) sú vlastnou podmnožinou bezkontextových: doplnok $\\{a^nb^nc^n\\}$ je bezkontextový, ale nie deterministický. DCFL nie sú uzavreté na prienik ani zjednotenie, ale sú uzavreté na doplnok a na prienik a zjednotenie s regulárnym jazykom.",
+  "overview": "Prednáška ukazuje možnosti a limity deterministických zásobníkových automatov. Z uzavretosti DCFL na doplnok a z neuzavretosti CFL na doplnok vyplýva, že existuje CFL, ktorý nie je DCFL (nedeterminizmus sa vo všeobecnosti odstrániť nedá). DCFL nie sú uzavreté na prienik (rovnaký príklad ako pre CFL) ani na zjednotenie (zjednotenie doplnkov by dalo doplnok $\\{a^nb^nc^n\\}$). Súčinová konštrukcia s deterministickým konečným akceptorom však zachová determinizmus, takže prienik aj zjednotenie s regulárnym jazykom sú DCFL.",
+  "keyQuestions": [
+   "Prečo je hierarchia $\\text{DCFL}\\subsetneq\\text{CFL}$ ostrá?",
+   "Prečo DCFL nie sú uzavreté na zjednotenie?",
+   "Čo zostáva z uzavretosti pri regulárnych jazykoch?"
+  ],
+  "prerequisites": [
+   "doplnok-dbj",
+   "uzaver-bezk"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "thm.cfl-nie-je-dcfl",
+   "type": "theorem",
+   "topic": "det-bezk",
+   "title": "Existuje CFL, ktorý nie je deterministický",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb09_DetBezJazyky_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "Existuje [bezkontextový jazyk](dfn.bezkontextovy-jazyk) $L$, ktorý nie je deterministický bezkontextový. Teda existujú ne[deterministické zásobníkové automaty](dfn.dpda), pre ktoré neexistujú ekvivalentné deterministické, čiže vo všeobecnom prípade sa nedeterminizmus v [zásobníkových automatoch](dfn.zasobnikovy-automat) odstraňovať nedá. Trieda DCFL je vlastnou podmnožinou triedy CFL.",
+   "explanation": {
+    "intuition": "Keby bol doplnok DCFL aj DCFL, doplnok by bol bezkontextový, čo pre $a^nb^nc^n$ nie je.",
+    "detailed": "Príklad $L=\\{w\\in\\{a,b,c\\}^*:w$ nie je tvaru $a^nb^nc^n\\}$ je CFL, ale nie DCFL. Dôkaz [sporom](def.dokaz-sporom) využíva [uzavretosť](def.uzavretost) DCFL na doplnok.",
+    "pitfalls": [
+     "Pre konečné automaty nedeterminizmus nezvyšuje silu; pre zásobníkové zvyšuje."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Zoberme $L=\\{w\\in\\{a,b,c\\}^*:w$ nie je v tvare $a^nb^nc^n$ pre nejaké $n\\ge1\\}$. Pre $L$ existuje bezkontextová gramatika (prednáška 7), teda aj nedeterministický PDA.",
+      "why": "Doplnok je bezkontextový.",
+      "uses": [
+       "thm.cfl-nie-uzavrete-doplnok"
+      ]
+     },
+     {
+      "text": "Predpokladajme sporom, že $L$ je DCFL. Podľa uzavretosti DCFL na doplnok (prednáška 8) existuje DPDA aj pre $L^c=\\{a^nb^nc^n:n\\ge1\\}$.",
+      "why": "Veta o doplnku.",
+      "uses": [
+       "thm.dcfl-uzavrete-doplnok"
+      ]
+     },
+     {
+      "text": "Teda $L^c$ je DCFL, a tým pádom bezkontextový jazyk, čo je spor s pumping lemou ($a^nb^nc^n$ nie je bezkontextový).",
+      "why": "Pumping lema.",
+      "uses": [
+       "thm.anbncn-nie-je-bezkontextovy"
+      ]
+     }
+    ]
+   },
+   "uses": [
+    "thm.dcfl-uzavrete-doplnok",
+    "thm.cfl-nie-uzavrete-doplnok",
+    "thm.anbncn-nie-je-bezkontextovy",
+    "def.dokaz-sporom",
+    "dfn.dpda",
+    "dfn.zasobnikovy-automat",
+    "dfn.bezkontextovy-jazyk",
+    "def.uzavretost"
+   ],
+   "relations": [
+    {
+     "type": "contrasts-with",
+     "target": "thm.veta-8-1-nfa-na-dfa",
+     "note": "pre konečné akceptory nedeterminizmus možno odstrániť"
+    }
+   ],
+   "figures": [
+    "fig.hierarchia-dcfl"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.dcfl-nie-uzavrete-prienik",
+   "type": "theorem",
+   "topic": "det-bezk",
+   "title": "DCFL nie sú uzavreté na prienik",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb09_DetBezJazyky_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "Existujú deterministické [bezkontextové jazyky](dfn.bezkontextovy-jazyk) $L_1,L_2$ také, že ich prienik $L_1\\cap L_2$ nie je deterministický bez[kontextový jazyk](dfn.kontextovy-jazyk). Teda trieda DCFL nie je [uzavretá](def.uzavretost) na prienik. Príklad: $L_1=\\{a^nb^nc^k\\}$, $L_2=\\{a^kb^nc^n\\}$.",
+   "explanation": {
+    "intuition": "Rovnaký protipríklad ako pre CFL; keďže $L_1,L_2$ sú DCFL, platí aj pre DCFL.",
+    "detailed": "Dôkaz je rovnaký ako pre [bezkontextové jazyky](dfn.bezkontextovy-jazyk) vo všeobecnosti; uvedený tu len pre úplnosť. Prienikom je $\\{a^nb^nc^n\\}$, ktorý nie je ani bezkontextový, a teda nie je ani DCFL.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "$L_1=\\{a^nb^nc^k:n,k\\ge1\\}$ a $L_2=\\{a^kb^nc^n:k,n\\ge1\\}$ majú deterministické zásobníkové automaty (prednáška 7), teda sú DCFL.",
+      "why": "Konštrukcia z prednášky 7.",
+      "uses": [
+       "thm.cfl-nie-uzavrete-prienik"
+      ]
+     },
+     {
+      "text": "$L_1\\cap L_2=\\{a^nb^nc^n:n\\ge1\\}$ nie je bezkontextový (pumping lema), teda nie je ani DCFL.",
+      "why": "DCFL $\\subseteq$ CFL.",
+      "uses": [
+       "thm.anbncn-nie-je-bezkontextovy"
+      ]
+     }
+    ]
+   },
+   "uses": [
+    "thm.cfl-nie-uzavrete-prienik",
+    "dfn.dpda",
+    "dfn.bezkontextovy-jazyk",
+    "def.uzavretost"
+   ],
+   "relations": [
+    {
+     "type": "contrasts-with",
+     "target": "thm.uzavretost-prienik"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.kontextovy-jazyk"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.dcfl-nie-uzavrete-zjednotenie",
+   "type": "theorem",
+   "topic": "det-bezk",
+   "title": "DCFL nie sú uzavreté na zjednotenie",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb09_DetBezJazyky_P.pdf",
+     "page": 5
+    }
+   ],
+   "statement": "Existujú deterministické [bezkontextové jazyky](dfn.bezkontextovy-jazyk) $\\bar L_1,\\bar L_2$ také, že ich zjednotenie $\\bar L_1\\cup\\bar L_2$ nie je DCFL. Teda trieda DCFL nie je [uzavretá](def.uzavretost) na zjednotenie.",
+   "explanation": {
+    "intuition": "Zjednotenie doplnkov dvoch DCFL je doplnok prieniku, a ten DCFL nie je.",
+    "detailed": "Z [uzavretosti](def.uzavretost) DCFL na doplnok sú doplnky $\\bar L_1=L_1^c$, $\\bar L_2=L_2^c$ opäť DCFL, a $\\bar L_1\\cup\\bar L_2=(L_1\\cap L_2)^c=\\{a^nb^nc^n\\}^c$, ktorý podľa predošlej vety nie je DCFL.",
+    "pitfalls": [
+     "Neuzavretosť na zjednotenie plynie z uzavretosti na doplnok a neuzavretosti na prienik (de Morgan)."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Pre $L_1=\\{a^nb^nc^k\\}$, $L_2=\\{a^kb^nc^n\\}$ (DCFL) sú $\\bar L_1=\\{w:w$ nie je tvaru $a^nb^nc^k\\}$ a $\\bar L_2=\\{w:w$ nie je tvaru $a^kb^nc^n\\}$ DCFL, lebo DCFL sú uzavreté na doplnok.",
+      "why": "Uzavretosť na doplnok.",
+      "uses": [
+       "thm.dcfl-uzavrete-doplnok"
+      ]
+     },
+     {
+      "text": "Predpokladajme sporom, že DCFL sú uzavreté na zjednotenie. Potom by $\\bar L_1\\cup\\bar L_2=\\{w:w$ nie je tvaru $a^nb^nc^n\\}$ bol DCFL.",
+      "why": "Zjednotenie dvoch DCFL.",
+      "uses": [
+       "def.dokaz-sporom"
+      ]
+     },
+     {
+      "text": "To je spor, lebo pre tento jazyk sa DPDA zostrojiť nedá (predošlá veta).",
+      "why": "Existuje CFL, ktorý nie je DCFL.",
+      "uses": [
+       "thm.cfl-nie-je-dcfl"
+      ]
+     }
+    ]
+   },
+   "uses": [
+    "thm.dcfl-uzavrete-doplnok",
+    "thm.cfl-nie-je-dcfl",
+    "def.dokaz-sporom",
+    "dfn.bezkontextovy-jazyk",
+    "def.uzavretost"
+   ],
+   "relations": [
+    {
+     "type": "contrasts-with",
+     "target": "thm.uzavretost-zjednotenie-rozdiel"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.dcfl-regularny-prienik-zjednotenie",
+   "type": "theorem",
+   "topic": "det-bezk",
+   "title": "Prienik a zjednotenie DCFL s regulárnym jazykom je DCFL",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb09_DetBezJazyky_P.pdf",
+     "page": 7
+    }
+   ],
+   "statement": "Ak $L_1$ je deterministický bezkontextový a $L_2$ [regulárny jazyk](dfn.regularny-jazyk), tak aj $L_1\\cap L_2$ aj $L_1\\cup L_2$ sú deterministické bezkontextové. Teda trieda DCFL je [uzavretá](def.uzavretost) aj na prienik aj na zjednotenie s regulárnymi [jazykmi](dfn.jazyk).",
+   "explanation": {
+    "intuition": "Deterministický PDA a [DFA](dfn.konecnostavovy-akceptor) sa dajú pustiť súčasne; stav dvojice určuje rozhodnutie.",
+    "detailed": "Súčin $M_1$ ([DPDA](dfn.dpda)) a $M_2$ ([DFA](dfn.konecnostavovy-akceptor)) je opäť deterministický. Rozdiel medzi prienikom a zjednotením je iba vo voľbe koncových stavov: $F_1\\times F_2$ pre prienik a $(F_1\\times Q_2)\\cup(Q_1\\times F_2)$ pre zjednotenie.",
+    "pitfalls": [
+     "Pri zjednotení treba, aby DPDA pred koncom vstupu dokončil ε-kroky (zastavujúci tvar), inak by sa mohol koncový stav $M_1$ prehliadnuť."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "sketch",
+    "steps": [
+     {
+      "text": "Nech $M_1$ je DPDA a $M_2$ deterministický konečný akceptor. Súčinový automat používa stavy $Q_1\\times Q_2$ a simuluje oba súčasne.",
+      "why": "Súčinová konštrukcia.",
+      "uses": [
+       "alg.sucin-pda-dfa"
+      ]
+     },
+     {
+      "text": "Pre prienik akceptujeme, ak akceptujú oba; pre zjednotenie, ak akceptuje aspoň jeden.",
+      "why": "Zmena iba množiny koncových stavov.",
+      "uses": []
+     },
+     {
+      "text": "Súčin je deterministický, lebo oba automaty sú deterministické; teda výsledný jazyk je DCFL.",
+      "why": "Žiadna nová voľba nevzniká.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "alg.sucin-pda-dfa",
+    "dfn.dpda",
+    "thm.dpda-vzdy-zastavi",
+    "dfn.regularny-jazyk",
+    "dfn.jazyk",
+    "def.uzavretost",
+    "dfn.konecnostavovy-akceptor"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajd 8 uvádza iba schému súčinu; korektnosť pre zjednotenie predpokladá normalizovaný (zastavujúci) DPDA — pozri prednášku 8. Dôkaz je náčrt."
+    ]
+   }
+  },
+  {
+   "id": "def.prehlad-uzavretosti-dcfl",
+   "type": "concept",
+   "topic": "det-bezk",
+   "title": "Prehľad uzavretosti: CFL, DCFL a regulárne jazyky",
+   "terms": [
+    {
+     "term": "prehľad uzavretosti DCFL",
+     "alt": "closure summary for DCFL"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb09_DetBezJazyky_P.pdf",
+     "page": 9
+    }
+   ],
+   "statement": "Uzavretosť tried CFL / DCFL / REG: doplnok (nie / áno / áno), prienik (nie / nie / áno), zjednotenie (áno / nie / áno), [zreťazenie](dfn.zretazenie-slov) (áno / nie / áno), iterácia (áno / nie / áno), zrkadlo (áno / nie / áno), prienik s regulárnym (áno / áno / áno), zjednotenie s regulárnym (áno / áno / áno).",
+   "explanation": {
+    "intuition": "DCFL majú doplnok, ale stratia zjednotenie; CFL majú zjednotenie, ale stratia doplnok.",
+    "detailed": "Tabuľka ukazuje, že deterministická a nedeterministická bezkontextová trieda sa líšia presne v týchto dvoch operáciách (a v [zreťazení](dfn.zretazenie-slov), iterácii, zrkadle, kde DCFL neboli [uzavreté](def.uzavretost); slajd uvádza „−“ pre všetky tieto operácie).",
+    "pitfalls": [
+     "Slajd 9 uvádza pre DCFL neuzavretosť na zreťazenie, iteráciu a zrkadlo; tieto výsledky sa v prednáške nedokazujú."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "thm.cfl-nie-je-dcfl",
+    "thm.dcfl-nie-uzavrete-prienik",
+    "thm.dcfl-nie-uzavrete-zjednotenie",
+    "thm.dcfl-regularny-prienik-zjednotenie",
+    "dfn.zretazenie-slov",
+    "def.uzavretost"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.uzavretost-dcfl"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Hodnoty pre zreťazenie, iteráciu a zrkadlo (DCFL: nie) sú prevzaté zo zhrnujúcej tabuľky slajdu 9; dôkaz v prednáškach nie je."
+    ]
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.uzavretost-dcfl",
+   "title": "Uzavretosť: CFL, DCFL, REG",
+   "caption": "Slajd 9.",
+   "origin": "slides",
+   "illustrates": [
+    "def.prehlad-uzavretosti-dcfl"
+   ],
+   "sources": [
+    {
+     "file": "Afjb09_DetBezJazyky_P.pdf",
+     "page": 9
+    }
+   ],
+   "kind": "table",
+   "columns": [
+    "operácia",
+    "CFL",
+    "DCFL",
+    "REG"
+   ],
+   "rows": [
+    [
+     "doplnok",
+     "−",
+     "+",
+     "+"
+    ],
+    [
+     "prienik",
+     "−",
+     "−",
+     "+"
+    ],
+    [
+     "zjednotenie",
+     "+",
+     "−",
+     "+"
+    ],
+    [
+     "zreťazenie",
+     "+",
+     "−",
+     "+"
+    ],
+    [
+     "iterácia",
+     "+",
+     "−",
+     "+"
+    ],
+    [
+     "zrkadlo",
+     "+",
+     "−",
+     "+"
+    ],
+    [
+     "prienik s REG",
+     "+",
+     "+",
+     "+"
+    ],
+    [
+     "zjednotenie s REG",
+     "+",
+     "+",
+     "+"
+    ]
+   ]
+  },
+  {
+   "id": "fig.hierarchia-dcfl",
+   "title": "Hierarchia REG ⊂ DCFL ⊂ CFL",
+   "caption": "Jazyky, ktoré oddeľujú triedy.",
+   "origin": "generated",
+   "illustrates": [
+    "thm.cfl-nie-je-dcfl"
+   ],
+   "sources": [],
+   "kind": "mermaid",
+   "code": "flowchart LR\n  R[\"REG\"] -->|a^n b^n| D[\"DCFL\"]\n  D -->|doplnok a^n b^n c^n| C[\"CFL\"]"
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.lr-parsery",
+   "title": "Prečo LR parsery nezvládnu všetky CFL",
+   "summary": "Deterministické parsery pokrývajú iba DCFL.",
+   "scenario": "Generátory parserov (LR) vytvárajú deterministické parsery.",
+   "modelling": "Deterministický parser rozpoznáva DCFL.",
+   "solution": "Jazyk typu $\\{ww^R\\}$ alebo doplnok $a^nb^nc^n$ potrebuje nedeterminizmus alebo iný algoritmus (napr. CYK).",
+   "connects": [
+    "thm.cfl-nie-je-dcfl"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.navrh-jazykov",
+   "title": "Návrh jazykov tak, aby boli deterministické",
+   "summary": "Syntaxe bez dvojznačností.",
+   "scenario": "Navrhovateľ jazyka chce zaručiť efektívny parser.",
+   "modelling": "Vyhýbať sa konštrukciám, kde stred slova nie je rozpoznateľný (palindrómy).",
+   "solution": "Pridanie oddelovačov (ako $c$ v $wcw^Rc$) robí jazyk deterministickým.",
+   "connects": [
+    "thm.cfl-nie-je-dcfl",
+    "dfn.dpda"
+   ],
+   "figures": [],
+   "tags": [
+    "jazyky"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.dcfl-regularne-obmedzenia",
+   "title": "Kombinovanie DCFL s regulárnymi obmedzeniami",
+   "summary": "Bezpečné filtrovanie.",
+   "scenario": "Z deterministického jazyka chceme vybrať alebo pridať slová regulárneho tvaru.",
+   "modelling": "Súčin DPDA a DFA.",
+   "solution": "Výsledok ostáva DCFL.",
+   "connects": [
+    "thm.dcfl-regularny-prienik-zjednotenie"
+   ],
+   "figures": [],
+   "tags": [
+    "analýza"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.dbj2-1",
+   "kind": "truefalse",
+   "prompt": "Každý bezkontextový jazyk je deterministický bezkontextový.",
+   "answer": false,
+   "explanation": "Príklad: doplnok $\\{a^nb^nc^n\\}$.",
+   "about": [
+    "thm.cfl-nie-je-dcfl"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.dbj2-2",
+   "kind": "mcq",
+   "prompt": "Ktoré operácie DCFL nie sú uzavreté (v tomto prehľade)?",
+   "options": [
+    "doplnok",
+    "prienik a zjednotenie",
+    "prienik s regulárnym",
+    "žiadna"
+   ],
+   "answer": 1,
+   "explanation": "DCFL sú uzavreté na doplnok a na prienik/zjednotenie s regulárnymi.",
+   "about": [
+    "def.prehlad-uzavretosti-dcfl"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.dbj2-3",
+   "kind": "open",
+   "prompt": "Dokážte, že DCFL nie sú uzavreté na zjednotenie.",
+   "answer": "Doplnky $\\bar L_1,\\bar L_2$ DCFL $L_1,L_2$ sú DCFL; ich zjednotenie je doplnok $\\{a^nb^nc^n\\}$, ktorý nie je DCFL.",
+   "explanation": "Využite uzavretosť na doplnok.",
+   "about": [
+    "thm.dcfl-nie-uzavrete-zjednotenie"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.dbj2-4",
+   "kind": "mcq",
+   "prompt": "Čo odlišuje súčin pre prienik od súčinu pre zjednotenie s regulárnym jazykom?",
+   "options": [
+    "množina koncových stavov",
+    "prechodová funkcia",
+    "počet stavov",
+    "zásobníková abeceda"
+   ],
+   "answer": 0,
+   "explanation": "$F_1\\times F_2$ vs. $(F_1\\times Q_2)\\cup(Q_1\\times F_2)$.",
+   "about": [
+    "thm.dcfl-regularny-prienik-zjednotenie"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.dbj2-5",
+   "kind": "truefalse",
+   "prompt": "Nedeterminizmus v zásobníkových automatoch sa dá vo všeobecnosti odstrániť.",
+   "answer": false,
+   "explanation": "Veta 9: existuje CFL, ktorý nie je DCFL.",
+   "about": [
+    "thm.cfl-nie-je-dcfl"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.dbj2-6",
+   "kind": "flashcard",
+   "prompt": "Aký je vzťah REG, DCFL, CFL?",
+   "answer": "$\\text{REG}\\subsetneq\\text{DCFL}\\subsetneq\\text{CFL}$.",
+   "explanation": "Oddeľujú ich $a^nb^n$ a doplnok $a^nb^nc^n$.",
+   "about": [
+    "thm.cfl-nie-je-dcfl"
+   ],
+   "difficulty": 1
+  }
+ ]
+}

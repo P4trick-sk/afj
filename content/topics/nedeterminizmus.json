@@ -1,0 +1,1287 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "nedeterminizmus",
+  "title": "Nedeterministické konečnostavové akceptory",
+  "course": "A",
+  "order": 8,
+  "sourceFiles": [
+   "Afja08_ned_akceptory_P.pdf"
+  ],
+  "summary": "Nedeterministický akceptor môže v každom kroku prejsť do viacerých stavov (alebo do žiadneho) a slovo prijíma, ak aspoň jeden výpočet skončí v koncovom stave. Nedeterminizmus nezvyšuje silu akceptorov: podmnožinová konštrukcia nahradí každý nedeterministický akceptor deterministickým.",
+  "overview": "Prednáška zavádza nedeterministický konečnostavový akceptor, ktorého prechodová funkcia $\\delta:Q\\times\\Sigma\\to2^Q$ vracia množinu stavov. Výpočet na slove je „strom“ možností a slovo je prijaté, ak niektorá vetva skončí v koncovom stave. Zovšeobecnenie $\\delta^*$ pracuje s množinami stavov. Hlavným výsledkom je Veta 8.1 (podmnožinová konštrukcia): ku každému nedeterministickému akceptoru existuje deterministický s rovnakým jazykom, ktorého stavmi sú podmnožiny pôvodných stavov. Nedeterminizmus teda uľahčuje návrh, ale triedu regulárnych jazykov nerozširuje.",
+  "keyQuestions": [
+   "Čo znamená, že nedeterministický akceptor slovo prijme?",
+   "Ako sa nedeterminizmus odstráni?",
+   "Prečo môže mať výsledný DFA exponenciálne veľa stavov?"
+  ],
+  "prerequisites": [
+   "akceptory",
+   "operacie"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "dfn.nfa",
+   "type": "definition",
+   "topic": "nedeterminizmus",
+   "title": "Nedeterministický konečnostavový akceptor",
+   "terms": [
+    {
+     "term": "nedeterministický akceptor",
+     "alt": "nondeterministic finite automaton, NFA",
+     "symbol": "M=(Q,\\Sigma,q_I,\\delta,F)"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja08_ned_akceptory_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "**Nedeterministický [konečnostavový akceptor](dfn.konecnostavovy-akceptor)** je usporiadaná päťica $M=(Q,\\Sigma,q_I,\\delta,F)$, kde $Q$ je konečná množina stavov, $\\Sigma$ je konečná [abeceda](dfn.abeceda) vstupných symbolov, $q_I\\in Q$ je počiatočný stav, $F\\subseteq Q$ sú koncové stavy a $\\delta:Q\\times\\Sigma\\to2^Q$ je [prechodová funkcia](dfn.konecnostavovy-automat). Ak napr. $\\delta(q,a)=\\{q',q'',q'''\\}$, tak $M$ sa čítaním $a$ nedeterministicky vyberie, či prejde z $q$ do $q'$, $q''$ alebo $q'''$.",
+   "explanation": {
+    "intuition": "Akceptor „háda“ cestu: ak aspoň jedno hádanie vedie k prijatiu, [slovo](dfn.slovo) prijme.",
+    "detailed": "Hodnota $\\delta(q,a)$ môže byť prázdna (výpočet sa zasekne) aj mať viac prvkov (vetvenie). Namiesto jedného výpočtu na [slove](dfn.slovo) máme „strom“ výpočtov. Deterministický akceptor je špeciálny prípad, v ktorom je každá hodnota $\\delta(q,a)$ jednoprvková.",
+    "pitfalls": [
+     "Nedeterminizmus nie je náhodnosť; ide o existenciu aspoň jednej prijímajúcej vetvy.",
+     "Zasekne sa vetva, nie celý akceptor: ostatné vetvy môžu pokračovať."
+    ],
+    "examples": [
+     "$Q=\\{1,2\\}$, $\\delta(1,a)=\\{2\\}$, $\\delta(1,b)=\\emptyset$, $\\delta(2,a)=\\emptyset$, $\\delta(2,b)=\\{1,2\\}$, $F=\\{2\\}$."
+    ]
+   },
+   "uses": [
+    "dfn.abeceda",
+    "dfn.konecnostavovy-akceptor",
+    "dfn.konecnostavovy-automat",
+    "dfn.slovo"
+   ],
+   "relations": [
+    {
+     "type": "specializes",
+     "target": "dfn.konecnostavovy-akceptor",
+     "note": "DFA je NFA s jednoprvkovými množinami"
+    },
+    {
+     "type": "equivalent",
+     "target": "dfn.konecnostavovy-akceptor",
+     "note": "rovnaká trieda jazykov (Veta 8.1)"
+    }
+   ],
+   "figures": [
+    "fig.nfa-dva-stavy"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.nfa-dva-stavy",
+   "type": "example",
+   "topic": "nedeterminizmus",
+   "title": "NFA s dvoma stavmi a jeho výpočet na vstupe abbab",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja08_ned_akceptory_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "$M=(\\{1,2\\},\\{a,b\\},1,\\delta,\\{2\\})$ s $\\delta(1,a)=\\{2\\}$, $\\delta(1,b)=\\emptyset$, $\\delta(2,a)=\\emptyset$, $\\delta(2,b)=\\{1,2\\}$. Na vstupe $abbab$ sa množiny dosiahnutých stavov menia takto: $\\{1\\},\\{2\\},\\{1,2\\},\\{1,2\\},\\{2\\},\\{1,2\\}$. Slovo $abbab$ sa prijme, lebo $\\{1,2\\}\\cap F=\\{2\\}\\ne\\emptyset$.",
+   "explanation": {
+    "intuition": "Po [slove](dfn.slovo) $a$ sme v $2$ a po $ab$ vo $\\{1,2\\}$: $b$ zo stavu $2$ vedie do oboch stavov. Štvrtý znak $a$ vedie iba zo stavu $1$ do $2$ (zo stavu $2$ sa vetva zasekne).",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "dfn.nfa"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.slovo"
+    }
+   ],
+   "figures": [
+    "fig.nfa-dva-stavy",
+    "fig.nfa-tabulka"
+   ],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajd 4 zobrazuje výpočet ako obrázok; množiny stavov sú dopočítané a overené výpočtom."
+    ]
+   }
+  },
+  {
+   "id": "dfn.delta-hviezdicka",
+   "type": "definition",
+   "topic": "nedeterminizmus",
+   "title": "Zovšeobecnená prechodová funkcia δ*",
+   "terms": [
+    {
+     "term": "zovšeobecnená prechodová funkcia nedeterministického akceptora",
+     "alt": "extended transition function",
+     "symbol": "\\delta^*"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja08_ned_akceptory_P.pdf",
+     "page": 5
+    }
+   ],
+   "statement": "K základnej [prechodovej funkcii](dfn.konecnostavovy-automat) $\\delta:Q\\times\\Sigma\\to2^Q$ definujeme $\\delta^*:2^Q\\times\\Sigma^*\\to2^Q$: (1) $\\delta^*(A,\\varepsilon)=A$ pre $A\\subseteq Q$; (2) $\\delta^*(A,\\omega a)=\\bigcup_{q\\in\\delta^*(A,\\omega)}\\delta(q,a)$ pre $A\\subseteq Q$, $\\omega\\in\\Sigma^*$, $a\\in\\Sigma$. Ak $\\delta^*(A,\\omega)=\\emptyset$, tak $\\delta^*(A,\\omega a)=\\emptyset$.",
+   "explanation": {
+    "intuition": "$\\delta^*(A,\\omega)$ je množina všetkých stavov, do ktorých sa dá dostať z niektorého stavu množiny $A$ čítaním $\\omega$.",
+    "detailed": "Podobne ako u [DFA](dfn.konecnostavovy-akceptor), kde $f^*:Q\\times\\Sigma^*\\to Q$, tu pracujeme s množinami stavov, lebo výpočet sa vetví. Prázdna množina je „pascou“: z nej sa už nedá dostať nikam.",
+    "pitfalls": [
+     "Argumentom prvého parametra $\\delta^*$ je množina stavov, nie jeden stav (jeden stav sa píše ako $\\{q\\}$)."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.nfa",
+    "dfn.slovo",
+    "dfn.rozsirene-funkcie",
+    "dfn.konecnostavovy-automat",
+    "dfn.konecnostavovy-akceptor"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.jazyk-nfa",
+   "type": "definition",
+   "topic": "nedeterminizmus",
+   "title": "Jazyk rozpoznávaný nedeterministickým akceptorom",
+   "terms": [
+    {
+     "term": "jazyk NFA",
+     "alt": "language of an NFA",
+     "symbol": "L(M)"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja08_ned_akceptory_P.pdf",
+     "page": 7
+    }
+   ],
+   "statement": "[Jazyk](dfn.jazyk) rozpoznávaný [nedeterministickým akceptorom](dfn.nfa) $M=(Q,\\Sigma,q_I,\\delta,F)$ je množina $L(M)=\\{\\omega\\in\\Sigma^*:\\delta^*(\\{q_I\\},\\omega)\\cap F\\ne\\emptyset\\}$.",
+   "explanation": {
+    "intuition": "Slovo prijmeme, ak niektorý z [dosiahnuteľných stavov](dfn.dosiahnutelny-stav) po jeho prečítaní je koncový.",
+    "detailed": "Táto definícia je ekvivalentná „existuje prijímajúca vetva výpočtu“. Prázdna množina na konci znamená, že žiadna vetva neprežila, a teda [slovo](dfn.slovo) sa neprijíma.",
+    "pitfalls": [
+     "Slovo sa neprijíma, ak všetky vetvy skončia v nekoncových stavoch alebo sa zasekli."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.delta-hviezdicka",
+    "dfn.jazyk",
+    "dfn.nfa",
+    "dfn.dosiahnutelny-stav",
+    "dfn.slovo"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.podmnozinova-konstrukcia",
+   "type": "algorithm",
+   "topic": "nedeterminizmus",
+   "title": "Podmnožinová konštrukcia",
+   "terms": [
+    {
+     "term": "podmnožinová konštrukcia",
+     "alt": "subset construction"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja08_ned_akceptory_P.pdf",
+     "page": 8
+    }
+   ],
+   "statement": "Pre [NFA](dfn.nfa) $M=(Q,\\Sigma,q_I,\\delta,F)$ zostrojíme [DFA](dfn.konecnostavovy-akceptor) $M'=(Q',\\Sigma,q_I',f,F')$: $Q'=2^Q$, $q_I'=\\{q_I\\}$, $f(A,a)=\\bigcup_{q\\in A}\\delta(q,a)$ pre $A\\subseteq Q$, $a\\in\\Sigma$ a $F'=\\{A\\subseteq Q:A\\cap F\\ne\\emptyset\\}$.",
+   "explanation": {
+    "intuition": "Stav [DFA](dfn.konecnostavovy-akceptor) je množina stavov, v ktorých by [NFA](dfn.nfa) mohol byť; sledujeme „všetky možnosti naraz“.",
+    "detailed": "V praxi sa generuje iba dosiahnuteľná časť $2^Q$, ktorá býva oveľa menšia. V najhoršom prípade však [DFA](dfn.konecnostavovy-akceptor) potrebuje $2^{|Q|}$ stavov ([jazyk](dfn.jazyk) „$n$-tý symbol od konca je $a$“). Výsledný DFA sa dá ešte minimalizovať.",
+    "pitfalls": [
+     "Prázdna množina je legitímny stav (pasca), nie chyba konštrukcie."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Korektnosť dokazuje Veta 8.1: $f^*(q_I',\\omega)=\\delta^*(\\{q_I\\},\\omega)$ indukciou podľa $|\\omega|$ a $A\\in F'$ práve vtedy, keď obsahuje koncový stav.",
+    "steps": []
+   },
+   "uses": [
+    "dfn.nfa",
+    "dfn.konecnostavovy-akceptor",
+    "dfn.delta-hviezdicka",
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "algorithm-for",
+     "target": "thm.veta-8-1-nfa-na-dfa",
+     "note": "Veta 8.1 dokazuje jej korektnosť"
+    },
+    {
+     "type": "analogue",
+     "target": "alg.sucinova-konstrukcia",
+     "note": "stavy sú zložené objekty"
+    }
+   ],
+   "figures": [
+    "fig.dfa-podmnozinova"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.veta-8-1-nfa-na-dfa",
+   "type": "theorem",
+   "topic": "nedeterminizmus",
+   "title": "Veta 8.1: každý NFA sa dá nahradiť DFA",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja08_ned_akceptory_P.pdf",
+     "page": 8
+    }
+   ],
+   "statement": "Každý [nedeterministický akceptor](dfn.nfa) $M=(Q,\\Sigma,q_I,\\delta,F)$ sa dá nahradiť [deterministickým akceptorom](dfn.konecnostavovy-akceptor) $M'$ takým, že $L(M')=L(M)$.",
+   "explanation": {
+    "intuition": "Nedeterminizmus nedáva akceptorom silu navyše; cena je počet stavov.",
+    "detailed": "Kľúčovým pomocným tvrdením je $f^*(q_I',\\omega)=\\delta^*(\\{q_I\\},\\omega)$: stav [DFA](dfn.konecnostavovy-akceptor) po prečítaní $\\omega$ je presne množina stavov [NFA](dfn.nfa) dosiahnuteľných po $\\omega$.",
+    "pitfalls": [
+     "DFA môže mať exponenciálne viac stavov: nedá sa to vo všeobecnosti vylepšiť."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Definujeme $M'=(2^Q,\\Sigma,\\{q_I\\},f,F')$, $f(A,a)=\\bigcup_{q\\in A}\\delta(q,a)$, $F'=\\{A:A\\cap F\\ne\\emptyset\\}$.",
+      "why": "Podmnožinová konštrukcia.",
+      "uses": [
+       "alg.podmnozinova-konstrukcia"
+      ]
+     },
+     {
+      "text": "Pomocné tvrdenie: $f^*(\\{q_I\\},\\omega)=\\delta^*(\\{q_I\\},\\omega)$ pre každé $\\omega$. Báza $\\omega=\\varepsilon$: oba výrazy sa rovnajú $\\{q_I\\}$.",
+      "why": "Definície $f^*$ a $\\delta^*$ pre prázdne slovo.",
+      "uses": [
+       "def.indukcia"
+      ]
+     },
+     {
+      "text": "Krok: pre $\\omega=\\omega'a$ s $A=\\delta^*(\\{q_I\\},\\omega')$ je $f^*(\\{q_I\\},\\omega'a)=f(f^*(\\{q_I\\},\\omega'),a)=f(A,a)=\\bigcup_{q\\in A}\\delta(q,a)=\\delta^*(\\{q_I\\},\\omega'a)$.",
+      "why": "Indukčný predpoklad, definícia $f$ a $\\delta^*$.",
+      "uses": []
+     },
+     {
+      "text": "$\\omega\\in L(M)\\iff\\delta^*(\\{q_I\\},\\omega)\\cap F\\ne\\emptyset\\iff\\delta^*(\\{q_I\\},\\omega)\\in F'\\iff f^*(\\{q_I\\},\\omega)\\in F'\\iff\\omega\\in L(M')$.",
+      "why": "Definícia $F'$ a pomocné tvrdenie.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "alg.podmnozinova-konstrukcia",
+    "dfn.jazyk-nfa",
+    "def.indukcia",
+    "dfn.nfa",
+    "dfn.konecnostavovy-akceptor"
+   ],
+   "relations": [
+    {
+     "type": "contrasts-with",
+     "target": "thm.cfl-nie-je-dcfl",
+     "note": "pri konečných akceptoroch sa nedeterminizmus odstrániť dá"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.nfa-na-dfa",
+   "type": "example",
+   "topic": "nedeterminizmus",
+   "title": "Prevod NFA na DFA a minimalizácia",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja08_ned_akceptory_P.pdf",
+     "page": 10
+    }
+   ],
+   "statement": "Jazyk $L=\\{w\\in\\{a,b\\}^*: w$ začína $aa$ a buď obsahuje $aba$, alebo končí na $a$, alebo obsahuje $bab\\}$ má [NFA](dfn.nfa) $M$ s $10$ stavmi $1,\\dots,9,E$. Podmnožinová konštrukcia dá $M'$ so 19 [dosiahnuteľnými stavmi](dfn.dosiahnutelny-stav), po minimalizácii ostane 8 stavov.",
+   "explanation": {
+    "intuition": "Z $10$ stavov [NFA](dfn.nfa) vznikne [DFA](dfn.konecnostavovy-akceptor), ktorého stavy sú množiny; minimalizáciou sa zlepia ekvivalentné.",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "alg.podmnozinova-konstrukcia"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.nfa"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.dosiahnutelny-stav"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.konecnostavovy-akceptor"
+    }
+   ],
+   "figures": [
+    "fig.nfa-aa",
+    "fig.dfa-podmnozinova"
+   ],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Obrázky $M$, $M'$ na slajdoch 10–11 sú nečitateľné; NFA je zrekonštruovaný zo slovného popisu jazyka a overený výpočtom na všetkých slovách do dĺžky 11. Počty stavov sú výsledkom výpočtu pre tento NFA a môžu sa líšiť od slajdu."
+    ]
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.nfa-dva-stavy",
+   "title": "NFA s dvoma stavmi",
+   "caption": "Zo stavu $2$ vedú dve hrany s $b$ (vetvenie).",
+   "origin": "generated",
+   "illustrates": [
+    "ex.nfa-dva-stavy",
+    "dfn.nfa"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "1",
+     "x": 0,
+     "y": 40,
+     "label": "▸ 1"
+    },
+    {
+     "id": "2",
+     "x": 180,
+     "y": 40,
+     "label": "2 ◉"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "1",
+     "target": "2",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "2",
+     "target": "2",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "2",
+     "target": "1",
+     "label": "b",
+     "directed": true
+    }
+   ],
+   "animations": [
+    {
+     "title": "Výpočet na abbab",
+     "steps": [
+      {
+       "caption": "{1}",
+       "highlight": [
+        "1"
+       ]
+      },
+      {
+       "caption": "a: {2}",
+       "highlight": [
+        "2",
+        "e0"
+       ]
+      },
+      {
+       "caption": "b: {1,2}",
+       "highlight": [
+        "1",
+        "2",
+        "e2",
+        "e1"
+       ]
+      },
+      {
+       "caption": "b: {1,2}",
+       "highlight": [
+        "1",
+        "2",
+        "e2",
+        "e1"
+       ]
+      },
+      {
+       "caption": "a: zo stavu 2 sa vetva zasekne, zo stavu 1 vedie a do 2: {2}.",
+       "highlight": [
+        "2",
+        "e0"
+       ]
+      },
+      {
+       "caption": "b: {1,2} obsahuje koncový stav 2 — slovo abbab sa prijme.",
+       "highlight": [
+        "1",
+        "2",
+        "e2",
+        "e1"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fig.nfa-aa",
+   "title": "NFA pre jazyk: začína aa a (obsahuje aba / končí na a / obsahuje bab)",
+   "caption": "Zrekonštruovaný NFA; po prečítaní $aa$ sa nedeterministicky vyberie jedna z troch vetiev.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.nfa-na-dfa"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "1",
+     "x": 0,
+     "y": 100,
+     "label": "▸ 1"
+    },
+    {
+     "id": "2",
+     "x": 120,
+     "y": 100,
+     "label": "2"
+    },
+    {
+     "id": "3",
+     "x": 240,
+     "y": 100,
+     "label": "3"
+    },
+    {
+     "id": "4",
+     "x": 360,
+     "y": 20,
+     "label": "4"
+    },
+    {
+     "id": "5",
+     "x": 480,
+     "y": 20,
+     "label": "5"
+    },
+    {
+     "id": "6",
+     "x": 600,
+     "y": 20,
+     "label": "6 ◉"
+    },
+    {
+     "id": "E",
+     "x": 360,
+     "y": 100,
+     "label": "E ◉"
+    },
+    {
+     "id": "7",
+     "x": 360,
+     "y": 180,
+     "label": "7"
+    },
+    {
+     "id": "8",
+     "x": 480,
+     "y": 180,
+     "label": "8"
+    },
+    {
+     "id": "9",
+     "x": 600,
+     "y": 180,
+     "label": "9 ◉"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "1",
+     "target": "2",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "2",
+     "target": "3",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "2",
+     "target": "4",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "2",
+     "target": "E",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "3",
+     "target": "3",
+     "label": "a, b",
+     "directed": true
+    },
+    {
+     "id": "e5",
+     "source": "3",
+     "target": "4",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e6",
+     "source": "3",
+     "target": "E",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e7",
+     "source": "3",
+     "target": "7",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e8",
+     "source": "4",
+     "target": "5",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e9",
+     "source": "5",
+     "target": "6",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e10",
+     "source": "6",
+     "target": "6",
+     "label": "a, b",
+     "directed": true
+    },
+    {
+     "id": "e11",
+     "source": "7",
+     "target": "8",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e12",
+     "source": "8",
+     "target": "9",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e13",
+     "source": "9",
+     "target": "9",
+     "label": "a, b",
+     "directed": true
+    }
+   ],
+   "animations": []
+  },
+  {
+   "id": "fig.dfa-podmnozinova",
+   "title": "DFA po podmnožinovej konštrukcii (dosiahnuteľné stavy)",
+   "caption": "Stavy sú množiny stavov NFA; $\\emptyset$ je pasca.",
+   "origin": "generated",
+   "illustrates": [
+    "alg.podmnozinova-konstrukcia",
+    "ex.nfa-na-dfa"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "∅",
+     "x": 0,
+     "y": 0,
+     "label": "∅"
+    },
+    {
+     "id": "{1}",
+     "x": 150,
+     "y": 0,
+     "label": "▸ {1}"
+    },
+    {
+     "id": "{2}",
+     "x": 300,
+     "y": 0,
+     "label": "{2}"
+    },
+    {
+     "id": "{3,7}",
+     "x": 450,
+     "y": 0,
+     "label": "{3,7}"
+    },
+    {
+     "id": "{3,4,E}",
+     "x": 0,
+     "y": 100,
+     "label": "{3,4,E} ◉"
+    },
+    {
+     "id": "{3,5,7}",
+     "x": 150,
+     "y": 100,
+     "label": "{3,5,7}"
+    },
+    {
+     "id": "{3,6,7}",
+     "x": 300,
+     "y": 100,
+     "label": "{3,6,7} ◉"
+    },
+    {
+     "id": "{3,7,9}",
+     "x": 450,
+     "y": 100,
+     "label": "{3,7,9} ◉"
+    },
+    {
+     "id": "{3,4,6,E}",
+     "x": 0,
+     "y": 200,
+     "label": "{3,4,6,E} ◉"
+    },
+    {
+     "id": "{3,4,8,E}",
+     "x": 150,
+     "y": 200,
+     "label": "{3,4,8,E} ◉"
+    },
+    {
+     "id": "{3,4,9,E}",
+     "x": 300,
+     "y": 200,
+     "label": "{3,4,9,E} ◉"
+    },
+    {
+     "id": "{3,5,6,7}",
+     "x": 450,
+     "y": 200,
+     "label": "{3,5,6,7} ◉"
+    },
+    {
+     "id": "{3,5,7,9}",
+     "x": 0,
+     "y": 300,
+     "label": "{3,5,7,9} ◉"
+    },
+    {
+     "id": "{3,6,7,9}",
+     "x": 150,
+     "y": 300,
+     "label": "{3,6,7,9} ◉"
+    },
+    {
+     "id": "{3,4,6,8,E}",
+     "x": 300,
+     "y": 300,
+     "label": "{3,4,6,8,E} ◉"
+    },
+    {
+     "id": "{3,4,6,9,E}",
+     "x": 450,
+     "y": 300,
+     "label": "{3,4,6,9,E} ◉"
+    },
+    {
+     "id": "{3,4,8,9,E}",
+     "x": 0,
+     "y": 400,
+     "label": "{3,4,8,9,E} ◉"
+    },
+    {
+     "id": "{3,5,6,7,9}",
+     "x": 150,
+     "y": 400,
+     "label": "{3,5,6,7,9} ◉"
+    },
+    {
+     "id": "{3,4,6,8,9,E}",
+     "x": 300,
+     "y": 400,
+     "label": "{3,4,6,8,9,E} ◉"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "∅",
+     "target": "∅",
+     "label": "a, b",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "{1}",
+     "target": "{2}",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "{1}",
+     "target": "∅",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "{2}",
+     "target": "{3,4,E}",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "{2}",
+     "target": "∅",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e5",
+     "source": "{3,7}",
+     "target": "{3,4,8,E}",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e6",
+     "source": "{3,7}",
+     "target": "{3,7}",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e7",
+     "source": "{3,4,E}",
+     "target": "{3,4,E}",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e8",
+     "source": "{3,4,E}",
+     "target": "{3,5,7}",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e9",
+     "source": "{3,5,7}",
+     "target": "{3,4,6,8,E}",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e10",
+     "source": "{3,5,7}",
+     "target": "{3,7}",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e11",
+     "source": "{3,6,7}",
+     "target": "{3,4,6,8,E}",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e12",
+     "source": "{3,6,7}",
+     "target": "{3,6,7}",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e13",
+     "source": "{3,7,9}",
+     "target": "{3,4,8,9,E}",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e14",
+     "source": "{3,7,9}",
+     "target": "{3,7,9}",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e15",
+     "source": "{3,4,6,E}",
+     "target": "{3,4,6,E}",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e16",
+     "source": "{3,4,6,E}",
+     "target": "{3,5,6,7}",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e17",
+     "source": "{3,4,8,E}",
+     "target": "{3,4,E}",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e18",
+     "source": "{3,4,8,E}",
+     "target": "{3,5,7,9}",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e19",
+     "source": "{3,4,9,E}",
+     "target": "{3,4,9,E}",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e20",
+     "source": "{3,4,9,E}",
+     "target": "{3,5,7,9}",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e21",
+     "source": "{3,5,6,7}",
+     "target": "{3,4,6,8,E}",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e22",
+     "source": "{3,5,6,7}",
+     "target": "{3,6,7}",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e23",
+     "source": "{3,5,7,9}",
+     "target": "{3,4,6,8,9,E}",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e24",
+     "source": "{3,5,7,9}",
+     "target": "{3,7,9}",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e25",
+     "source": "{3,6,7,9}",
+     "target": "{3,4,6,8,9,E}",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e26",
+     "source": "{3,6,7,9}",
+     "target": "{3,6,7,9}",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e27",
+     "source": "{3,4,6,8,E}",
+     "target": "{3,4,6,E}",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e28",
+     "source": "{3,4,6,8,E}",
+     "target": "{3,5,6,7,9}",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e29",
+     "source": "{3,4,6,9,E}",
+     "target": "{3,4,6,9,E}",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e30",
+     "source": "{3,4,6,9,E}",
+     "target": "{3,5,6,7,9}",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e31",
+     "source": "{3,4,8,9,E}",
+     "target": "{3,4,9,E}",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e32",
+     "source": "{3,4,8,9,E}",
+     "target": "{3,5,7,9}",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e33",
+     "source": "{3,5,6,7,9}",
+     "target": "{3,4,6,8,9,E}",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e34",
+     "source": "{3,5,6,7,9}",
+     "target": "{3,6,7,9}",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e35",
+     "source": "{3,4,6,8,9,E}",
+     "target": "{3,4,6,9,E}",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e36",
+     "source": "{3,4,6,8,9,E}",
+     "target": "{3,5,6,7,9}",
+     "label": "b",
+     "directed": true
+    }
+   ],
+   "animations": []
+  },
+  {
+   "id": "fig.nfa-tabulka",
+   "title": "Prechodová tabuľka NFA s dvoma stavmi",
+   "caption": "Slajd 3.",
+   "origin": "slides",
+   "illustrates": [
+    "ex.nfa-dva-stavy"
+   ],
+   "sources": [
+    {
+     "file": "Afja08_ned_akceptory_P.pdf",
+     "page": 3
+    }
+   ],
+   "kind": "table",
+   "columns": [
+    "q",
+    "δ(q,a)",
+    "δ(q,b)"
+   ],
+   "rows": [
+    [
+     "1",
+     "{2}",
+     "∅"
+    ],
+    [
+     "2",
+     "∅",
+     "{1,2}"
+    ]
+   ]
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.regexp-enginy",
+   "title": "Regulárne výrazy v textových enginoch",
+   "summary": "NFA je prirodzený medzikrok pri spracovaní regulárnych výrazov.",
+   "scenario": "Engine na regulárne výrazy musí vyhľadať vzor v dlhom texte.",
+   "modelling": "Regulárny výraz sa prevedie na NFA; stavy NFA vedú sledovanie všetkých možných zhôd naraz.",
+   "solution": "Simulácia množiny aktívnych stavov (ako v $\\delta^*$) funguje v čase $O(|Q|)$ na znak bez exponenciálneho nárastu; alebo sa NFA determinizuje podmnožinovou konštrukciou.",
+   "connects": [
+    "dfn.nfa",
+    "alg.podmnozinova-konstrukcia"
+   ],
+   "figures": [],
+   "tags": [
+    "vyhľadávanie"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.lexery-nfa",
+   "title": "Návrh lexikálnych analyzátorov",
+   "summary": "Z NFA pre každý token ku DFA.",
+   "scenario": "Generátor lexerov kombinuje NFA tokenov do jedného NFA a determinizuje.",
+   "modelling": "Tokeny sú regulárne jazyky; ich zjednotenie je NFA s novým počiatočným stavom.",
+   "solution": "Podmnožinová konštrukcia a minimalizácia dajú deterministický lexer.",
+   "connects": [
+    "alg.podmnozinova-konstrukcia",
+    "dfn.nfa"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.nedeterministicke-protokoly",
+   "title": "Modelovanie nedeterministických protokolov",
+   "summary": "Správanie s viacerými možnými reakciami.",
+   "scenario": "Protokol môže reagovať viacerými spôsobmi podľa neznámeho prostredia.",
+   "modelling": "Možné reakcie sú hodnoty $\\delta(q,a)$; prijímajúca vetva zodpovedá scenáru bez chyby.",
+   "solution": "Determinizácia umožní spustiť model ako deterministický automat.",
+   "connects": [
+    "dfn.nfa",
+    "dfn.delta-hviezdicka"
+   ],
+   "figures": [],
+   "tags": [
+    "modelovanie"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.ned-det-1",
+   "kind": "mcq",
+   "prompt": "Kedy NFA slovo $w$ prijme?",
+   "options": [
+    "keď všetky vetvy skončia v koncovom stave",
+    "keď $\\delta^*(\\{q_I\\},w)\\cap F\\ne\\emptyset$",
+    "keď je $\\delta^*(\\{q_I\\},w)=F$",
+    "keď je $q_I\\in F$"
+   ],
+   "answer": 1,
+   "explanation": "Stačí jedna prijímajúca vetva.",
+   "about": [
+    "dfn.jazyk-nfa"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ned-det-2",
+   "kind": "truefalse",
+   "prompt": "NFA rozpoznávajú viac jazykov ako DFA.",
+   "answer": false,
+   "explanation": "Veta 8.1: ku každému NFA existuje DFA s rovnakým jazykom.",
+   "about": [
+    "thm.veta-8-1-nfa-na-dfa"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ned-det-3",
+   "kind": "mcq",
+   "prompt": "Koľko stavov môže mať DFA po podmnožinovej konštrukcii pre NFA s $n$ stavmi?",
+   "options": [
+    "$n$",
+    "najviac $n^2$",
+    "najviac $2^n$",
+    "najviac $n!$"
+   ],
+   "answer": 2,
+   "explanation": "Stavmi sú podmnožiny $Q$, ktorých je $2^n$.",
+   "about": [
+    "alg.podmnozinova-konstrukcia"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ned-det-4",
+   "kind": "mcq",
+   "prompt": "Aká je množina $\\delta^*(\\{1\\},ab)$ pre NFA z príkladu s dvoma stavmi?",
+   "options": [
+    "$\\{1\\}$",
+    "$\\{2\\}$",
+    "$\\{1,2\\}$",
+    "$\\emptyset$"
+   ],
+   "answer": 2,
+   "explanation": "$\\{1\\}\\xrightarrow{a}\\{2\\}\\xrightarrow{b}\\{1,2\\}$.",
+   "about": [
+    "ex.nfa-dva-stavy"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ned-det-5",
+   "kind": "truefalse",
+   "prompt": "Ak $\\delta^*(A,\\omega)=\\emptyset$, tak $\\delta^*(A,\\omega a)=\\emptyset$ pre každé $a$.",
+   "answer": true,
+   "explanation": "Zjednotenie cez prázdnu množinu je prázdne.",
+   "about": [
+    "dfn.delta-hviezdicka"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ned-det-6",
+   "kind": "flashcard",
+   "prompt": "Opíšte podmnožinovú konštrukciu.",
+   "answer": "Stavmi DFA sú podmnožiny $Q$, počiatočný stav je $\\{q_I\\}$, $f(A,a)=\\bigcup_{q\\in A}\\delta(q,a)$, koncové sú množiny, ktoré obsahujú koncový stav NFA.",
+   "explanation": "Veta 8.1.",
+   "about": [
+    "alg.podmnozinova-konstrukcia"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ned-det-7",
+   "kind": "open",
+   "prompt": "Prečo prázdna množina nie je koncovým stavom v podmnožinovej konštrukcii?",
+   "answer": "Neobsahuje žiadny koncový stav NFA ($\\emptyset\\cap F=\\emptyset$), takže zodpovedá odmietnutiu.",
+   "explanation": "Definícia $F'$.",
+   "about": [
+    "alg.podmnozinova-konstrukcia"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.ned-det-8",
+   "kind": "mcq",
+   "prompt": "Ktoré tvrdenie dokazuje indukcia v Vete 8.1?",
+   "options": [
+    "$f^*(\\{q_I\\},\\omega)=\\delta^*(\\{q_I\\},\\omega)$",
+    "$|Q'|=2^{|Q|}$",
+    "$F'=F$",
+    "$\\delta$ je totálna"
+   ],
+   "answer": 0,
+   "explanation": "Stav DFA po $\\omega$ je množina dosiahnuteľných stavov NFA.",
+   "about": [
+    "thm.veta-8-1-nfa-na-dfa"
+   ],
+   "difficulty": 1
+  }
+ ]
+}

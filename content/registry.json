@@ -1,0 +1,1092 @@
+{
+ "schemaVersion": 1,
+ "topics": [
+  {
+   "id": "gramatiky",
+   "title": "Jazyky, gramatiky a Chomského hierarchia",
+   "course": "A",
+   "order": 1,
+   "sourceFiles": [
+    "Afja01_gramatiky_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "automaty-vystup",
+   "title": "Konečnostavové automaty s výstupom",
+   "course": "A",
+   "order": 2,
+   "sourceFiles": [
+    "Afja02_automaty_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "nedosiahnutelne",
+   "title": "Redukcia automatov I: nedosiahnuteľné stavy",
+   "course": "A",
+   "order": 3,
+   "sourceFiles": [
+    "Afja03_redukcia_nedos_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "ekv-stavy",
+   "title": "Redukcia automatov II: ekvivalentné stavy",
+   "course": "A",
+   "order": 4,
+   "sourceFiles": [
+    "Afja04_redukcia_ekviv_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "optimalnost",
+   "title": "Redukcia automatov III: korektnosť a optimálnosť",
+   "course": "A",
+   "order": 5,
+   "sourceFiles": [
+    "Afja05_redukcia_optim_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "akceptory",
+   "title": "Deterministické konečnostavové akceptory",
+   "course": "A",
+   "order": 6,
+   "sourceFiles": [
+    "Afja06_akceptory_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "operacie",
+   "title": "Operácie s regulárnymi jazykmi",
+   "course": "A",
+   "order": 7,
+   "sourceFiles": [
+    "Afja07_operacie_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "nedeterminizmus",
+   "title": "Nedeterministické konečnostavové akceptory",
+   "course": "A",
+   "order": 8,
+   "sourceFiles": [
+    "Afja08_ned_akceptory_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "eps-akceptory",
+   "title": "ε-akceptory",
+   "course": "A",
+   "order": 9,
+   "sourceFiles": [
+    "Afja09_eps_akceptory_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "reg-gramatiky",
+   "title": "Regulárne gramatiky",
+   "course": "A",
+   "order": 10,
+   "sourceFiles": [
+    "Afja10_reg_gramatiky_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "reg-vyrazy",
+   "title": "Regulárne výrazy I: základné vlastnosti",
+   "course": "A",
+   "order": 11,
+   "sourceFiles": [
+    "Afja11_reg_vyrazy_zakl_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "reg-rovnice",
+   "title": "Regulárne výrazy II: rovnice",
+   "course": "A",
+   "order": 12,
+   "sourceFiles": [
+    "Afja12_reg_vyrazy_rovn_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "konstrukcie",
+   "title": "Ďalšie konštrukcie a uzavretosť regulárnych jazykov",
+   "course": "A",
+   "order": 13,
+   "sourceFiles": [
+    "Afja13_konstrukcie_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "zas-automaty",
+   "title": "Zásobníkové automaty",
+   "course": "B",
+   "order": 14,
+   "sourceFiles": [
+    "Afjb01_ZasAutomat_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "det-zas-automaty",
+   "title": "Deterministické zásobníkové automaty",
+   "course": "B",
+   "order": 15,
+   "sourceFiles": [
+    "Afjb02_DetZasAutomat_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "bezkontextove-gramatiky",
+   "title": "Bezkontextové gramatiky",
+   "course": "B",
+   "order": 16,
+   "sourceFiles": [
+    "Afjb03_BezGramatika_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "zas-bezgram",
+   "title": "Zásobníkové automaty a bezkontextové gramatiky",
+   "course": "B",
+   "order": 17,
+   "sourceFiles": [
+    "Afjb04_ZasAut-BezGram_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "pumping1",
+   "title": "Pumping lema pre bezkontextové jazyky I",
+   "course": "B",
+   "order": 18,
+   "sourceFiles": [
+    "Afjb05_Pumping-I_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "pumping2",
+   "title": "Pumping lema pre bezkontextové jazyky II",
+   "course": "B",
+   "order": 19,
+   "sourceFiles": [
+    "Afjb06_Pumping-II_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "uzaver-bezk",
+   "title": "Uzáverové vlastnosti bezkontextových jazykov",
+   "course": "B",
+   "order": 20,
+   "sourceFiles": [
+    "Afjb07_UzBezJazyky_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "doplnok-dbj",
+   "title": "Doplnok deterministických bezkontextových jazykov",
+   "course": "B",
+   "order": 21,
+   "sourceFiles": [
+    "Afjb08_DetBezDoplnok_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "det-bezk",
+   "title": "Deterministické bezkontextové jazyky",
+   "course": "B",
+   "order": 22,
+   "sourceFiles": [
+    "Afjb09_DetBezJazyky_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "zas-prevodniky",
+   "title": "Zásobníkové automaty s výstupom",
+   "course": "B",
+   "order": 23,
+   "sourceFiles": [
+    "Afjb10_ZasPrevodnik_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "kontextove",
+   "title": "Kontextové jazyky",
+   "course": "B",
+   "order": 24,
+   "sourceFiles": [
+    "Afjb11_KontextJaz_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "uzaver-kont",
+   "title": "Uzáverové vlastnosti kontextových jazykov",
+   "course": "B",
+   "order": 25,
+   "sourceFiles": [
+    "Afjb12_UzKontJazyky_P.pdf"
+   ],
+   "status": "draft"
+  },
+  {
+   "id": "rekurzivne-oc",
+   "title": "Rekurzívne vyčísliteľné jazyky",
+   "course": "B",
+   "order": 26,
+   "sourceFiles": [
+    "Afjb13_RekOcisJ_P.pdf"
+   ],
+   "status": "draft"
+  }
+ ],
+ "reserved": [
+  {
+   "id": "def.mnozina-relacia-funkcia",
+   "topic": "gramatiky",
+   "title": "Množina, relácia a funkcia"
+  },
+  {
+   "id": "def.ekvivalencia-rozklad",
+   "topic": "gramatiky",
+   "title": "Ekvivalencia a rozklad množiny"
+  },
+  {
+   "id": "def.indukcia",
+   "topic": "gramatiky",
+   "title": "Matematická indukcia"
+  },
+  {
+   "id": "def.dokaz-sporom",
+   "topic": "gramatiky",
+   "title": "Dôkaz sporom"
+  },
+  {
+   "id": "def.holubnikovy-princip",
+   "topic": "gramatiky",
+   "title": "Holubníkový princíp"
+  },
+  {
+   "id": "def.strom",
+   "topic": "gramatiky",
+   "title": "Strom"
+  },
+  {
+   "id": "dfn.abeceda",
+   "topic": "gramatiky",
+   "title": "Abeceda a symbol"
+  },
+  {
+   "id": "dfn.slovo",
+   "topic": "gramatiky",
+   "title": "Slovo a tranzitívny uzáver Σ*"
+  },
+  {
+   "id": "dfn.zretazenie-slov",
+   "topic": "gramatiky",
+   "title": "Dĺžka slova a zreťazenie"
+  },
+  {
+   "id": "dfn.jazyk",
+   "topic": "gramatiky",
+   "title": "Jazyk"
+  },
+  {
+   "id": "dfn.gramatika",
+   "topic": "gramatiky",
+   "title": "Gramatika"
+  },
+  {
+   "id": "dfn.odvodenie",
+   "topic": "gramatiky",
+   "title": "Odvoditeľnosť"
+  },
+  {
+   "id": "dfn.jazyk-gramatiky",
+   "topic": "gramatiky",
+   "title": "Jazyk generovaný gramatikou"
+  },
+  {
+   "id": "def.chomskeho-hierarchia",
+   "topic": "gramatiky",
+   "title": "Chomského hierarchia"
+  },
+  {
+   "id": "dfn.konecnostavovy-automat",
+   "topic": "automaty-vystup",
+   "title": "Konečnostavový automat s výstupom"
+  },
+  {
+   "id": "dfn.stavovy-diagram",
+   "topic": "automaty-vystup",
+   "title": "Grafická reprezentácia automatu"
+  },
+  {
+   "id": "dfn.rozsirene-funkcie",
+   "topic": "automaty-vystup",
+   "title": "Zovšeobecnené funkcie f* a g*"
+  },
+  {
+   "id": "thm.lema-2-2-zretazenie",
+   "topic": "automaty-vystup",
+   "title": "Lema 2.2: f* a g* na zreťazení slov"
+  },
+  {
+   "id": "dfn.ekvivalentne-automaty",
+   "topic": "nedosiahnutelne",
+   "title": "Ekvivalentné automaty"
+  },
+  {
+   "id": "dfn.minimalny-automat",
+   "topic": "nedosiahnutelne",
+   "title": "Minimálny (optimálny) automat"
+  },
+  {
+   "id": "dfn.dosiahnutelny-stav",
+   "topic": "nedosiahnutelne",
+   "title": "Dosiahnuteľný stav"
+  },
+  {
+   "id": "alg.dosiahnutelne-stavy",
+   "topic": "nedosiahnutelne",
+   "title": "Hľadanie dosiahnuteľných stavov"
+  },
+  {
+   "id": "alg.odstranenie-nedosiahnutelnych",
+   "topic": "nedosiahnutelne",
+   "title": "Odstránenie nedosiahnuteľných stavov"
+  },
+  {
+   "id": "dfn.ekvivalentne-stavy",
+   "topic": "ekv-stavy",
+   "title": "Ekvivalentné stavy"
+  },
+  {
+   "id": "dfn.k-ekvivalentne-stavy",
+   "topic": "ekv-stavy",
+   "title": "k-ekvivalentné stavy"
+  },
+  {
+   "id": "def.motivacia-k-ekvivalencie",
+   "topic": "ekv-stavy",
+   "title": "Prečo k-ekvivalencia"
+  },
+  {
+   "id": "thm.lema-4-1-ekvivalencie",
+   "topic": "ekv-stavy",
+   "title": "Lema 4.1: ekvivalencia a k-ekvivalencia sú ekvivalencie"
+  },
+  {
+   "id": "thm.lema-4-2-monotonnost",
+   "topic": "ekv-stavy",
+   "title": "Lema 4.2: monotónnosť k-ekvivalencie a charakterizácia ekvivalencie"
+  },
+  {
+   "id": "thm.veta-4-3-rekurzia-k-ekvivalencie",
+   "topic": "ekv-stavy",
+   "title": "Veta 4.3: (k+1)-ekvivalencia pomocou k-ekvivalencie a nasledovníkov"
+  },
+  {
+   "id": "dfn.rozklad-stavov",
+   "topic": "ekv-stavy",
+   "title": "Rozklad stavov na triedy k-ekvivalencie"
+  },
+  {
+   "id": "alg.rozklad-ekvivalentnych-stavov",
+   "topic": "ekv-stavy",
+   "title": "Rozklad na triedy ekvivalentných stavov"
+  },
+  {
+   "id": "alg.odstranenie-ekvivalentnych-stavov",
+   "topic": "ekv-stavy",
+   "title": "Odstraňovanie ekvivalentných stavov"
+  },
+  {
+   "id": "thm.lema-5-2-zastavenie-rozkladu",
+   "topic": "optimalnost",
+   "title": "Lema 5.2: algoritmus rozkladu sa vždy zastaví"
+  },
+  {
+   "id": "thm.lema-5-3-korektnost-rozkladu",
+   "topic": "optimalnost",
+   "title": "Lema 5.3: výstup algoritmu je rozklad na plne ekvivalentné stavy"
+  },
+  {
+   "id": "thm.veta-5-4-redukcia-zachovava-ekvivalenciu",
+   "topic": "optimalnost",
+   "title": "Veta 5.4: automat po odstránení ekvivalentných stavov je ekvivalentný s pôvodným"
+  },
+  {
+   "id": "dfn.izomorfizmus-automatov",
+   "topic": "optimalnost",
+   "title": "Izomorfizmus automatov"
+  },
+  {
+   "id": "thm.veta-5-5-izomorfizmus",
+   "topic": "optimalnost",
+   "title": "Veta 5.5: ekvivalentné automaty bez nedosiahnuteľných a ekvivalentných stavov sú izomorfné"
+  },
+  {
+   "id": "thm.dosledok-5-6-optimalnost",
+   "topic": "optimalnost",
+   "title": "Dôsledok 5.6: automat bez nedosiahnuteľných a ekvivalentných stavov je optimálny"
+  },
+  {
+   "id": "alg.test-ekvivalencie-automatov",
+   "topic": "optimalnost",
+   "title": "Testovanie ekvivalencie dvoch automatov"
+  },
+  {
+   "id": "dfn.konecnostavovy-akceptor",
+   "topic": "akceptory",
+   "title": "Konečnostavový akceptor"
+  },
+  {
+   "id": "dfn.jazyk-akceptora",
+   "topic": "akceptory",
+   "title": "Jazyk rozpoznávaný akceptorom"
+  },
+  {
+   "id": "dfn.ekvivalentne-stavy-akceptora",
+   "topic": "akceptory",
+   "title": "Ekvivalentné a k-ekvivalentné stavy akceptora"
+  },
+  {
+   "id": "thm.ekvivalencia-stavov-akceptora",
+   "topic": "akceptory",
+   "title": "Prenos tvrdení o ekvivalencii stavov na akceptory"
+  },
+  {
+   "id": "alg.minimalizacia-akceptora",
+   "topic": "akceptory",
+   "title": "Minimalizácia akceptora"
+  },
+  {
+   "id": "def.uzavretost",
+   "topic": "operacie",
+   "title": "Uzavretosť triedy jazykov na operáciu"
+  },
+  {
+   "id": "dfn.regularny-jazyk",
+   "topic": "operacie",
+   "title": "Regulárny jazyk"
+  },
+  {
+   "id": "thm.uzavretost-doplnok",
+   "topic": "operacie",
+   "title": "Veta 7.1: regulárne jazyky sú uzavreté na doplnok"
+  },
+  {
+   "id": "alg.sucinova-konstrukcia",
+   "topic": "operacie",
+   "title": "Súčinová konštrukcia akceptorov"
+  },
+  {
+   "id": "thm.uzavretost-prienik",
+   "topic": "operacie",
+   "title": "Veta 7.2: regulárne jazyky sú uzavreté na prienik"
+  },
+  {
+   "id": "thm.uzavretost-zjednotenie-rozdiel",
+   "topic": "operacie",
+   "title": "Veta 7.3: uzavretosť na zjednotenie, rozdiel, symetrický rozdiel"
+  },
+  {
+   "id": "thm.rozhodnutelnost-prazdnosti",
+   "topic": "operacie",
+   "title": "Lema 7.4: rozhodnuteľnosť L=Ø a L=Σ*"
+  },
+  {
+   "id": "thm.rozhodnutelnost-inkluzie-rovnosti",
+   "topic": "operacie",
+   "title": "Veta 7.5: rozhodnuteľnosť inklúzie, rovnosti, disjunktnosti a pokrytia"
+  },
+  {
+   "id": "dfn.nfa",
+   "topic": "nedeterminizmus",
+   "title": "Nedeterministický konečnostavový akceptor"
+  },
+  {
+   "id": "dfn.delta-hviezdicka",
+   "topic": "nedeterminizmus",
+   "title": "Zovšeobecnená prechodová funkcia δ*"
+  },
+  {
+   "id": "dfn.jazyk-nfa",
+   "topic": "nedeterminizmus",
+   "title": "Jazyk rozpoznávaný NFA"
+  },
+  {
+   "id": "alg.podmnozinova-konstrukcia",
+   "topic": "nedeterminizmus",
+   "title": "Podmnožinová konštrukcia"
+  },
+  {
+   "id": "thm.veta-8-1-nfa-na-dfa",
+   "topic": "nedeterminizmus",
+   "title": "Veta 8.1: každý NFA sa dá nahradiť ekvivalentným DFA"
+  },
+  {
+   "id": "dfn.eps-akceptor",
+   "topic": "eps-akceptory",
+   "title": "ε-akceptor"
+  },
+  {
+   "id": "dfn.jazyk-eps-akceptora",
+   "topic": "eps-akceptory",
+   "title": "Jazyk rozpoznávaný ε-akceptorom"
+  },
+  {
+   "id": "alg.odstranenie-eps-prechodov",
+   "topic": "eps-akceptory",
+   "title": "Odstránenie ε-prechodov"
+  },
+  {
+   "id": "thm.veta-9-1-eps-na-nfa",
+   "topic": "eps-akceptory",
+   "title": "Veta 9.1: každý ε-akceptor sa dá nahradiť NFA"
+  },
+  {
+   "id": "dfn.regularna-gramatika",
+   "topic": "reg-gramatiky",
+   "title": "Regulárna gramatika"
+  },
+  {
+   "id": "dfn.rozsirena-regularna-gramatika",
+   "topic": "reg-gramatiky",
+   "title": "Rozšírená regulárna gramatika"
+  },
+  {
+   "id": "thm.veta-10-1-dfa-na-gramatiku",
+   "topic": "reg-gramatiky",
+   "title": "Veta 10.1: každý DFA sa dá nahradiť regulárnou gramatikou"
+  },
+  {
+   "id": "alg.gramatika-na-eps-akceptor",
+   "topic": "reg-gramatiky",
+   "title": "Konštrukcia ε-akceptora z rozšírenej regulárnej gramatiky"
+  },
+  {
+   "id": "thm.veta-10-2-gramatika-na-eps-akceptor",
+   "topic": "reg-gramatiky",
+   "title": "Veta 10.2: rozšírená regulárna gramatika sa dá nahradiť ε-akceptorom"
+  },
+  {
+   "id": "dfn.regularny-vyraz",
+   "topic": "reg-vyrazy",
+   "title": "Regulárny výraz"
+  },
+  {
+   "id": "dfn.jazyk-vyrazu",
+   "topic": "reg-vyrazy",
+   "title": "Jazyk označený regulárnym výrazom"
+  },
+  {
+   "id": "alg.thompsonova-konstrukcia",
+   "topic": "reg-vyrazy",
+   "title": "Konštrukcia ε-akceptora z regulárneho výrazu"
+  },
+  {
+   "id": "thm.veta-11-1-vyraz-na-eps-akceptor",
+   "topic": "reg-vyrazy",
+   "title": "Veta 11.1: každý regulárny výraz sa dá nahradiť ε-akceptorom"
+  },
+  {
+   "id": "dfn.rovnost-vyrazov",
+   "topic": "reg-rovnice",
+   "title": "Rovnosť a usporiadanie regulárnych výrazov, mocnina"
+  },
+  {
+   "id": "thm.lema-12-1-algebra-vyrazov",
+   "topic": "reg-rovnice",
+   "title": "Lema 12.1: algebraické vlastnosti regulárnych výrazov"
+  },
+  {
+   "id": "thm.veta-12-2-ardenovo-lemma",
+   "topic": "reg-rovnice",
+   "title": "Veta 12.2: minimálne riešenie rovnice x=αx+β je x=α*β"
+  },
+  {
+   "id": "alg.riesenie-sustavy-rovnic",
+   "topic": "reg-rovnice",
+   "title": "Riešenie sústavy regulárnych rovníc"
+  },
+  {
+   "id": "thm.veta-12-3-dfa-na-vyraz",
+   "topic": "reg-rovnice",
+   "title": "Veta 12.3: každý DFA sa dá nahradiť regulárnym výrazom"
+  },
+  {
+   "id": "def.konverzie-reprezentacii",
+   "topic": "konstrukcie",
+   "title": "Konverzie medzi reprezentáciami regulárnych jazykov"
+  },
+  {
+   "id": "def.uzavretost-regularnych",
+   "topic": "konstrukcie",
+   "title": "Prehľad uzavretosti regulárnych jazykov na operácie"
+  },
+  {
+   "id": "dfn.zrkadlovy-obraz",
+   "topic": "konstrukcie",
+   "title": "Zrkadlový obraz jazyka"
+  },
+  {
+   "id": "dfn.homomorfizmus",
+   "topic": "konstrukcie",
+   "title": "Homomorfizmus a inverzný homomorfizmus"
+  },
+  {
+   "id": "thm.uzavretost-zretazenie-iteracia",
+   "topic": "konstrukcie",
+   "title": "Veta 13.1: uzavretosť na zreťazenie a iteráciu"
+  },
+  {
+   "id": "alg.konstrukcia-zretazenia-iteracie",
+   "topic": "konstrukcie",
+   "title": "Priamočiara konštrukcia zreťazenia a iterácie pre akceptory"
+  },
+  {
+   "id": "thm.uzavretost-zrkadlo",
+   "topic": "konstrukcie",
+   "title": "Veta 13.2: uzavretosť na zrkadlový obraz"
+  },
+  {
+   "id": "thm.uzavretost-homomorfizmus",
+   "topic": "konstrukcie",
+   "title": "Veta 13.3: uzavretosť na homomorfizmus a inverzný homomorfizmus"
+  },
+  {
+   "id": "thm.veta-13-4-anbn-nie-je-regularny",
+   "topic": "konstrukcie",
+   "title": "Veta 13.4: a^n b^n je bezkontextový, ale nie regulárny"
+  },
+  {
+   "id": "dfn.zasobnikovy-automat",
+   "topic": "zas-automaty",
+   "title": "Zásobníkový automat"
+  },
+  {
+   "id": "dfn.konfiguracia-pda",
+   "topic": "zas-automaty",
+   "title": "Konfigurácia a krok výpočtu"
+  },
+  {
+   "id": "dfn.akceptovanie-pda",
+   "topic": "zas-automaty",
+   "title": "Akceptovanie koncovým stavom a prázdnym zásobníkom"
+  },
+  {
+   "id": "thm.pda-prazdny-na-koncove",
+   "topic": "zas-automaty",
+   "title": "Lema: akceptovanie prázdnym zásobníkom možno nahradiť koncovými stavmi"
+  },
+  {
+   "id": "thm.pda-koncove-na-prazdny",
+   "topic": "zas-automaty",
+   "title": "Lema: akceptovanie koncovými stavmi možno nahradiť prázdnym zásobníkom"
+  },
+  {
+   "id": "thm.pda-zmena-o-jeden-symbol",
+   "topic": "zas-automaty",
+   "title": "Lema: zásobník sa mení najviac o jeden symbol"
+  },
+  {
+   "id": "dfn.dpda",
+   "topic": "det-zas-automaty",
+   "title": "Deterministický zásobníkový automat"
+  },
+  {
+   "id": "def.else-eps-prechod",
+   "topic": "det-zas-automaty",
+   "title": "Else-ε-prechod"
+  },
+  {
+   "id": "ex.dpda-aritmeticke-vyrazy",
+   "topic": "det-zas-automaty",
+   "title": "DPDA pre aritmetické výrazy"
+  },
+  {
+   "id": "thm.dpda-bez-else-eps",
+   "topic": "det-zas-automaty",
+   "title": "Lema: DPDA možno upraviť bez else-ε-prechodov pre jazyk L$"
+  },
+  {
+   "id": "dfn.bezkontextova-gramatika",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Bezkontextová gramatika"
+  },
+  {
+   "id": "dfn.lave-odvodenie",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Ľavé odvodenie"
+  },
+  {
+   "id": "dfn.derivacny-strom",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Derivačný strom"
+  },
+  {
+   "id": "thm.eliminacia-eps-pravidiel",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Lema: každú CFG možno nahradiť CFG bez ε-pravidiel"
+  },
+  {
+   "id": "alg.odstranenie-eps-pravidiel",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Odstránenie ε-pravidiel"
+  },
+  {
+   "id": "thm.eliminacia-jednotkovych-pravidiel",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Lema: každú CFG možno nahradiť CFG bez jednotkových pravidiel A→B"
+  },
+  {
+   "id": "alg.odstranenie-jednotkovych-pravidiel",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Odstránenie jednotkových pravidiel"
+  },
+  {
+   "id": "dfn.chomskeho-normalny-tvar",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Chomského normálny tvar"
+  },
+  {
+   "id": "thm.chomskeho-normalny-tvar",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Veta: každú CFG možno nahradiť CFG v Chomského normálnom tvare"
+  },
+  {
+   "id": "alg.prevod-do-cnf",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Prevod gramatiky do Chomského normálneho tvaru"
+  },
+  {
+   "id": "thm.bezgram-na-pda",
+   "topic": "zas-bezgram",
+   "title": "Veta (CFG → PDA): ku každej CFG existuje PDA s akceptovaním prázdnym zásobníkom"
+  },
+  {
+   "id": "alg.pda-z-gramatiky",
+   "topic": "zas-bezgram",
+   "title": "Konštrukcia PDA z gramatiky v CNF"
+  },
+  {
+   "id": "thm.pda-na-bezgram",
+   "topic": "zas-bezgram",
+   "title": "Veta (PDA → CFG): ku každému PDA s akceptovaním prázdnym zásobníkom existuje CFG"
+  },
+  {
+   "id": "alg.trojicova-konstrukcia",
+   "topic": "zas-bezgram",
+   "title": "Trojicová konštrukcia gramatiky z PDA"
+  },
+  {
+   "id": "dfn.bezkontextovy-jazyk",
+   "topic": "zas-bezgram",
+   "title": "Bezkontextový jazyk a deterministický bezkontextový jazyk"
+  },
+  {
+   "id": "thm.regularne-v-dcfl",
+   "topic": "zas-bezgram",
+   "title": "Regulárne jazyky sú podmnožinou deterministických bezkontextových jazykov"
+  },
+  {
+   "id": "thm.anbn-dcfl-nie-regularny",
+   "topic": "zas-bezgram",
+   "title": "Lema: a^n b^n je deterministický bezkontextový, ale nie regulárny"
+  },
+  {
+   "id": "def.vyska-binarneho-stromu",
+   "topic": "pumping1",
+   "title": "Výška binárneho stromu a počet listov"
+  },
+  {
+   "id": "thm.pumping-lema-bezkontextove",
+   "topic": "pumping1",
+   "title": "Pumping lema pre bezkontextové jazyky"
+  },
+  {
+   "id": "def.schema-pumping",
+   "topic": "pumping2",
+   "title": "Schéma dôkazu nebezkontextovosti pomocou pumping lemy"
+  },
+  {
+   "id": "thm.anbncn-nie-je-bezkontextovy",
+   "topic": "pumping2",
+   "title": "a^n b^n c^n nie je bezkontextový jazyk"
+  },
+  {
+   "id": "thm.kopirovanie-nie-je-bezkontextove",
+   "topic": "pumping2",
+   "title": "Jazyk a^{n1}b^{n2}a^{n1}b^{n2} nie je bezkontextový"
+  },
+  {
+   "id": "thm.prvocisla-nie-su-bezkontextove",
+   "topic": "pumping2",
+   "title": "Jazyk a^p, p prvočíslo, nie je bezkontextový"
+  },
+  {
+   "id": "thm.cfl-nie-uzavrete-prienik",
+   "topic": "uzaver-bezk",
+   "title": "Bezkontextové jazyky nie sú uzavreté na prienik"
+  },
+  {
+   "id": "thm.cfl-nie-uzavrete-doplnok",
+   "topic": "uzaver-bezk",
+   "title": "Bezkontextové jazyky nie sú uzavreté na doplnok"
+  },
+  {
+   "id": "thm.cfl-uzavrete-zjednotenie-zretazenie-iteracia-zrkadlo",
+   "topic": "uzaver-bezk",
+   "title": "Uzavretosť CFL na zjednotenie, zreťazenie, iteráciu a zrkadlový obraz"
+  },
+  {
+   "id": "thm.cfl-regularny-prienik",
+   "topic": "uzaver-bezk",
+   "title": "Prienik CFL s regulárnym jazykom je bezkontextový"
+  },
+  {
+   "id": "alg.sucin-pda-dfa",
+   "topic": "uzaver-bezk",
+   "title": "Súčinová konštrukcia PDA a DFA"
+  },
+  {
+   "id": "def.prehlad-uzavretosti-cfl",
+   "topic": "uzaver-bezk",
+   "title": "Prehľad uzavretosti: bezkontextové a regulárne jazyky"
+  },
+  {
+   "id": "def.nekonecne-eps-vypocty",
+   "topic": "doplnok-dbj",
+   "title": "Nekonečné ε-výpočty DPDA a prečo prekážajú doplnku"
+  },
+  {
+   "id": "thm.lema-nekonecna-eps-postupnost",
+   "topic": "doplnok-dbj",
+   "title": "Lema: viac ako m po sebe idúcich ε-prechodov znamená nekonečnú postupnosť"
+  },
+  {
+   "id": "dfn.funkcia-h",
+   "topic": "doplnok-dbj",
+   "title": "Funkcia h(p,A) s hodnotami ε, − a +"
+  },
+  {
+   "id": "alg.vypocet-tabulky-h",
+   "topic": "doplnok-dbj",
+   "title": "Výpočet tabuľky h"
+  },
+  {
+   "id": "alg.konstrukcia-zastavujuceho-dpda",
+   "topic": "doplnok-dbj",
+   "title": "Konštrukcia DPDA M' zastavujúceho vždy"
+  },
+  {
+   "id": "thm.dpda-vzdy-zastavi",
+   "topic": "doplnok-dbj",
+   "title": "Veta: každý DPDA sa dá nahradiť DPDA, ktorý vždy zastaví"
+  },
+  {
+   "id": "thm.dcfl-uzavrete-doplnok",
+   "topic": "doplnok-dbj",
+   "title": "Dôsledok: deterministické bezkontextové jazyky sú uzavreté na doplnok"
+  },
+  {
+   "id": "thm.cfl-nie-je-dcfl",
+   "topic": "det-bezk",
+   "title": "Existuje bezkontextový jazyk, ktorý nie je deterministický bezkontextový"
+  },
+  {
+   "id": "thm.dcfl-nie-uzavrete-prienik",
+   "topic": "det-bezk",
+   "title": "DCFL nie sú uzavreté na prienik"
+  },
+  {
+   "id": "thm.dcfl-nie-uzavrete-zjednotenie",
+   "topic": "det-bezk",
+   "title": "DCFL nie sú uzavreté na zjednotenie"
+  },
+  {
+   "id": "thm.dcfl-regularny-prienik-zjednotenie",
+   "topic": "det-bezk",
+   "title": "Prienik a zjednotenie DCFL s regulárnym jazykom je DCFL"
+  },
+  {
+   "id": "def.prehlad-uzavretosti-dcfl",
+   "topic": "det-bezk",
+   "title": "Prehľad uzavretosti: CFL, DCFL, regulárne jazyky"
+  },
+  {
+   "id": "dfn.zasobnikovy-prevodnik",
+   "topic": "zas-prevodniky",
+   "title": "Deterministický zásobníkový prevodník"
+  },
+  {
+   "id": "def.zadny-polsky-zapis",
+   "topic": "zas-prevodniky",
+   "title": "Zadný poľský zápis"
+  },
+  {
+   "id": "ex.preklad-do-postfix",
+   "topic": "zas-prevodniky",
+   "title": "Preklad aritmetického výrazu do zadného poľského zápisu"
+  },
+  {
+   "id": "dfn.kontextova-gramatika",
+   "topic": "kontextove",
+   "title": "Kontextová gramatika"
+  },
+  {
+   "id": "dfn.lba",
+   "topic": "kontextove",
+   "title": "Nedeterministický lineárne ohraničený Turingov stroj"
+  },
+  {
+   "id": "dfn.akceptovanie-lba",
+   "topic": "kontextove",
+   "title": "Akceptovanie a odmietnutie LBA"
+  },
+  {
+   "id": "thm.lba-na-kontextovu",
+   "topic": "kontextove",
+   "title": "Veta (LBA → CSG): ku každému LBA existuje kontextová gramatika"
+  },
+  {
+   "id": "alg.kontextova-z-lba",
+   "topic": "kontextove",
+   "title": "Konštrukcia kontextovej gramatiky z LBA"
+  },
+  {
+   "id": "thm.kontextova-na-lba",
+   "topic": "kontextove",
+   "title": "Veta (CSG → LBA): ku každej kontextovej gramatike existuje LBA"
+  },
+  {
+   "id": "alg.lba-z-kontextovej",
+   "topic": "kontextove",
+   "title": "Konštrukcia LBA z kontextovej gramatiky"
+  },
+  {
+   "id": "dfn.kontextovy-jazyk",
+   "topic": "kontextove",
+   "title": "Kontextový jazyk"
+  },
+  {
+   "id": "thm.lba-kratky-vypocet",
+   "topic": "uzaver-kont",
+   "title": "Lema: LBA má akceptujúci výpočet vtedy a len vtedy, ak má akceptujúci výpočet kratší než d^n krokov"
+  },
+  {
+   "id": "thm.lba-vzdy-zastavi",
+   "topic": "uzaver-kont",
+   "title": "Veta: každý LBA sa dá nahradiť LBA, ktorý vždy zastaví"
+  },
+  {
+   "id": "alg.lba-s-pocitadlom",
+   "topic": "uzaver-kont",
+   "title": "Konštrukcia vždy zastavujúceho LBA s počítadlom krokov"
+  },
+  {
+   "id": "thm.dcsl-uzavrete-doplnok",
+   "topic": "uzaver-kont",
+   "title": "Deterministické kontextové jazyky sú uzavreté na doplnok"
+  },
+  {
+   "id": "thm.csl-uzavrete-doplnok",
+   "topic": "uzaver-kont",
+   "title": "Kontextové jazyky sú uzavreté na doplnok"
+  },
+  {
+   "id": "thm.csl-uzavrete-prienik-zjednotenie",
+   "topic": "uzaver-kont",
+   "title": "Kontextové aj deterministické kontextové jazyky sú uzavreté na prienik a zjednotenie"
+  },
+  {
+   "id": "thm.csl-uzavrete-zretazenie-iteracia-zrkadlo",
+   "topic": "uzaver-kont",
+   "title": "Uzavretosť na zreťazenie, iteráciu a zrkadlový obraz"
+  },
+  {
+   "id": "def.prehlad-uzavretosti-csl",
+   "topic": "uzaver-kont",
+   "title": "Prehľad uzavretosti: CSL, DCSL, CFL, DCFL, REG"
+  },
+  {
+   "id": "prob.lba-problem",
+   "topic": "uzaver-kont",
+   "title": "Otvorený problém: sú deterministické a nedeterministické kontextové jazyky rovnaké?"
+  },
+  {
+   "id": "dfn.frazova-gramatika",
+   "topic": "rekurzivne-oc",
+   "title": "Frázová gramatika"
+  },
+  {
+   "id": "thm.lema-n-normalny-tvar",
+   "topic": "rekurzivne-oc",
+   "title": "Lema N (normálny tvar frázových gramatík)"
+  },
+  {
+   "id": "dfn.turingov-stroj",
+   "topic": "rekurzivne-oc",
+   "title": "Turingov stroj"
+  },
+  {
+   "id": "thm.ts-na-frazovu",
+   "topic": "rekurzivne-oc",
+   "title": "Veta (TS → frázová gramatika): ku každému nedeterministickému TS existuje frázová gramatika"
+  },
+  {
+   "id": "thm.frazova-na-dts",
+   "topic": "rekurzivne-oc",
+   "title": "Veta (frázová gramatika → DTS): ku každej frázovej gramatike existuje deterministický TS"
+  },
+  {
+   "id": "alg.generovanie-retazcov",
+   "topic": "rekurzivne-oc",
+   "title": "Generovanie všetkých reťazcov nad N∪T∪{$}"
+  },
+  {
+   "id": "dfn.rekurzivne-vycisliteny-jazyk",
+   "topic": "rekurzivne-oc",
+   "title": "Rekurzívne vyčísliteľný a rekurzívny jazyk"
+  },
+  {
+   "id": "thm.re-uzavrete-prienik",
+   "topic": "rekurzivne-oc",
+   "title": "Rekurzívne vyčísliteľné jazyky sú uzavreté na prienik"
+  },
+  {
+   "id": "thm.re-uzavrete-ostatne",
+   "topic": "rekurzivne-oc",
+   "title": "Uzavretosť RE na zjednotenie, zreťazenie, iteráciu a zrkadlový obraz"
+  },
+  {
+   "id": "def.prehlad-uzavretosti-vsetkych",
+   "topic": "rekurzivne-oc",
+   "title": "Prehľad uzavretosti všetkých tried jazykov"
+  }
+ ]
+}

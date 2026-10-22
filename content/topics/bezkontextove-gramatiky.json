@@ -1,0 +1,1299 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "bezkontextove-gramatiky",
+  "title": "Bezkontextové gramatiky",
+  "course": "B",
+  "order": 16,
+  "sourceFiles": [
+   "Afjb03_BezGramatika_P.pdf"
+  ],
+  "summary": "Bezkontextová gramatika má pravidlá $A\\to\\alpha$ s jediným neterminálom vľavo. Prednáška zavádza ľavé odvodenie a derivačný strom a ukazuje, že každú bezkontextovú gramatiku možno upraviť na tvar bez $\\varepsilon$-pravidiel, bez jednotkových pravidiel a napokon do Chomského normálneho tvaru.",
+  "overview": "Bezkontextové gramatiky sú najdôležitejšou triedou gramatík: popisujú syntax väčšiny programovacích jazykov. Prednáška zavádza gramatiku, ľavé odvodenie a derivačný strom na príklade aritmetických výrazov. Potom zavedie postupné úpravy gramatiky: odstránenie $\\varepsilon$-pravidiel (cez množinu neterminálov odvoditeľných na $\\varepsilon$), odstránenie jednotkových pravidiel $A\\to B$ a rozdelenie dlhých pravidiel na binárne, čím vznikne Chomského normálny tvar, v ktorom majú všetky pravidlá tvar $A\\to BC$ alebo $A\\to a$. Normálne tvary sa používajú v dôkaze pumping lemy a pri prevode gramatiky na zásobníkový automat.",
+  "keyQuestions": [
+   "Čo je ľavé odvodenie a derivačný strom?",
+   "Ako sa odstránia $\\varepsilon$-pravidlá a jednotkové pravidlá?",
+   "Prečo sa každá bezkontextová gramatika dá previesť do Chomského normálneho tvaru?"
+  ],
+  "prerequisites": [
+   "gramatiky",
+   "zas-automaty"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "dfn.bezkontextova-gramatika",
+   "type": "definition",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Bezkontextová gramatika",
+   "terms": [
+    {
+     "term": "bezkontextová gramatika",
+     "alt": "context-free grammar, CFG",
+     "symbol": "G=(N,T,P,S)"
+    },
+    {
+     "term": "bezkontextový jazyk",
+     "alt": "context-free language, CFL"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb03_BezGramatika_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "**Bez[kontextová gramatika](dfn.kontextova-gramatika)** je $G=(N,T,P,S)$, kde $N$ je neterminálová [abeceda](dfn.abeceda), $T$ je terminálová abeceda ($N\\cap T=\\emptyset$), $P\\subseteq N\\times(N\\cup T)^*$ je množina gramatických pravidiel typu $A\\to\\alpha$, kde $A\\in N$ a $\\alpha\\in(N\\cup T)^*$, a $S\\in N$ je počiatočný neterminálový symbol. Napríklad $G=(N,T,P,S)$ s $N=\\{S,M,P,E,T\\}$ (v pôvodnom zápise $M$, $+\\!-\\!M$, $E$, $*/E$), $T=\\{+,-,*,/,(,),a\\}$ a pravidlami $S\\to MP$, $P\\to+MP\\mid-MP\\mid\\varepsilon$, $M\\to ET$, $T\\to*ET\\mid/ET\\mid\\varepsilon$, $E\\to a\\mid(S)$ generuje aritmetické výrazy. Pravidlá s rovnakou ľavou stranou sa zapisujú kompaktne pomocou $\\mid$.",
+   "explanation": {
+    "intuition": "Neterminál sa prepisuje vždy rovnako, nech je v akomkoľvek okolí — preto „bezkontextová“.",
+    "detailed": "Bez[kontextové gramatiky](dfn.kontextova-gramatika) popisujú vnorenú, rekurzívnu štruktúru (zátvorky, bloky). Každý krok [odvodenia](dfn.odvodenie) nahrádza jediný neterminál reťazcom; preto sa odvodenie dá zobraziť ako strom. Nie sú to [regulárne gramatiky](dfn.regularna-gramatika): pravá strana môže mať neterminál kdekoľvek aj viac než jeden.",
+    "pitfalls": [
+     "Pravidlo $AB\\to a$ nie je bezkontextové (dva symboly vľavo)."
+    ],
+    "examples": [
+     "$S\\to aSb\\mid ab$ generuje $a^nb^n$."
+    ]
+   },
+   "uses": [
+    "dfn.gramatika",
+    "dfn.odvodenie",
+    "dfn.jazyk-gramatiky",
+    "def.chomskeho-hierarchia",
+    "dfn.abeceda"
+   ],
+   "relations": [
+    {
+     "type": "specializes",
+     "target": "dfn.gramatika",
+     "note": "ľavá strana je jediný neterminál"
+    },
+    {
+     "type": "generalizes",
+     "target": "dfn.regularna-gramatika",
+     "note": "regulárne pravidlá sú špeciálny prípad"
+    },
+    {
+     "type": "equivalent",
+     "target": "dfn.zasobnikovy-automat",
+     "note": "rovnaká trieda jazykov (prednáška 4)"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.kontextova-gramatika"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.lave-odvodenie",
+   "type": "definition",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Ľavé odvodenie",
+   "terms": [
+    {
+     "term": "ľavé odvodenie",
+     "alt": "leftmost derivation"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb03_BezGramatika_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "**Ľavé [odvodenie](dfn.odvodenie)** je odvodenie v [bezkontextovej gramatike](dfn.bezkontextova-gramatika), v ktorom sa v každom kroku dosadzuje za najľavejší neterminál. Napr. $S\\Rightarrow MP\\Rightarrow ETP\\Rightarrow aTP\\Rightarrow aP\\Rightarrow a+MP\\Rightarrow a+ETP\\Rightarrow a+aTP\\Rightarrow a+aP\\Rightarrow a+a$.",
+   "explanation": {
+    "intuition": "Poradie dosadzovania je pevné: vždy najľavejší neterminál.",
+    "detailed": "V [bezkontextovej gramatike](dfn.bezkontextova-gramatika) má každé [slovo](dfn.slovo) [jazyka](dfn.jazyk) aspoň jedno ľavé [odvodenie](dfn.odvodenie); poradie dosadenia neterminálov nemení výsledné slovo ani [derivačný strom](dfn.derivacny-strom). Ľavé odvodenia zodpovedajú práci [zásobníkového automatu](dfn.zasobnikovy-automat) (zásobník drží ešte neprepísané neterminály).",
+    "pitfalls": [
+     "Dve rôzne ľavé odvodenia toho istého slova zodpovedajú rôznym stromom: gramatika je nejednoznačná."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.bezkontextova-gramatika",
+    "dfn.odvodenie",
+    "dfn.derivacny-strom",
+    "dfn.zasobnikovy-automat",
+    "dfn.slovo",
+    "dfn.jazyk"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.derivacny-strom",
+   "type": "definition",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Derivačný strom",
+   "terms": [
+    {
+     "term": "derivačný strom",
+     "alt": "derivation tree, parse tree"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb03_BezGramatika_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "**Derivačný strom** [slova](dfn.slovo) $w\\in L(G)$ je strom, ktorého koreň je $S$, vnútorné uzly sú neterminály a synovia uzla $A$ sú symboly pravej strany použitého pravidla $A\\to\\alpha$ (v poradí zľava doprava); listy tvoria zľava doprava slovo $w$ (listy s $\\varepsilon$ sa vynechajú).",
+   "explanation": {
+    "intuition": "Strom ukazuje, ktoré pravidlá a v akej štruktúre vytvorili [slovo](dfn.slovo).",
+    "detailed": "Derivačný strom je štruktúrnym popisom [slova](dfn.slovo): v prípade aritmetických výrazov vyjadruje priority operátorov. Pumping lema (prednáška 5) využíva výšku binárneho derivačného stromu v [Chomského normálnom tvare](dfn.chomskeho-normalny-tvar).",
+    "pitfalls": [
+     "Strom nezachytáva poradie dosadzovania, iba výsledné pravidlá."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.bezkontextova-gramatika",
+    "def.strom",
+    "dfn.slovo",
+    "dfn.chomskeho-normalny-tvar"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.derivacny-strom-a-plus-a-krat-a"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.cfg-aritmeticke-vyrazy",
+   "type": "example",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Gramatika aritmetických výrazov a ľavé odvodenie",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb03_BezGramatika_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "Gramatika s pravidlami $S\\to MP$, $P\\to+MP\\mid-MP\\mid\\varepsilon$, $M\\to ET$, $T\\to*ET\\mid/ET\\mid\\varepsilon$, $E\\to a\\mid(S)$ generuje výrazy ako $a*(a+a-a)$. Ľavé [odvodenie](dfn.odvodenie) [slova](dfn.slovo) $a+a*a$: $S\\Rightarrow MP\\Rightarrow ETP\\Rightarrow aTP\\Rightarrow aP\\Rightarrow a+MP\\Rightarrow a+ETP\\Rightarrow a+aTP\\Rightarrow a+a*ETP\\Rightarrow a+a*aTP\\Rightarrow a+a*aP\\Rightarrow a+a*a$.",
+   "explanation": {
+    "intuition": "Neterminál $P$ vytvára zvyšok súčtu, $T$ zvyšok súčinu; vďaka tomu má $*$ vyššiu prioritu než $+$.",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "dfn.lave-odvodenie"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.slovo"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.odvodenie"
+    }
+   ],
+   "figures": [
+    "fig.derivacny-strom-a-plus-a-krat-a"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Neterminály $M$ a $+\\!-\\!M$, $*/E$ zo slajdov sú v texte označené $P$ a $T$; jazyk gramatiky overený: rovná sa jazyku rekurzívneho analyzátora výrazov na všetkých slovách nad $\\{a,+,-,*,/,(,)\\}$ do dĺžky 6."
+    ]
+   }
+  },
+  {
+   "id": "alg.hladanie-nullable",
+   "type": "algorithm",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Hľadanie neterminálov odvoditeľných na ε",
+   "terms": [
+    {
+     "term": "anulovateľný neterminál",
+     "alt": "nullable nonterminal"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb03_BezGramatika_P.pdf",
+     "page": 6
+    }
+   ],
+   "statement": "Množina $E=\\{A\\in N:A\\Rightarrow^*\\varepsilon\\}$ sa vypočíta takto: (1) $E:=\\emptyset$; (2) ak $A\\to B_1\\dots B_k\\in P$ pre $B_1,\\dots,B_k\\in E$ (pre $k=0$ prázdna pravá strana), pridáme $A$ do $E$. Bod 2 opakujeme, pokiaľ sa dá pridávať.",
+   "explanation": {
+    "intuition": "Neterminál sa dá zmazať, ak má pravidlo, ktorého pravá strana pozostáva iba z mazateľných neterminálov.",
+    "detailed": "Iterácia je zhodná s hľadaním najmenšieho pevného bodu; zastaví sa po najviac $|N|$ krokoch.",
+    "pitfalls": [
+     "Pravidlo $A\\to\\varepsilon$ (prázdna pravá strana) splní podmienku triviálne."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Indukciou podľa počtu krokov: neterminál pridaný v $i$-tom kroku sa dá odvodiť na $\\varepsilon$ derivačným stromom výšky $\\le i$. Naopak, derivačný strom $A\\Rightarrow^*\\varepsilon$ s najmenšou výškou obsahuje len mazateľné podstromy, ktoré sa pridali skôr. Zastavenie plynie z rastúcej ohraničenej množiny.",
+    "steps": []
+   },
+   "uses": [
+    "dfn.bezkontextova-gramatika"
+   ],
+   "relations": [
+    {
+     "type": "analogue",
+     "target": "alg.dosiahnutelne-stavy",
+     "note": "iterácia do ustálenia"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.eliminacia-eps-pravidiel",
+   "type": "theorem",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Lema: eliminácia ε-pravidiel",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb03_BezGramatika_P.pdf",
+     "page": 6
+    }
+   ],
+   "statement": "Každá [bezkontextová gramatika](dfn.bezkontextova-gramatika) $G=(N,T,P,S)$ sa dá nahradiť bez[kontextovou gramatikou](dfn.kontextova-gramatika) $G'=(N,T,P',S)$, ktorá nemá pravidlá typu $A\\to\\varepsilon$, pričom $L(G')=L(G)-\\{\\varepsilon\\}$.",
+   "explanation": {
+    "intuition": "Namiesto mazania neterminálov „predvyrobíme“ všetky varianty pravidiel, v ktorých sú niektoré mazateľné neterminály vynechané.",
+    "detailed": "Slovo $\\varepsilon$ sa stratí, ak $\\varepsilon\\in L(G)$; ostatné slová ostávajú. Ak treba $\\varepsilon$ zachovať, pridá sa nový štartovací symbol $S'\\to S\\mid\\varepsilon$.",
+    "pitfalls": [
+     "Z pravidla s $k$ mazateľnými neterminálmi môže vzniknúť až $2^k$ nových pravidiel."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Kľúčová myšlienka: každé odvodenie $A\\Rightarrow^*w$, $w\\ne\\varepsilon$, sa dá previesť na odvodenie v $G'$, v ktorom sa „zmazané“ neterminály z $E$ vynechajú už v pravidle, ktoré ich zaviedlo. Opačne každé pravidlo $G'$ je skrátením pravidla $G$ o mazateľné neterminály, ktoré v $G$ odvodíme na $\\varepsilon$ (indukcia podľa dĺžky odvodenia).",
+    "steps": []
+   },
+   "uses": [
+    "alg.hladanie-nullable",
+    "dfn.jazyk-gramatiky",
+    "dfn.bezkontextova-gramatika"
+   ],
+   "relations": [
+    {
+     "type": "analogue",
+     "target": "alg.odstranenie-eps-prechodov",
+     "note": "ε-pravidlá vs. ε-prechody"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.kontextova-gramatika"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.odstranenie-eps-pravidiel",
+   "type": "algorithm",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Odstránenie ε-pravidiel",
+   "terms": [
+    {
+     "term": "odstránenie ε-pravidiel",
+     "alt": "epsilon-rule elimination"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb03_BezGramatika_P.pdf",
+     "page": 7
+    }
+   ],
+   "statement": "Pre každé pravidlo $A\\to x_1\\dots x_k$ pôvodnej [gramatiky](dfn.gramatika) pridáme do $G'$ všetky pravidlá typu $A\\to y_1\\dots y_k$, kde $y_i=x_i$, ak $x_i\\in T\\cup(N-E)$, a $y_i\\in\\{x_i,\\varepsilon\\}$, ak $x_i\\in E$, s výnimkou, že ak by takto vzniklo pravidlo $A\\to\\varepsilon$, nepridáme ho.",
+   "explanation": {
+    "intuition": "Každý mazateľný neterminál sa v pravej strane buď ponechá, alebo vynechá.",
+    "detailed": "Pre [gramatiku](dfn.gramatika) s pravidlami $S\\to aS\\mid BC$, $A\\to aBC\\mid CC\\mid CbD$, $B\\to aBbbDA\\mid CAA$, $C\\to DabD\\mid\\varepsilon$, $D\\to baSbBA$ je $E=\\{C,A,B,S\\}$ a výsledná gramatika $G'$ má napr. pre $S$ pravidlá $S\\to aS\\mid a\\mid BC\\mid C\\mid B$ (pravidlo $S\\to\\varepsilon$ sa nepridáva).",
+    "pitfalls": [
+     "Pozor na pravidlá, ktoré by po vynechaní všetkých symbolov dali $A\\to\\varepsilon$: tie sa nepridávajú."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Korektnosť plynie z lemy o eliminácii ε-pravidiel. Výpočtom overené na príklade zo slajdu 8: $L(G')=L(G)-\\{\\varepsilon\\}$ pre slová do dĺžky 6.",
+    "steps": []
+   },
+   "uses": [
+    "alg.hladanie-nullable",
+    "dfn.gramatika"
+   ],
+   "relations": [
+    {
+     "type": "algorithm-for",
+     "target": "thm.eliminacia-eps-pravidiel",
+     "note": "korektnosť"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.eliminacia-jednotkovych-pravidiel",
+   "type": "theorem",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Lema: eliminácia jednotkových pravidiel",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb03_BezGramatika_P.pdf",
+     "page": 9
+    }
+   ],
+   "statement": "Každá [bezkontextová gramatika](dfn.bezkontextova-gramatika) $G=(N,T,P,S)$ sa dá nahradiť bez[kontextovou gramatikou](dfn.kontextova-gramatika) $G'=(N,T,P',S)$, ktorá nemá pravidlá typu $A\\to B$ ($A,B\\in N$), pričom $L(G')=L(G)$. Navyše, ak $G$ nemá pravidlá typu $A\\to\\varepsilon$, nebude ich mať ani $G'$.",
+   "explanation": {
+    "intuition": "Jednotkové pravidlo je len „premenovanie“; môžeme ho preskočiť priamym dosadením.",
+    "detailed": "Pre každé [odvodenie](dfn.odvodenie) $A_1\\Rightarrow A_2\\Rightarrow\\dots\\Rightarrow A_n\\Rightarrow\\alpha$ s neterminálmi $A_i$ a $\\alpha\\notin N$ pridáme pravidlo $A_1\\to\\alpha$. Stačí sledovať odvodenia, v ktorých je $n$ najviac počet neterminálov (pri dlhších sa nejaký neterminál zopakuje).",
+    "pitfalls": [
+     "Cykly jednotkových pravidiel ($A\\to B\\to A$) sú prípustné; tvrdenie sa ich týka tiež."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Každé odvodenie v $G$ sa dá skrátiť tak, že reťazec jednotkových krokov nahradíme jedným krokom nového pravidla $A_1\\to\\alpha$; naopak nové pravidlá sú odvoditeľné v $G$. Iba konečne veľa reťazcov jednotkových krokov treba uvažovať, lebo v dlhšom sa neterminál zopakuje a cyklus možno vynechať.",
+    "steps": []
+   },
+   "uses": [
+    "dfn.bezkontextova-gramatika",
+    "dfn.jazyk-gramatiky",
+    "dfn.odvodenie"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.kontextova-gramatika"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.odstranenie-jednotkovych-pravidiel",
+   "type": "algorithm",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Odstránenie jednotkových pravidiel",
+   "terms": [
+    {
+     "term": "odstránenie jednotkových pravidiel",
+     "alt": "unit-rule elimination"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb03_BezGramatika_P.pdf",
+     "page": 9
+    }
+   ],
+   "statement": "Pre každú dvojicu neterminálov $A,B$, pre ktoré $A\\Rightarrow^*B$ cez jednotkové pravidlá (vrátane $A=B$), a pre každé nejednotkové pravidlo $B\\to\\alpha$ pridáme $A\\to\\alpha$ do $P'$. Jednotkové pravidlá do $P'$ nepridávame.",
+   "explanation": {
+    "intuition": "Z $A$ sa dá cez jednotkové kroky dostať do $B$; potom $A$ zdedí všetky nejednotkové pravidlá $B$.",
+    "detailed": "Pre [gramatiku](dfn.gramatika) $S\\to aS\\mid BC$, $A\\to aBC\\mid B\\mid CbD$, $B\\to aBbbDA\\mid A\\mid b$, $C\\to DabD\\mid A$, $D\\to baBb$ dostaneme napr. $A\\to aBC\\mid aBbbDA\\mid b\\mid CbD$, $B$ dostane rovnakú množinu nejednotkových pravidiel ako $A$ (tvoria cyklus $A\\to B\\to A$) a $C$ k nim pridá vlastné $C\\to DabD$.",
+    "pitfalls": [
+     "Dvojice $(A,B)$ sa počítajú tranzitívne: $A\\to B\\to C$ dáva aj $(A,C)$."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Korektnosť plynie z lemy o jednotkových pravidlách; overené výpočtom na príklade zo slajdu 10 (jazyky rovnaké na slovách do dĺžky 6).",
+    "steps": []
+   },
+   "uses": [
+    "thm.eliminacia-jednotkovych-pravidiel",
+    "dfn.gramatika"
+   ],
+   "relations": [
+    {
+     "type": "algorithm-for",
+     "target": "thm.eliminacia-jednotkovych-pravidiel",
+     "note": "korektnosť"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.chomskeho-normalny-tvar",
+   "type": "definition",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Chomského normálny tvar",
+   "terms": [
+    {
+     "term": "Chomského normálny tvar",
+     "alt": "Chomsky normal form, CNF"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb03_BezGramatika_P.pdf",
+     "page": 11
+    }
+   ],
+   "statement": "Bez[kontextová gramatika](dfn.kontextova-gramatika) je v **Chomského normálnom tvare** (CNF), ak všetky jej pravidlá majú tvar $A\\to BC$ alebo $A\\to a$, pričom $A,B,C$ sú neterminály a $a$ je terminál.",
+   "explanation": {
+    "intuition": "Každé pravidlo je buď binárne rozvetvenie, alebo list.",
+    "detailed": "Derivačný strom v CNF je binárny strom: každý vnútorný uzol má dvoch synov a uzol nad listom jedného. To dáva presné odhady veľkosti a výšky, využité v [pumping leme](thm.pumping-lema-bezkontextove) a v algoritme CYK.",
+    "pitfalls": [
+     "CNF nepripúšťa $\\varepsilon$-pravidlá; slovo $\\varepsilon$ sa dá spracovať osobitne."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.bezkontextova-gramatika"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.kontextova-gramatika"
+    },
+    {
+     "type": "see-also",
+     "target": "thm.pumping-lema-bezkontextove"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.chomskeho-normalny-tvar",
+   "type": "theorem",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Veta: Chomského normálny tvar",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb03_BezGramatika_P.pdf",
+     "page": 11
+    }
+   ],
+   "statement": "Každá [bezkontextová gramatika](dfn.bezkontextova-gramatika) $G=(N,T,P,S)$ sa dá nahradiť bez[kontextovou gramatikou](dfn.kontextova-gramatika) $G'$ takou, že $L(G')=L(G)-\\{\\varepsilon\\}$. Navyše, všetky pravidlá $G'$ sú v tvare $A\\to BC$ alebo $A\\to a$.",
+   "explanation": {
+    "intuition": "Gramatiku vyčistíme (bez $\\varepsilon$, bez jednotkových) a potom dlhé pravé strany rozbijeme na binárne.",
+    "detailed": "Tri kroky: (1) $G_1$ bez $\\varepsilon$-pravidiel, (2) $G_2$ bez jednotkových pravidiel, (3) rozdelenie pravidiel s $k\\ge2$ symbolmi na pravej strane. Počet pravidiel môže rásť (kvadraticky pri vhodnom poradí krokov).",
+    "pitfalls": [
+     "Poradie krokov je dôležité: odstránenie $\\varepsilon$ môže vyrobiť nové jednotkové pravidlá, preto sa $\\varepsilon$ odstraňuje prvé."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "sketch",
+    "steps": [
+     {
+      "text": "Gramatiku $G$ nahradíme $G_1$ bez pravidiel $A\\to\\varepsilon$ s $L(G_1)=L(G)-\\{\\varepsilon\\}$.",
+      "why": "Lema o eliminácii $\\varepsilon$-pravidiel.",
+      "uses": [
+       "thm.eliminacia-eps-pravidiel"
+      ]
+     },
+     {
+      "text": "$G_1$ nahradíme $G_2$ bez jednotkových pravidiel, $L(G_2)=L(G_1)$ (a stále bez $\\varepsilon$-pravidiel).",
+      "why": "Lema o jednotkových pravidlách.",
+      "uses": [
+       "thm.eliminacia-jednotkovych-pravidiel"
+      ]
+     },
+     {
+      "text": "Po týchto úpravách je každé pravidlo buď $A\\to a$ (už v CNF), alebo $A\\to\\alpha$ s $|\\alpha|\\ge2$. Každé také pravidlo $A\\to x_1\\dots x_k$ nahradíme reťazou $A\\to\\langle x_1\\dots x_{k-1}\\rangle x_k'$, $\\langle x_1\\dots x_{k-1}\\rangle\\to\\langle x_1\\dots x_{k-2}\\rangle x_{k-1}'$, \\dots, $\\langle x_1x_2\\rangle\\to x_1'x_2'$ s novými neterminálmi, kde $x_i'=x_i$ pre neterminál a $x_i'$ nový neterminál s pravidlom $x_i'\\to x_i$ pre terminál.",
+      "why": "Pravé strany sa rozbijú na dvojice.",
+      "uses": []
+     },
+     {
+      "text": "Výsledná gramatika $G'$ má všetky pravidlá v CNF a $L(G')=L(G_2)=L(G_1)=L(G)-\\{\\varepsilon\\}$.",
+      "why": "Každý krok zachová jazyk.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.chomskeho-normalny-tvar",
+    "thm.eliminacia-eps-pravidiel",
+    "thm.eliminacia-jednotkovych-pravidiel",
+    "dfn.bezkontextova-gramatika"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.kontextova-gramatika"
+    }
+   ],
+   "figures": [
+    "fig.upravy-gramatiky"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajdy 11–13 opisujú konštrukciu a zhrňujú rovnosť jazykov; formálny dôkaz správnosti kroku 3 je len naznačený."
+    ]
+   }
+  },
+  {
+   "id": "alg.prevod-do-cnf",
+   "type": "algorithm",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Prevod gramatiky do Chomského normálneho tvaru",
+   "terms": [
+    {
+     "term": "prevod do CNF",
+     "alt": "CNF conversion"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb03_BezGramatika_P.pdf",
+     "page": 11
+    }
+   ],
+   "statement": "1. Odstránime $\\varepsilon$-pravidlá. 2. Odstránime jednotkové pravidlá. 3. Pravidlá $A\\to x_1\\dots x_k$, $k\\ge2$, rozdelíme: pre každý terminál $a$ pridáme neterminál $X_a$ s pravidlom $X_a\\to a$ a $a$ v pravých stranách nahradíme $X_a$; potom $A\\to x_1\\dots x_k$ nahradíme $A\\to x_1\\langle x_2\\dots x_k\\rangle$ atď., až kým sú všetky pravé strany dĺžky $2$.",
+   "explanation": {
+    "intuition": "Postup ako úprava dokumentu: najprv vyhodiť prázdne a jednotkové pravidlá, potom skrátiť dlhé.",
+    "detailed": "Na príklade $S\\to aS\\mid ABB$, $A\\to aBC\\mid aBbbA$, $B\\to abb\\mid b$ vznikne [gramatika](dfn.gramatika) s novými neterminálmi pre $a$, $b$ a pre [zreťazené](dfn.zretazenie-slov) koncovky pravých strán (napr. $\\langle ABB\\rangle$-typu). Štruktúra výsledku závisí od poradia delenia, [jazyk](dfn.jazyk) je rovnaký.",
+    "pitfalls": [
+     "Terminály vo veľkých pravidlách treba nahradiť neterminálmi pred delením, inak by vznikli pravidlá typu $A\\to aB$."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Korektnosť: každé z troch úprav zachová jazyk (až na $\\varepsilon$). Na príklade zo slajdu 13 aj na gramatike aritmetických výrazov bola rovnosť jazykov overená výpočtom do dĺžky 6, resp. 7.",
+    "steps": []
+   },
+   "uses": [
+    "alg.odstranenie-eps-pravidiel",
+    "alg.odstranenie-jednotkovych-pravidiel",
+    "dfn.chomskeho-normalny-tvar",
+    "dfn.zretazenie-slov",
+    "dfn.jazyk",
+    "dfn.gramatika"
+   ],
+   "relations": [
+    {
+     "type": "algorithm-for",
+     "target": "thm.chomskeho-normalny-tvar",
+     "note": "korektnosť"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.cnf-aritmeticke-vyrazy",
+   "type": "example",
+   "topic": "bezkontextove-gramatiky",
+   "title": "Chomského normálny tvar gramatiky aritmetických výrazov",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb03_BezGramatika_P.pdf",
+     "page": 14
+    }
+   ],
+   "statement": "Pôvodná [gramatika](dfn.gramatika): $S\\to MP$, $P\\to+MP\\mid-MP\\mid\\varepsilon$, $M\\to ET$, $T\\to*ET\\mid/ET\\mid\\varepsilon$, $E\\to a\\mid(S)$. Po odstránení $\\varepsilon$-pravidiel: $S\\to MP\\mid M$, $P\\to+MP\\mid+M\\mid-MP\\mid-M$, $M\\to ET\\mid E$, $T\\to*ET\\mid*E\\mid/ET\\mid/E$, $E\\to a\\mid(S)$. Po odstránení jednotkových pravidiel: $S\\to MP\\mid ET\\mid a\\mid(S)$, $P\\to+MP\\mid+M\\mid-MP\\mid-M$, $M\\to ET\\mid a\\mid(S)$, $T\\to*ET\\mid*E\\mid/ET\\mid/E$, $E\\to a\\mid(S)$. Prevod do CNF zavedie pomocné neterminály pre terminály $+,-,*,/,(,)$ a pre dĺžky pravých strán $3$: výsledná gramatika má 30 pravidiel nad 18 neterminálmi. Slovo $a+a*a$ má v CNF binárny [derivačný strom](dfn.derivacny-strom).",
+   "explanation": {
+    "intuition": "Z nepoužívaných skratiek sa stane úplne binárna [gramatika](dfn.gramatika).",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "alg.prevod-do-cnf"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.derivacny-strom"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.gramatika"
+    }
+   ],
+   "figures": [
+    "fig.cnf-gramatika"
+   ],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Jazyk gramatiky po každom kroku overený výpočtom na všetkých slovách nad $\\{a,+,-,*,/,(,)\\}$ do dĺžky 6. Presné pomenovanie pomocných neterminálov je odlišné od slajdov (generované)."
+    ]
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.derivacny-strom-a-plus-a-krat-a",
+   "title": "Derivačný strom slova a+a*a",
+   "caption": "Strom v gramatike aritmetických výrazov. Uzly s $\\varepsilon$ zodpovedajú pravidlám $P\\to\\varepsilon$, $T\\to\\varepsilon$.",
+   "origin": "generated",
+   "illustrates": [
+    "dfn.derivacny-strom",
+    "ex.cfg-aritmeticke-vyrazy"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": false,
+   "vertices": [
+    {
+     "id": "n3",
+     "x": 0,
+     "y": 210,
+     "label": "a"
+    },
+    {
+     "id": "n2",
+     "x": 0,
+     "y": 140,
+     "label": "E"
+    },
+    {
+     "id": "n5",
+     "x": 60,
+     "y": 210,
+     "label": "ε"
+    },
+    {
+     "id": "n4",
+     "x": 60,
+     "y": 140,
+     "label": "T"
+    },
+    {
+     "id": "n1",
+     "x": 30,
+     "y": 70,
+     "label": "M"
+    },
+    {
+     "id": "n7",
+     "x": 120,
+     "y": 140,
+     "label": "+"
+    },
+    {
+     "id": "n10",
+     "x": 180,
+     "y": 280,
+     "label": "a"
+    },
+    {
+     "id": "n9",
+     "x": 180,
+     "y": 210,
+     "label": "E"
+    },
+    {
+     "id": "n12",
+     "x": 240,
+     "y": 280,
+     "label": "*"
+    },
+    {
+     "id": "n14",
+     "x": 300,
+     "y": 350,
+     "label": "a"
+    },
+    {
+     "id": "n13",
+     "x": 300,
+     "y": 280,
+     "label": "E"
+    },
+    {
+     "id": "n16",
+     "x": 360,
+     "y": 350,
+     "label": "ε"
+    },
+    {
+     "id": "n15",
+     "x": 360,
+     "y": 280,
+     "label": "T"
+    },
+    {
+     "id": "n11",
+     "x": 300,
+     "y": 210,
+     "label": "T"
+    },
+    {
+     "id": "n8",
+     "x": 240,
+     "y": 140,
+     "label": "M"
+    },
+    {
+     "id": "n18",
+     "x": 420,
+     "y": 210,
+     "label": "ε"
+    },
+    {
+     "id": "n17",
+     "x": 420,
+     "y": 140,
+     "label": "P"
+    },
+    {
+     "id": "n6",
+     "x": 260,
+     "y": 70,
+     "label": "P"
+    },
+    {
+     "id": "n0",
+     "x": 145,
+     "y": 0,
+     "label": "S"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "n2",
+     "target": "n3",
+     "directed": false
+    },
+    {
+     "id": "e1",
+     "source": "n4",
+     "target": "n5",
+     "directed": false
+    },
+    {
+     "id": "e2",
+     "source": "n1",
+     "target": "n2",
+     "directed": false
+    },
+    {
+     "id": "e3",
+     "source": "n1",
+     "target": "n4",
+     "directed": false
+    },
+    {
+     "id": "e4",
+     "source": "n9",
+     "target": "n10",
+     "directed": false
+    },
+    {
+     "id": "e5",
+     "source": "n13",
+     "target": "n14",
+     "directed": false
+    },
+    {
+     "id": "e6",
+     "source": "n15",
+     "target": "n16",
+     "directed": false
+    },
+    {
+     "id": "e7",
+     "source": "n11",
+     "target": "n12",
+     "directed": false
+    },
+    {
+     "id": "e8",
+     "source": "n11",
+     "target": "n13",
+     "directed": false
+    },
+    {
+     "id": "e9",
+     "source": "n11",
+     "target": "n15",
+     "directed": false
+    },
+    {
+     "id": "e10",
+     "source": "n8",
+     "target": "n9",
+     "directed": false
+    },
+    {
+     "id": "e11",
+     "source": "n8",
+     "target": "n11",
+     "directed": false
+    },
+    {
+     "id": "e12",
+     "source": "n17",
+     "target": "n18",
+     "directed": false
+    },
+    {
+     "id": "e13",
+     "source": "n6",
+     "target": "n7",
+     "directed": false
+    },
+    {
+     "id": "e14",
+     "source": "n6",
+     "target": "n8",
+     "directed": false
+    },
+    {
+     "id": "e15",
+     "source": "n6",
+     "target": "n17",
+     "directed": false
+    },
+    {
+     "id": "e16",
+     "source": "n0",
+     "target": "n1",
+     "directed": false
+    },
+    {
+     "id": "e17",
+     "source": "n0",
+     "target": "n6",
+     "directed": false
+    }
+   ],
+   "animations": []
+  },
+  {
+   "id": "fig.cnf-gramatika",
+   "title": "Gramatika aritmetických výrazov v CNF (vygenerovaná)",
+   "caption": "Výsledok kroku 3; jazyk overený.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.cnf-aritmeticke-vyrazy"
+   ],
+   "sources": [],
+   "kind": "table",
+   "columns": [
+    "neterminál",
+    "pravidlá"
+   ],
+   "rows": [
+    [
+     "S",
+     "a  |  X_( <S.7>  |  E T  |  M P"
+    ],
+    [
+     "P",
+     "X_+ <P.9>  |  X_+ M  |  X_- <P.11>  |  X_- M"
+    ],
+    [
+     "M",
+     "a  |  X_( <M.12>  |  E T"
+    ],
+    [
+     "T",
+     "X_* <T.14>  |  X_* E  |  X_/ <T.16>  |  X_/ E"
+    ],
+    [
+     "E",
+     "a  |  X_( <E.17>"
+    ],
+    [
+     "X_(",
+     "("
+    ],
+    [
+     "X_)",
+     ")"
+    ],
+    [
+     "<S.7>",
+     "S X_)"
+    ],
+    [
+     "X_+",
+     "+"
+    ],
+    [
+     "<P.9>",
+     "M P"
+    ],
+    [
+     "X_-",
+     "-"
+    ],
+    [
+     "<P.11>",
+     "M P"
+    ],
+    [
+     "<M.12>",
+     "S X_)"
+    ],
+    [
+     "X_*",
+     "*"
+    ],
+    [
+     "<T.14>",
+     "E T"
+    ],
+    [
+     "X_/",
+     "/"
+    ],
+    [
+     "<T.16>",
+     "E T"
+    ],
+    [
+     "<E.17>",
+     "S X_)"
+    ]
+   ]
+  },
+  {
+   "id": "fig.upravy-gramatiky",
+   "title": "Postup úprav",
+   "caption": "Slajdy 14–16.",
+   "origin": "slides",
+   "illustrates": [
+    "thm.chomskeho-normalny-tvar"
+   ],
+   "sources": [
+    {
+     "file": "Afjb03_BezGramatika_P.pdf",
+     "page": 14
+    }
+   ],
+   "kind": "table",
+   "columns": [
+    "krok",
+    "výsledok"
+   ],
+   "rows": [
+    [
+     "pôvodná",
+     "$S\\to MP$, $P\\to+MP\\mid-MP\\mid\\varepsilon$, \\dots"
+    ],
+    [
+     "bez $\\varepsilon$-pravidiel",
+     "$S\\to MP\\mid M$, $P\\to+MP\\mid+M\\mid-MP\\mid-M$, \\dots"
+    ],
+    [
+     "bez jednotkových",
+     "$S\\to MP\\mid ET\\mid a\\mid(S)$, \\dots"
+    ],
+    [
+     "CNF",
+     "všetky pravidlá $A\\to BC$ alebo $A\\to a$"
+    ]
+   ]
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.syntax-jazykov",
+   "title": "Špecifikácia syntaxe programovacích jazykov",
+   "summary": "BNF/EBNF ako bezkontextová gramatika.",
+   "scenario": "Dokumentácia jazyka opisuje jeho syntax gramatikou.",
+   "modelling": "Neterminály sú syntaktické kategórie, terminály tokeny.",
+   "solution": "Gramatika sa spracuje generátorom parsera; úpravy ako odstránenie $\\varepsilon$ a ľavej rekurzie pripravia gramatiku pre konkrétny algoritmus.",
+   "connects": [
+    "dfn.bezkontextova-gramatika",
+    "ex.cfg-aritmeticke-vyrazy"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.generatory-parserov",
+   "title": "Generátory parserov (yacc, bison)",
+   "summary": "Z gramatiky na tabuľku.",
+   "scenario": "Z gramatiky jazyka sa automaticky vytvorí parser.",
+   "modelling": "Gramatika → derivačné stromy → akcie.",
+   "solution": "Normálne tvary a pomocné úpravy zjednodušia algoritmy (CYK, LR).",
+   "connects": [
+    "dfn.derivacny-strom",
+    "dfn.chomskeho-normalny-tvar"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.xml-gramatiky",
+   "title": "Popis štruktúry XML/JSON",
+   "summary": "Vnorenie značiek ako rekurzia.",
+   "scenario": "Schéma dokumentu používa vnorené elementy.",
+   "modelling": "Element sa skladá z podelementov: pravidlá $E\\to\\text{tag}\\,E^*\\,\\text{endtag}$.",
+   "solution": "Bezkontextová gramatika opíše všetky povolené dokumenty.",
+   "connects": [
+    "dfn.bezkontextova-gramatika"
+   ],
+   "figures": [],
+   "tags": [
+    "dokumenty"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.nlp",
+   "title": "Spracovanie prirodzeného jazyka",
+   "summary": "Syntaktická analýza viet.",
+   "scenario": "Parser vety hľadá štruktúru podmet–prísudok–predmet.",
+   "modelling": "Gramatika viet a derivačný strom ako syntaktický rozbor.",
+   "solution": "CNF umožní polynomiálny algoritmus CYK.",
+   "connects": [
+    "dfn.derivacny-strom",
+    "dfn.chomskeho-normalny-tvar"
+   ],
+   "figures": [],
+   "tags": [
+    "NLP"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.cfg-1",
+   "kind": "mcq",
+   "prompt": "Aký tvar majú pravidlá bezkontextovej gramatiky?",
+   "options": [
+    "$A\\to\\alpha$ s $A\\in N$",
+    "$\\alpha A\\beta\\to\\gamma$",
+    "$A\\to aB$ alebo $A\\to a$",
+    "ľubovoľný"
+   ],
+   "answer": 0,
+   "explanation": "Ľavá strana je jediný neterminál.",
+   "about": [
+    "dfn.bezkontextova-gramatika"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.cfg-2",
+   "kind": "mcq",
+   "prompt": "Čo je ľavé odvodenie?",
+   "options": [
+    "odvodenie sprava",
+    "odvodenie, v ktorom sa vždy prepisuje najľavejší neterminál",
+    "odvodenie s najmenším počtom krokov",
+    "odvodenie bez neterminálov"
+   ],
+   "answer": 1,
+   "explanation": "Poradie dosadzovania je pevné.",
+   "about": [
+    "dfn.lave-odvodenie"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.cfg-3",
+   "kind": "open",
+   "prompt": "Nájdite množinu $E$ pre gramatiku $S\\to AB$, $A\\to\\varepsilon\\mid a$, $B\\to A\\mid b$.",
+   "answer": "$E=\\{A,B,S\\}$: $A\\to\\varepsilon$, potom $B\\to A$, potom $S\\to AB$.",
+   "explanation": "Iterujte pridávanie neterminálov s pravou stranou z $E$.",
+   "about": [
+    "alg.hladanie-nullable"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.cfg-4",
+   "kind": "truefalse",
+   "prompt": "Po odstránení $\\varepsilon$-pravidiel pôvodne obsahujúci $\\varepsilon$ jazyk stále obsahuje $\\varepsilon$.",
+   "answer": false,
+   "explanation": "Podľa lemy $L(G')=L(G)-\\{\\varepsilon\\}$.",
+   "about": [
+    "thm.eliminacia-eps-pravidiel"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.cfg-5",
+   "kind": "mcq",
+   "prompt": "Ktoré pravidlo je v Chomského normálnom tvare?",
+   "options": [
+    "$A\\to aB$",
+    "$A\\to BC$",
+    "$A\\to BCD$",
+    "$A\\to\\varepsilon$"
+   ],
+   "answer": 1,
+   "explanation": "Povolené sú $A\\to BC$ a $A\\to a$.",
+   "about": [
+    "dfn.chomskeho-normalny-tvar"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.cfg-6",
+   "kind": "flashcard",
+   "prompt": "Aké sú tri kroky prevodu do CNF?",
+   "answer": "1) odstrániť $\\varepsilon$-pravidlá, 2) odstrániť jednotkové pravidlá, 3) rozdeliť pravé strany dĺžky $\\ge2$ na binárne a nahradiť terminály neterminálmi.",
+   "explanation": "Poradie je podstatné.",
+   "about": [
+    "alg.prevod-do-cnf"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.cfg-7",
+   "kind": "mcq",
+   "prompt": "Prečo sa pri odstraňovaní jednotkových pravidiel stačí pozerať na odvodenia dĺžky najviac $|N|$?",
+   "options": [
+    "v dlhších sa neterminál zopakuje a cyklus možno vynechať",
+    "lebo $T$ je konečná",
+    "lebo $S$ je jediný",
+    "nestačí to"
+   ],
+   "answer": 0,
+   "explanation": "Holubníkový princíp.",
+   "about": [
+    "thm.eliminacia-jednotkovych-pravidiel"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.cfg-8",
+   "kind": "truefalse",
+   "prompt": "Derivačný strom v CNF je binárny.",
+   "answer": true,
+   "explanation": "Každý vnútorný uzol má dvoch synov, alebo jedného listového.",
+   "about": [
+    "dfn.chomskeho-normalny-tvar",
+    "dfn.derivacny-strom"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.cfg-9",
+   "kind": "open",
+   "prompt": "Prevedte $S\\to aSb\\mid ab$ do CNF.",
+   "answer": "$S\\to X_aY$, $Y\\to SX_b$, $S\\to X_aX_b$, $X_a\\to a$, $X_b\\to b$.",
+   "explanation": "Terminály nahraďte neterminálmi a rozdeľte $aSb$.",
+   "about": [
+    "alg.prevod-do-cnf"
+   ],
+   "difficulty": 2
+  }
+ ]
+}

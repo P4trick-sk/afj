@@ -1,0 +1,134 @@
+{
+ "schemaVersion": 1,
+ "engine": "1.1.0",
+ "preset": "cs-theory",
+ "app": {
+  "name": "AFJ",
+  "courseId": "afj",
+  "tagline": "FORMÁLNE JAZYKY",
+  "heroTitle": "Automaty a formálne jazyky",
+  "heroText": "Chomského hierarchia, konečné automaty a regulárne jazyky, zásobníkové automaty a bezkontextové jazyky.",
+  "copyright": ""
+ },
+ "language": {
+  "primary": "sk",
+  "alt": "en",
+  "ui": "sk"
+ },
+ "courses": [
+  {
+   "id": "A",
+   "title": "AFJa – Regulárne jazyky a konečné automaty"
+  },
+  {
+   "id": "B",
+   "title": "AFJb – Bezkontextové jazyky a zásobníkové automaty"
+  }
+ ],
+ "nodeTypes": [
+  {
+   "type": "concept",
+   "prefix": "def",
+   "label": "Pojem",
+   "color": "#7cc4e8",
+   "rank": 0,
+   "needsTerms": true
+  },
+  {
+   "type": "definition",
+   "prefix": "dfn",
+   "label": "Definícia",
+   "color": "#f0d070",
+   "rank": 0,
+   "needsTerms": true
+  },
+  {
+   "type": "data-structure",
+   "prefix": "ds",
+   "label": "Dátová štruktúra",
+   "color": "#e8a86c",
+   "rank": 1,
+   "needsTerms": true
+  },
+  {
+   "type": "theorem",
+   "prefix": "thm",
+   "label": "Veta",
+   "color": "#e3c48e",
+   "rank": 2,
+   "needsProof": true
+  },
+  {
+   "type": "algorithm",
+   "prefix": "alg",
+   "label": "Algoritmus",
+   "color": "#c3d98a",
+   "rank": 2,
+   "needsProof": true
+  },
+  {
+   "type": "complexity",
+   "prefix": "cx",
+   "label": "Výsledok o zložitosti",
+   "color": "#95d8bb",
+   "rank": 2,
+   "needsProof": true
+  },
+  {
+   "type": "reduction",
+   "prefix": "red",
+   "label": "Redukcia",
+   "color": "#a5e07c",
+   "rank": 3,
+   "needsProof": true
+  },
+  {
+   "type": "example",
+   "prefix": "ex",
+   "label": "Príklad",
+   "color": "#f2a3c3",
+   "rank": 4,
+   "reference": true
+  },
+  {
+   "type": "problem",
+   "prefix": "prob",
+   "label": "Úloha",
+   "color": "#c8a8f0",
+   "rank": 4,
+   "reference": true
+  },
+  {
+   "type": "pitfall",
+   "prefix": "rem",
+   "label": "Úskalie",
+   "color": "#a8b2ad",
+   "rank": 4,
+   "reference": true
+  }
+ ],
+ "applicationColor": "#b49cf0",
+ "proofLabel": "Správnosť a zložitosť",
+ "figureKinds": [
+  "graph",
+  "table",
+  "plot",
+  "mermaid"
+ ],
+ "relationTypes": [
+  "generalizes",
+  "specializes",
+  "equivalent",
+  "implies",
+  "converse-of",
+  "contrasts-with",
+  "algorithm-for",
+  "counterexample-to",
+  "analogue",
+  "see-also",
+  "reduces-to",
+  "implements",
+  "bounds"
+ ],
+ "linkIgnore": []
+}

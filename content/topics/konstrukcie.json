@@ -1,0 +1,1218 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "konstrukcie",
+  "title": "Ďalšie konštrukcie a uzavretosť regulárnych jazykov",
+  "course": "A",
+  "order": 13,
+  "sourceFiles": [
+   "Afja13_konstrukcie_P.pdf"
+  ],
+  "summary": "Zhrnutie konverzií medzi reprezentáciami regulárnych jazykov a dôkazy uzavretosti triedy regulárnych jazykov na zreťazenie, iteráciu, zrkadlový obraz, homomorfizmus a inverzný homomorfizmus. Záverom sa ukazuje, že trieda regulárnych jazykov je vlastnou podtriedou bezkontextových jazykov.",
+  "overview": "Posledná prednáška o regulárnych jazykoch sumarizuje, že akceptory, ε-akceptory, nedeterministické akceptory, regulárne gramatiky a regulárne výrazy popisujú tú istú triedu jazykov; konverzie sú cez Vety 8.1–12.3. Potom dokazuje uzavretosť na zreťazenie a iteráciu (lacno cez výrazy, alebo priamo cez ε-akceptory), zrkadlový obraz a homomorfizmus aj inverzný homomorfizmus. Na záver sa ukáže, že jazyk $\\{a^nb^n\\}$ je bezkontextový, ale nie regulárny: konečný akceptor sa nemôže „pamätať“ neohraničený počet $a$.",
+  "keyQuestions": [
+   "Ako súvisia všetky reprezentácie regulárnych jazykov?",
+   "Ako sa priamo (bez výrazov) zostrojí akceptor pre zreťazenie, iteráciu a zrkadlo?",
+   "Prečo $\\{a^nb^n\\}$ nie je regulárny?"
+  ],
+  "prerequisites": [
+   "operacie",
+   "nedeterminizmus",
+   "eps-akceptory",
+   "reg-gramatiky",
+   "reg-vyrazy",
+   "reg-rovnice"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "def.konverzie-reprezentacii",
+   "type": "concept",
+   "topic": "konstrukcie",
+   "title": "Konverzie medzi reprezentáciami regulárnych jazykov",
+   "terms": [
+    {
+     "term": "konverzie reprezentácií",
+     "alt": "conversions between representations"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja13_konstrukcie_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "Regulárne [jazyky](dfn.jazyk) možno reprezentovať $\\varepsilon$-akceptormi, [nedeterministickými akceptormi](dfn.nfa), [deterministickými akceptormi](dfn.konecnostavovy-akceptor), [regulárnymi gramatikami](dfn.regularna-gramatika) (aj rozšírenými) a [regulárnymi výrazmi](dfn.regularny-vyraz). Medzi nimi existujú konverzie: výraz $\\to$ [ε-akceptor](dfn.eps-akceptor) (Veta 11.1), ε-akceptor $\\to$ NFA (Veta 9.1), NFA $\\to$ DFA (Veta 8.1), DFA $\\to$ výraz (Veta 12.3), DFA $\\to$ regulárna [gramatika](dfn.gramatika) (Veta 10.1), rozšírená regulárna gramatika $\\to$ ε-akceptor (Veta 10.2); trivialné sú DFA $\\to$ NFA $\\to$ ε-akceptor a regulárna $\\to$ rozšírená gramatika.",
+   "explanation": {
+    "intuition": "Päť spôsobov, ako popísať [regulárny jazyk](dfn.regularny-jazyk), sú navzájom prevoditeľné.",
+    "detailed": "Táto ekvivalencia dovoľuje voliť pre každý problém najvhodnejšiu reprezentáciu: výrazy a [gramatiky](dfn.gramatika) na zápis, [nedeterministické akceptory](dfn.nfa) na návrh, deterministické na vykonávanie a rozhodovanie. Cena konverzií sa líši: NFA $\\to$ [DFA](dfn.konecnostavovy-akceptor) môže exponenciálne zväčšiť počet stavov, DFA $\\to$ výraz tiež môže veľmi zväčšiť dĺžku.",
+    "pitfalls": [
+     "Konverzia nezachováva veľkosť: rovnaký jazyk môže mať malý NFA a veľmi veľký DFA."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "thm.veta-8-1-nfa-na-dfa",
+    "thm.veta-9-1-eps-na-nfa",
+    "thm.veta-10-1-dfa-na-gramatiku",
+    "thm.veta-10-2-gramatika-na-eps-akceptor",
+    "thm.veta-11-1-vyraz-na-eps-akceptor",
+    "thm.veta-12-3-dfa-na-vyraz",
+    "dfn.regularna-gramatika",
+    "dfn.regularny-vyraz",
+    "dfn.eps-akceptor",
+    "dfn.nfa",
+    "dfn.konecnostavovy-akceptor",
+    "dfn.jazyk",
+    "dfn.gramatika",
+    "dfn.regularny-jazyk"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.konverzie"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.gramatika-na-vyraz",
+   "type": "example",
+   "topic": "konstrukcie",
+   "title": "Prevod regulárnej gramatiky na regulárny výraz",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja13_konstrukcie_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "Pre [gramatiku](dfn.gramatika) $S\\to aS\\mid bS\\mid aA\\mid a$, $A\\to aA\\mid bA\\mid aB\\mid aC\\mid bC$, $B\\to aB\\mid bB\\mid bC\\mid b$, $C\\to bC\\mid a\\mid b$ zostavíme sústavu rovníc: $S=(a+b)S+aA+a$, $A=(a+b)A+aB+(a+b)C+\\emptyset$, $B=(a+b)B+bC+b$, $C=bC+(a+b)$. Jej vyriešením (Ardenovo lemma) dostaneme $S=(a+b)^*a\\big((a+b)^*\\big((a(a+b)^*b+a+b)b^*(a+b)+a(a+b)^*b\\big)+\\varepsilon\\big)$.",
+   "explanation": {
+    "intuition": "Neterminály sa stanú neznámymi; pravidlá $A\\to aB$ dávajú členy $aB$ a pravidlá $A\\to a$ konštanty.",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "thm.veta-12-2-ardenovo-lemma",
+    "dfn.regularna-gramatika"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.gramatika"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Výsledný výraz zo slajdu 3 bol overený: zodpovedá jazyku gramatiky na všetkých slovách nad $\\{a,b\\}$ do dĺžky 10."
+    ]
+   }
+  },
+  {
+   "id": "def.uzavretost-regularnych",
+   "type": "concept",
+   "topic": "konstrukcie",
+   "title": "Uzavretosť regulárnych jazykov na jazykové operácie",
+   "terms": [
+    {
+     "term": "uzavretosť regulárnych jazykov",
+     "alt": "closure properties of regular languages"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja13_konstrukcie_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "Ak [jazyky](dfn.jazyk) $L_1,L_2$ sú regulárne, tak aj nasledujúce sú regulárne: doplnok $L_1^c$ (Veta 7.1), prienik $L_1\\cap L_2$ (7.2), zjednotenie $L_1\\cup L_2$, rozdiel $L_1-L_2=L_1\\cap L_2^c$ a symetrický rozdiel (7.3), [zreťazenie](dfn.zretazenie-slov) $L_1L_2=\\{xy:x\\in L_1,y\\in L_2\\}$, iterácia $L_1^*$, [zrkadlový obraz](dfn.zrkadlovy-obraz) $L_1^R=\\{a_n\\dots a_1:a_1\\dots a_n\\in L_1\\}$, [homomorfizmus](dfn.homomorfizmus) $h(L_1)$ a inverzný homomorfizmus $h^{-1}(L_2)$ pre $h:\\Sigma_1^*\\to\\Sigma_2^*$.",
+   "explanation": {
+    "intuition": "S [regulárnymi jazykmi](dfn.regularny-jazyk) môžeme robiť takmer všetko, čo od [jazykov](dfn.jazyk) očakávame, a ostanú regulárne.",
+    "detailed": "Tento prehľad zhŕňa nové výsledky tejto prednášky ([zreťazenie](dfn.zretazenie-slov), iterácia, zrkadlo, [homomorfizmus](dfn.homomorfizmus)) a výsledky prednášky 7. Ne[uzavretosť](def.uzavretost) pri iných triedach ([bezkontextové jazyky](dfn.bezkontextovy-jazyk) nie sú uzavreté na prienik a doplnok) vyniká na tomto pozadí.",
+    "pitfalls": [
+     "Pre „uzavretosť na zjednotenie“ aj „na prienik“ stačí súčinová konštrukcia, ale s inou voľbou koncových stavov."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "thm.uzavretost-doplnok",
+    "thm.uzavretost-prienik",
+    "thm.uzavretost-zjednotenie-rozdiel",
+    "def.uzavretost",
+    "dfn.zretazenie-slov",
+    "dfn.homomorfizmus",
+    "dfn.zrkadlovy-obraz",
+    "dfn.jazyk",
+    "dfn.regularny-jazyk"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "def.prehlad-uzavretosti-cfl",
+     "note": "porovnanie s bezkontextovými jazykmi"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.bezkontextovy-jazyk"
+    }
+   ],
+   "figures": [
+    "fig.uzavretost-regularnych-tabulka"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.zrkadlovy-obraz",
+   "type": "definition",
+   "topic": "konstrukcie",
+   "title": "Zrkadlový obraz jazyka",
+   "terms": [
+    {
+     "term": "zrkadlový obraz",
+     "alt": "reversal of a language",
+     "symbol": "L^R"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja13_konstrukcie_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "**Zrkadlový obraz** [jazyka](dfn.jazyk) $L\\subseteq\\Sigma^*$ je jazyk $L^R=\\{a_1a_2\\dots a_n\\in\\Sigma^*:a_n\\dots a_2a_1\\in L\\}$.",
+   "explanation": {
+    "intuition": "Slová [jazyka](dfn.jazyk) čítame odzadu.",
+    "detailed": "Operácia vystupuje pri palindrómoch a pri pravých vs. ľavých [gramatikách](dfn.gramatika). Pre $L=\\{ab,abb\\}$ je $L^R=\\{ba,bba\\}$.",
+    "pitfalls": [
+     "$(L_1L_2)^R=L_2^RL_1^R$: poradie sa otáča."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.jazyk",
+    "dfn.slovo",
+    "dfn.gramatika"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.homomorfizmus",
+   "type": "definition",
+   "topic": "konstrukcie",
+   "title": "Homomorfizmus a inverzný homomorfizmus",
+   "terms": [
+    {
+     "term": "homomorfizmus",
+     "alt": "homomorphism",
+     "symbol": "h"
+    },
+    {
+     "term": "inverzný homomorfizmus",
+     "alt": "inverse homomorphism",
+     "symbol": "h^{-1}"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja13_konstrukcie_P.pdf",
+     "page": 10
+    }
+   ],
+   "statement": "**Homomorfizmus** je funkcia $h:\\Sigma_1^*\\to\\Sigma_2^*$ zachovávajúca [zreťazenie](dfn.zretazenie-slov): $h(xy)=h(x)h(y)$ pre každé $x,y\\in\\Sigma_1^*$. Je určený hodnotami $h(a)$ pre $a\\in\\Sigma_1$, lebo $h(a_1\\dots a_n)=h(a_1)\\dots h(a_n)$. Pre $L_1\\subseteq\\Sigma_1^*$ je $h(L_1)=\\{h(x):x\\in L_1\\}$ (homomorfný obraz) a pre $L_2\\subseteq\\Sigma_2^*$ je $h^{-1}(L_2)=\\{x\\in\\Sigma_1^*:h(x)\\in L_2\\}$ (inverzný homomorfný obraz).",
+   "explanation": {
+    "intuition": "Homomorfizmus je „prekódovanie“ symbolov: každý symbol sa nahradí reťazcom.",
+    "detailed": "Homomorfizmus môže niektoré symboly nahradiť $\\varepsilon$ (zmazať) a môže predĺžiť slová. Inverzný homomorfizmus berie všetky vzory, ktorých obraz leží v $L_2$.",
+    "pitfalls": [
+     "$h^{-1}(h(L))\\supseteq L$, ale nemusí platiť rovnosť."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.zretazenie-slov",
+    "dfn.jazyk"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.uzavretost-zretazenie-iteracia",
+   "type": "theorem",
+   "topic": "konstrukcie",
+   "title": "Veta 13.1: uzavretosť na zreťazenie a iteráciu",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja13_konstrukcie_P.pdf",
+     "page": 5
+    }
+   ],
+   "statement": "Ak [jazyky](dfn.jazyk) $L_1$ a $L_2$ sú regulárne, tak aj jazyky $L_1L_2=\\{xy:x\\in L_1\\wedge y\\in L_2\\}$ a $L_1^*=\\{x_1\\dots x_n:n\\ge0\\wedge x_1,\\dots,x_n\\in L_1\\}$ sú regulárne.",
+   "explanation": {
+    "intuition": "Z výrazov $\\alpha_1,\\alpha_2$ vznikne výraz $\\alpha_1\\alpha_2$ a $(\\alpha_1)^*$.",
+    "detailed": "Slajd uvádza „lacný“ dôkaz cez výrazy a upozorňuje, že existujú priamočiarejšie konštrukcie priamo na akceptoroch (nasledujúci algoritmus), ktoré sa vyhnú konverziám tam a späť.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Ak sú $L_1,L_2$ regulárne, existujú regulárne výrazy $\\alpha_1,\\alpha_2$ s $L(\\alpha_1)=L_1$, $L(\\alpha_2)=L_2$ (Veta 12.3).",
+      "why": "Konverzia akceptor $\\to$ výraz.",
+      "uses": [
+       "thm.veta-12-3-dfa-na-vyraz"
+      ]
+     },
+     {
+      "text": "Potom $\\alpha_3=\\alpha_1\\alpha_2$ je regulárny výraz s $L(\\alpha_3)=L_1L_2$ a $\\alpha_4=(\\alpha_1)^*$ s $L(\\alpha_4)=L_1^*$.",
+      "why": "Definícia jazyka výrazu.",
+      "uses": []
+     },
+     {
+      "text": "Podľa Vety 11.1 existuje akceptor pre $\\alpha_3$ aj $\\alpha_4$, teda $L_1L_2$ aj $L_1^*$ sú regulárne.",
+      "why": "Konverzia výraz $\\to$ akceptor.",
+      "uses": [
+       "thm.veta-11-1-vyraz-na-eps-akceptor"
+      ]
+     }
+    ]
+   },
+   "uses": [
+    "def.uzavretost-regularnych",
+    "thm.veta-12-3-dfa-na-vyraz",
+    "thm.veta-11-1-vyraz-na-eps-akceptor",
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "analogue",
+     "target": "thm.cfl-uzavrete-zjednotenie-zretazenie-iteracia-zrkadlo"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.konstrukcia-zretazenia-iteracie",
+   "type": "algorithm",
+   "topic": "konstrukcie",
+   "title": "Priamočiara konštrukcia zreťazenia a iterácie",
+   "terms": [
+    {
+     "term": "konštrukcia zreťazenia",
+     "alt": "concatenation construction"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja13_konstrukcie_P.pdf",
+     "page": 6
+    }
+   ],
+   "statement": "**Zreťazenie:** pre akceptory $M_1,M_2$ ([jazyky](dfn.jazyk) $L_1,L_2$) zostrojíme $\\varepsilon$-akceptor $M$ pre $L_1L_2$: pridáme $\\varepsilon$-prechody z každého koncového stavu $M_1$ do počiatočného stavu $M_2$; počiatočným stavom $M$ sa stane počiatočný stav $M_1$ a koncovými stavmi koncové stavy $M_2$. **Iterácia:** pre $M_1$ zostrojíme $\\varepsilon$-akceptor pre $L_1^*$: pridáme nový stav $X$, $\\varepsilon$-prechod z $X$ do počiatočného stavu $M_1$ a z každého koncového stavu $M_1$ do $X$; $X$ je nový počiatočný a súčasne jediný koncový stav.",
+   "explanation": {
+    "intuition": "Zreťazenie: koniec prvého napojíme na začiatok druhého; iterácia: zacyklíme cez nový stav $X$.",
+    "detailed": "Stav $X$ je zároveň počiatočný a koncový, takže prázdne [slovo](dfn.slovo) je prijaté (patrí do $L^*$). V iterácii je nutný nový stav, nestačí pridať ε-hrany z koncových do počiatočného, lebo by sa zlomilo prijatie prázdneho slova a mohli by sa prijať nechcené slová, ak je do počiatočného stavu vstupná hrana.",
+    "pitfalls": [
+     "Bez nového stavu $X$ by iterácia nemusela prijať $\\varepsilon$ a zacyklenie by mohlo prijať aj slová mimo $L_1^*$."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Prijímajúca cesta v zreťazení musí prejsť jedným ε-prechodom z koncového stavu $M_1$ do $M_2$, takže slovo sa rozdelí na $x\\in L_1$ a $y\\in L_2$. V iterácii každé obiehanie cez $X$ zodpovedá jednému slovu z $L_1$. Overené výpočtom na akceptoroch $M_1$, $M_2$ (slová do dĺžky 9).",
+    "steps": []
+   },
+   "uses": [
+    "dfn.eps-akceptor",
+    "dfn.konecnostavovy-akceptor",
+    "dfn.jazyk",
+    "dfn.slovo"
+   ],
+   "relations": [
+    {
+     "type": "algorithm-for",
+     "target": "thm.uzavretost-zretazenie-iteracia",
+     "note": "priama dôkazová konštrukcia"
+    }
+   ],
+   "figures": [
+    "fig.zretazenie-m1-m2"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.uzavretost-zrkadlo",
+   "type": "theorem",
+   "topic": "konstrukcie",
+   "title": "Veta 13.2: uzavretosť na zrkadlový obraz",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja13_konstrukcie_P.pdf",
+     "page": 8
+    }
+   ],
+   "statement": "Ak [jazyk](dfn.jazyk) $L$ je regulárny, tak aj jazyk $L^R=\\{a_1a_2\\dots a_n\\in\\Sigma^*:a_n\\dots a_2a_1\\in L\\}$ je regulárny.",
+   "explanation": {
+    "intuition": "Výraz prepíšeme sprava doľava.",
+    "detailed": "Pre výraz $\\alpha$ vznikne $\\alpha^R$ rekurzívne: $a^R=a$, $\\varepsilon^R=\\varepsilon$, $\\emptyset^R=\\emptyset$, $(\\alpha_1+\\alpha_2)^R=\\alpha_2^R+\\alpha_1^R$ (výber je komutatívny, poradie nie je podstatné), $(\\alpha_1\\alpha_2)^R=\\alpha_2^R\\alpha_1^R$ a $(\\alpha_1^*)^R=(\\alpha_1^R)^*$. Napr. $((0+1)^*(01+0110(0+1)^*))^R=((1+0)^*0110+10)(1+0)^*$.",
+    "pitfalls": [
+     "Pri zreťazení treba poradie obrátiť."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Pre regulárny jazyk $L$ existuje regulárny výraz $\\alpha$ s $L(\\alpha)=L$ (Veta 12.3).",
+      "why": "Konverzia akceptor $\\to$ výraz.",
+      "uses": [
+       "thm.veta-12-3-dfa-na-vyraz"
+      ]
+     },
+     {
+      "text": "Výraz $\\alpha^R$ definujeme rekurzívne: $a^R=a$, $\\varepsilon^R=\\varepsilon$, $\\emptyset^R=\\emptyset$, $(\\alpha_1+\\alpha_2)^R=\\alpha_2^R+\\alpha_1^R$, $(\\alpha_1\\alpha_2)^R=\\alpha_2^R\\alpha_1^R$, $(\\alpha_1^*)^R=(\\alpha_1^R)^*$.",
+      "why": "Obrátenie poradia zreťazenia.",
+      "uses": []
+     },
+     {
+      "text": "Štrukturálnou indukciou platí $L(\\alpha^R)=L(\\alpha)^R=L^R$: napr. $xy\\in L(\\alpha_1\\alpha_2)\\iff y^Rx^R\\in L(\\alpha_2^R\\alpha_1^R)$.",
+      "why": "Definícia zrkadlového obrazu slova.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.zrkadlovy-obraz",
+    "def.uzavretost-regularnych",
+    "thm.veta-11-1-vyraz-na-eps-akceptor",
+    "thm.veta-12-3-dfa-na-vyraz",
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "analogue",
+     "target": "thm.cfl-uzavrete-zjednotenie-zretazenie-iteracia-zrkadlo"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.konstrukcia-zrkadla",
+   "type": "algorithm",
+   "topic": "konstrukcie",
+   "title": "Konštrukcia akceptora pre zrkadlový obraz",
+   "terms": [
+    {
+     "term": "konštrukcia zrkadla",
+     "alt": "reversal construction"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja13_konstrukcie_P.pdf",
+     "page": 9
+    }
+   ],
+   "statement": "Pre akceptor $M$ [jazyka](dfn.jazyk) $L$ zostrojíme $\\varepsilon$-akceptor $M^R$ pre $L^R$: otočíme orientáciu všetkých hrán, prehodíme úlohu počiatočného a koncových stavov (pôvodný počiatočný sa stane jediným koncovým) a pridáme nový počiatočný stav $X$ s $\\varepsilon$-prechodmi do každého pôvodného koncového stavu.",
+   "explanation": {
+    "intuition": "Akceptor „spustíme odzadu“.",
+    "detailed": "Nový stav $X$ je potrebný, lebo pôvodný akceptor môže mať viac koncových stavov, ktoré sa stanú počiatočnými; $\\varepsilon$-prechody z $X$ ich sprístupnia naraz.",
+    "pitfalls": [
+     "Obrátením hrán deterministického akceptora vznikne vo všeobecnosti nedeterministický."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Prijímajúci výpočet $q_I\\xrightarrow{a_1}\\dots\\xrightarrow{a_n}q_F$ v $M$ zodpovedá výpočtu $X\\xrightarrow{\\varepsilon}q_F\\xrightarrow{a_n}\\dots\\xrightarrow{a_1}q_I$ v $M^R$ a naopak. Overené výpočtom na akceptoroch $M_1$, $M_2$ (slová do dĺžky 9).",
+    "steps": []
+   },
+   "uses": [
+    "dfn.eps-akceptor",
+    "dfn.zrkadlovy-obraz",
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "algorithm-for",
+     "target": "thm.uzavretost-zrkadlo",
+     "note": "priama dôkazová konštrukcia"
+    }
+   ],
+   "figures": [
+    "fig.zrkadlo-m2"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.uzavretost-homomorfizmus",
+   "type": "theorem",
+   "topic": "konstrukcie",
+   "title": "Veta 13.3: uzavretosť na homomorfizmus a inverzný homomorfizmus",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja13_konstrukcie_P.pdf",
+     "page": 11
+    }
+   ],
+   "statement": "Ak $h:\\Sigma_1^*\\to\\Sigma_2^*$ je [homomorfizmus](dfn.homomorfizmus) a [jazyky](dfn.jazyk) $L_1\\subseteq\\Sigma_1^*$ a $L_2\\subseteq\\Sigma_2^*$ sú regulárne, tak aj jazyky $h(L_1)$ a $h^{-1}(L_2)$ sú regulárne.",
+   "explanation": {
+    "intuition": "Pre obraz: každú hranu $a$ nahradíme cestou $h(a)$. Pre vzor: jedna hrana $a$ stojí za celé čítanie $h(a)$.",
+    "detailed": "Konštrukcia pre $h(L_1)$ môže vyrobiť [nedeterministický akceptor](dfn.nfa) s $\\varepsilon$-hranami (ak $h(a)=\\varepsilon$). Konštrukcia pre $h^{-1}(L_2)$ je deterministická: [prechodová funkcia](dfn.konecnostavovy-automat) $f'(q,a)=f_2^*(q,h(a))$.",
+    "pitfalls": [
+     "Obraz regulárneho jazyka je regulárny, ale obraz neregulárneho môže byť regulárny a naopak (napr. $h$ mazajúci všetko)."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Nech $M_1,M_2$ sú deterministické akceptory pre $L_1,L_2$. Obraz: ak $M_1$ má prechod $q\\xrightarrow{a}q'$, do $M_1'$ pridáme postupnosť prechodov $q\\xrightarrow{h(a)}q'$: pre $h(a)=a_1\\dots a_n$, $n\\ge2$ nové stavy $p_1,\\dots,p_{n-1}$ s prechodmi $q\\xrightarrow{a_1}p_1\\xrightarrow{a_2}\\dots\\xrightarrow{a_n}q'$; pre $n=1$ prechod $q\\xrightarrow{a_1}q'$; pre $n=0$ prechod $q\\xrightarrow{\\varepsilon}q'$.",
+      "why": "Nahradenie hrán cestami.",
+      "uses": []
+     },
+     {
+      "text": "Výpočet $M_1$ na $x=a_1\\dots a_m$ sa zobrazí na výpočet $M_1'$ na $h(x)=h(a_1)\\dots h(a_m)$ s tými istými stavmi. Teda $L(M_1')=h(L_1)$.",
+      "why": "Každý prijímajúci výpočet $M_1'$ vznikne takto.",
+      "uses": []
+     },
+     {
+      "text": "Vzor: pre $M_2$ s prechodom $f_2^*(q,h(a))=q'$ pridáme do $M_2'$ prechod $q\\xrightarrow{a}q'$, t.j. $f'(q,a)=f_2^*(q,h(a))$. $M_2'$ je deterministický.",
+      "why": "Jeden krok $M_2'$ simuluje čítanie $h(a)$ v $M_2$.",
+      "uses": []
+     },
+     {
+      "text": "Indukciou podľa $|x|$: $f'^*(q,x)=f_2^*(q,h(x))$, teda $x\\in L(M_2')\\iff h(x)\\in L_2\\iff x\\in h^{-1}(L_2)$.",
+      "why": "Homomorfizmus zachováva zreťazenie.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.homomorfizmus",
+    "def.uzavretost-regularnych",
+    "dfn.konecnostavovy-akceptor",
+    "dfn.eps-akceptor",
+    "dfn.jazyk",
+    "dfn.nfa",
+    "dfn.konecnostavovy-automat"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.homomorfizmus-priklad",
+   "type": "example",
+   "topic": "konstrukcie",
+   "title": "Homomorfný obraz a inverzný homomorfný obraz",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja13_konstrukcie_P.pdf",
+     "page": 12
+    }
+   ],
+   "statement": "Obraz: $L_1=\\{x\\in\\{a,b,c\\}^*:x$ obsahuje nepárny počet $a\\}$ a $h(a)=01$, $h(b)=001$, $h(c)=\\varepsilon$. Akceptor pre $h(L_1)$ vznikne vložením ciest $01$, $001$ a ε-hrany. Vzor: $L_2=\\{w\\in\\{0,1\\}^*:w$ končí na $01$ alebo obsahuje $0110\\}$ a $h(a)=001$, $h(b)=10$: akceptor $h^{-1}(L_2)$ má rovnaké stavy ako akceptor $M_2$ ($A,\\dots,E$) a prechody $f'(q,a)=f^*(q,001)$, $f'(q,b)=f^*(q,10)$.",
+   "explanation": {
+    "intuition": "Pri vzore stačí jedna hrana na jeden symbol, ktorá vykoná celé $h(a)$.",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "thm.uzavretost-homomorfizmus"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Obrázky na slajde 12 sú nečitateľné; príklady sú zostrojené podľa popisu a overené výpočtom (obraz na slovách do dĺžky 7, vzor na slovách do dĺžky 8)."
+    ]
+   }
+  },
+  {
+   "id": "thm.veta-13-4-anbn-nie-je-regularny",
+   "type": "theorem",
+   "topic": "konstrukcie",
+   "title": "Veta 13.4: a^n b^n je bezkontextový, ale nie regulárny jazyk",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja13_konstrukcie_P.pdf",
+     "page": 13
+    }
+   ],
+   "statement": "Existujú [bezkontextové jazyky](dfn.bezkontextovy-jazyk), ktoré nie sú regulárne, t.j. pre ktoré neexistuje [konečnostavový akceptor](dfn.konecnostavovy-akceptor). Príkladom je $L=\\{a^nb^n:n\\ge1\\}$, pre ktorý existuje [bezkontextová gramatika](dfn.bezkontextova-gramatika) $S\\to aSb$, $S\\to ab$.",
+   "explanation": {
+    "intuition": "Konečný automat si nepamätá neohraničený počet $a$, takže nevie porovnať s počtom $b$.",
+    "detailed": "Dôkaz je prvým výskytom „pumpovacej“ myšlienky: v dostatočne dlhom výpočte sa zopakuje stav a medzi dvoma výskytmi sa dá cyklus vynechať. Tým vznikne prijímané [slovo](dfn.slovo) s menším počtom $a$ ako $b$, čo je spor. Zovšeobecnením je [pumping lema](thm.pumping-lema-bezkontextove) pre [regulárne jazyky](dfn.regularny-jazyk).",
+    "pitfalls": [
+     "Dôkaz nepoužíva žiadne vlastnosti jazyka okrem „počet $a$ sa rovná počtu $b$“; funguje pre každý konečnostavový akceptor.",
+     "Existencia gramatiky $S\\to aSb\\mid ab$ znamená, že $\\{a^nb^n\\}$ je bezkontextový."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Gramatika $S\\to aSb\\mid ab$ generuje $L=\\{a^nb^n:n\\ge1\\}$, teda $L$ je bezkontextový.",
+      "why": "Príklad $G_2$ z prednášky 1.",
+      "uses": []
+     },
+     {
+      "text": "Sporom predpokladajme, že pre $L$ existuje konečnostavový akceptor $M=(Q,\\Sigma,f,q_I,F)$. Pre každé $n\\ge1$ má $M$ prijímajúci výpočet na slove $a^nb^n$: $q_I\\xrightarrow{a}q_1\\xrightarrow{a}\\dots\\xrightarrow{a}q_n\\xrightarrow{b^n}q'\\in F$.",
+      "why": "Slovo $a^nb^n\\in L$ musí byť prijaté.",
+      "uses": [
+       "def.dokaz-sporom"
+      ]
+     },
+     {
+      "text": "Pre $n>|Q|$ sa v postupnosti $q_1,\\dots,q_n$ musel nejaký stav zopakovať: $q_j=q_k$ pre nejaké $1\\le j<k\\le n$.",
+      "why": "Holubníkový princíp.",
+      "uses": [
+       "def.holubnikovy-princip"
+      ]
+     },
+     {
+      "text": "Vynechaním úseku medzi $q_j$ a $q_k$ dostaneme prijímajúci výpočet na slove $a^ib^n\\in L$, pričom $i=n-(k-j)<n$. Slovo $a^ib^n$ nie je v $L$, čo je spor.",
+      "why": "Výpočet po vynechaní cyklu stále končí v $q'\\in F$.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "def.holubnikovy-princip",
+    "def.dokaz-sporom",
+    "dfn.konecnostavovy-akceptor",
+    "dfn.bezkontextova-gramatika",
+    "dfn.regularny-jazyk",
+    "dfn.slovo"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "ex.gramatika-anbn",
+     "note": "gramatika $G_2$"
+    },
+    {
+     "type": "see-also",
+     "target": "thm.anbn-dcfl-nie-regularny",
+     "note": "rozšírenie: $a^nb^n$ je dokonca deterministický bezkontextový"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.bezkontextovy-jazyk"
+    },
+    {
+     "type": "see-also",
+     "target": "thm.pumping-lema-bezkontextove"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.zretazenie-m1-m2",
+   "title": "Zreťazenie akceptorov M1·M2 pomocou ε-hrán",
+   "caption": "Koncové stavy $C,E$ akceptora $M_1$ sa ε-hranami napoja na počiatočný stav $X$ akceptora $M_2$.",
+   "origin": "generated",
+   "illustrates": [
+    "alg.konstrukcia-zretazenia-iteracie"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "A",
+     "x": 0,
+     "y": 60,
+     "label": "▸ A"
+    },
+    {
+     "id": "B",
+     "x": 110,
+     "y": 0,
+     "label": "B"
+    },
+    {
+     "id": "C",
+     "x": 220,
+     "y": 0,
+     "label": "C"
+    },
+    {
+     "id": "D",
+     "x": 330,
+     "y": 0,
+     "label": "D"
+    },
+    {
+     "id": "E",
+     "x": 440,
+     "y": 0,
+     "label": "E"
+    },
+    {
+     "id": "X",
+     "x": 300,
+     "y": 150,
+     "label": "X"
+    },
+    {
+     "id": "Y",
+     "x": 440,
+     "y": 150,
+     "label": "Y ◉"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "A",
+     "target": "B",
+     "label": "0",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "A",
+     "target": "A",
+     "label": "1",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "B",
+     "target": "B",
+     "label": "0",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "B",
+     "target": "C",
+     "label": "1",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "C",
+     "target": "B",
+     "label": "0",
+     "directed": true
+    },
+    {
+     "id": "e5",
+     "source": "C",
+     "target": "D",
+     "label": "1",
+     "directed": true
+    },
+    {
+     "id": "e6",
+     "source": "D",
+     "target": "E",
+     "label": "0",
+     "directed": true
+    },
+    {
+     "id": "e7",
+     "source": "D",
+     "target": "A",
+     "label": "1",
+     "directed": true
+    },
+    {
+     "id": "e8",
+     "source": "E",
+     "target": "E",
+     "label": "0, 1",
+     "directed": true
+    },
+    {
+     "id": "e9",
+     "source": "X",
+     "target": "X",
+     "label": "0",
+     "directed": true
+    },
+    {
+     "id": "e10",
+     "source": "X",
+     "target": "Y",
+     "label": "1",
+     "directed": true
+    },
+    {
+     "id": "e11",
+     "source": "Y",
+     "target": "Y",
+     "label": "0",
+     "directed": true
+    },
+    {
+     "id": "e12",
+     "source": "Y",
+     "target": "X",
+     "label": "1",
+     "directed": true
+    },
+    {
+     "id": "e13",
+     "source": "C",
+     "target": "X",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e14",
+     "source": "E",
+     "target": "X",
+     "label": "ε",
+     "directed": true
+    }
+   ],
+   "animations": []
+  },
+  {
+   "id": "fig.zrkadlo-m2",
+   "title": "Zrkadlový obraz akceptora M2",
+   "caption": "Otočené hrany, nový počiatočný stav $S_0$ s ε-prechodom do pôvodného koncového stavu $Y$; pôvodný počiatočný $X$ je koncový.",
+   "origin": "generated",
+   "illustrates": [
+    "alg.konstrukcia-zrkadla"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "S0",
+     "x": 0,
+     "y": 60,
+     "label": "▸ S0"
+    },
+    {
+     "id": "X",
+     "x": 180,
+     "y": 0,
+     "label": "X ◉"
+    },
+    {
+     "id": "Y",
+     "x": 180,
+     "y": 120,
+     "label": "Y"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "X",
+     "target": "X",
+     "label": "0",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "Y",
+     "target": "X",
+     "label": "1",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "Y",
+     "target": "Y",
+     "label": "0",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "X",
+     "target": "Y",
+     "label": "1",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "S0",
+     "target": "Y",
+     "label": "ε",
+     "directed": true
+    }
+   ],
+   "animations": []
+  },
+  {
+   "id": "fig.uzavretost-regularnych-tabulka",
+   "title": "Uzavretosť regulárnych jazykov",
+   "caption": "Zhrnutie.",
+   "origin": "generated",
+   "illustrates": [
+    "def.uzavretost-regularnych"
+   ],
+   "sources": [],
+   "kind": "table",
+   "columns": [
+    "operácia",
+    "výsledok",
+    "dôkaz"
+   ],
+   "rows": [
+    [
+     "doplnok",
+     "áno",
+     "Veta 7.1"
+    ],
+    [
+     "prienik",
+     "áno",
+     "Veta 7.2"
+    ],
+    [
+     "zjednotenie, rozdiel, sym. rozdiel",
+     "áno",
+     "Veta 7.3"
+    ],
+    [
+     "zreťazenie, iterácia",
+     "áno",
+     "Veta 13.1"
+    ],
+    [
+     "zrkadlový obraz",
+     "áno",
+     "Veta 13.2"
+    ],
+    [
+     "homomorfizmus, inverzný homomorfizmus",
+     "áno",
+     "Veta 13.3"
+    ]
+   ]
+  },
+  {
+   "id": "fig.konverzie",
+   "title": "Konverzie medzi reprezentáciami",
+   "caption": "Slajd 2.",
+   "origin": "generated",
+   "illustrates": [
+    "def.konverzie-reprezentacii"
+   ],
+   "sources": [],
+   "kind": "mermaid",
+   "code": "flowchart LR\n  RV[\"regulárny výraz\"] -->|V11.1| EA[\"ε-akceptor\"]\n  EA -->|V9.1| NA[\"NFA\"]\n  NA -->|V8.1| DA[\"DFA\"]\n  DA -->|V12.3| RV\n  DA -->|V10.1| RG[\"regulárna gramatika\"]\n  RGE[\"rozšírená reg. gramatika\"] -->|V10.2| EA"
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.kombinovanie-lexerov",
+   "title": "Kombinovanie lexikálnych pravidiel",
+   "summary": "Operácie s regulárnymi jazykmi pri návrhu lexerov.",
+   "scenario": "Lexer pre jazyk má spájať pravidlá (zjednotenie tokenov) a skladať ich (zreťazenie, iterácia).",
+   "modelling": "Tokeny sú regulárne jazyky; operácie sú konštrukcie z prednášky.",
+   "solution": "Priame konštrukcie na akceptoroch dajú ε-akceptor bez nutnosti konverzií na výrazy.",
+   "connects": [
+    "thm.uzavretost-zretazenie-iteracia",
+    "alg.konstrukcia-zretazenia-iteracie"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.spatne-retazce",
+   "title": "Spracovanie reverzných reťazcov",
+   "summary": "Hľadanie vzorov odzadu.",
+   "scenario": "Potrebujeme rozpoznávať reťazce čítané od konca (napr. prípony).",
+   "modelling": "Prípony slov tvoria zrkadlový obraz jazyka prefixov.",
+   "solution": "Zrkadlový akceptor rozpozná $L^R$ rovnako rýchlo.",
+   "connects": [
+    "thm.uzavretost-zrkadlo",
+    "alg.konstrukcia-zrkadla"
+   ],
+   "figures": [],
+   "tags": [
+    "vyhľadávanie"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.prekodovanie",
+   "title": "Kódovanie a prekódovanie abecied",
+   "summary": "Homomorfizmy ako transformácia vstupov.",
+   "scenario": "Dáta sa kódujú iným alfabetom (napr. Morseov kód, UTF).",
+   "modelling": "Prekódovanie je homomorfizmus; pôvodný jazyk je regulárny.",
+   "solution": "Obraz aj vzor sú regulárne; môžeme rozpoznávať v oboch abecedách.",
+   "connects": [
+    "thm.uzavretost-homomorfizmus",
+    "dfn.homomorfizmus"
+   ],
+   "figures": [],
+   "tags": [
+    "kódovanie"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.dokaz-neregularity",
+   "title": "Dôkaz, že jazyk nie je regulárny",
+   "summary": "Prečo sa zátvorky nedajú overiť konečným automatom.",
+   "scenario": "Programátor chce overiť vyváženosť zátvoriek pomocou regulárneho výrazu.",
+   "modelling": "Zátvorky zodpovedajú jazyku typu $a^nb^n$.",
+   "solution": "Veta 13.4 ukazuje, že to nie je možné; potrebujeme zásobník (bezkontextový jazyk).",
+   "connects": [
+    "thm.veta-13-4-anbn-nie-je-regularny",
+    "ex.gramatika-anbn"
+   ],
+   "figures": [],
+   "tags": [
+    "analýza"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.kon-1",
+   "kind": "mcq",
+   "prompt": "Ako vznikne akceptor pre zreťazenie $L_1L_2$?",
+   "options": [
+    "súčinom stavov",
+    "ε-prechody z koncových stavov $M_1$ do počiatočného $M_2$",
+    "zámenou koncových stavov",
+    "podmnožinovou konštrukciou"
+   ],
+   "answer": 1,
+   "explanation": "Koniec prvého sa napojí na začiatok druhého.",
+   "about": [
+    "alg.konstrukcia-zretazenia-iteracie"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.kon-2",
+   "kind": "mcq",
+   "prompt": "Prečo pri iterácii pridávame nový stav $X$, ktorý je počiatočný aj koncový?",
+   "options": [
+    "aby sa prijalo prázdne slovo a zacyklenie bolo bezpečné",
+    "aby bol automat deterministický",
+    "aby sa zmenšil počet stavov",
+    "nie je potrebný"
+   ],
+   "answer": 0,
+   "explanation": "$\\varepsilon\\in L^*$ a zacyklenie cez $X$ nedovolí nechcené slová.",
+   "about": [
+    "alg.konstrukcia-zretazenia-iteracie"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.kon-3",
+   "kind": "open",
+   "prompt": "Zostrojte zrkadlový obraz výrazu $(0+1)^*01$.",
+   "answer": "$10(0+1)^*$ (resp. $10(1+0)^*$).",
+   "explanation": "Obráťte poradie zreťazenia a ponechajte $(0+1)^*$.",
+   "about": [
+    "thm.uzavretost-zrkadlo"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.kon-4",
+   "kind": "truefalse",
+   "prompt": "Pre zrkadlový obraz platí $(L_1L_2)^R=L_1^RL_2^R$.",
+   "answer": false,
+   "explanation": "Správne $(L_1L_2)^R=L_2^RL_1^R$.",
+   "about": [
+    "dfn.zrkadlovy-obraz"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.kon-5",
+   "kind": "mcq",
+   "prompt": "Aká je definícia $h^{-1}(L_2)$?",
+   "options": [
+    "$\\{h(x):x\\in L_2\\}$",
+    "$\\{x\\in\\Sigma_1^*:h(x)\\in L_2\\}$",
+    "$\\{x:h(x)=\\varepsilon\\}$",
+    "$h(L_2)^c$"
+   ],
+   "answer": 1,
+   "explanation": "Všetky vzory slov z $L_2$.",
+   "about": [
+    "dfn.homomorfizmus"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.kon-6",
+   "kind": "mcq",
+   "prompt": "Ako sa zostrojí akceptor pre $h^{-1}(L_2)$?",
+   "options": [
+    "$f'(q,a)=f_2^*(q,h(a))$",
+    "$f'(q,a)=f_2(q,a)$",
+    "nahradením hrán cestami",
+    "súčinom"
+   ],
+   "answer": 0,
+   "explanation": "Jeden krok simuluje celé čítanie $h(a)$.",
+   "about": [
+    "thm.uzavretost-homomorfizmus"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.kon-7",
+   "kind": "truefalse",
+   "prompt": "Jazyk $\\{a^nb^n:n\\ge1\\}$ je regulárny.",
+   "answer": false,
+   "explanation": "Konečný akceptor sa po $n>|Q|$ znakoch $a$ zopakuje stav; vynechaním cyklu by prijal $a^ib^n$ s $i<n$.",
+   "about": [
+    "thm.veta-13-4-anbn-nie-je-regularny"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.kon-8",
+   "kind": "open",
+   "prompt": "Načrtnite dôkaz, že $\\{a^nb^n\\}$ nie je regulárny.",
+   "answer": "Sporom: akceptor s $|Q|$ stavmi; pre $n>|Q|$ sa na $a^n$ zopakuje stav; vynechaním cyklu je prijaté $a^ib^n$, $i<n$, spor.",
+   "explanation": "Holubníkový princíp.",
+   "about": [
+    "thm.veta-13-4-anbn-nie-je-regularny"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.kon-9",
+   "kind": "flashcard",
+   "prompt": "Vymenujte operácie, na ktoré sú regulárne jazyky uzavreté.",
+   "answer": "Doplnok, prienik, zjednotenie, rozdiel, symetrický rozdiel, zreťazenie, iterácia, zrkadlový obraz, homomorfizmus, inverzný homomorfizmus.",
+   "explanation": "Vety 7.1–7.3 a 13.1–13.3.",
+   "about": [
+    "def.uzavretost-regularnych"
+   ],
+   "difficulty": 1
+  }
+ ]
+}

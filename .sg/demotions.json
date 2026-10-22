@@ -1,0 +1,62 @@
+[
+ {
+  "source": "dfn.gramatika",
+  "target": "def.chomskeho-hierarchia",
+  "reason": "cycle (round 1)"
+ },
+ {
+  "source": "def.vyska-binarneho-stromu",
+  "target": "thm.pumping-lema-bezkontextove",
+  "reason": "cycle (round 1)"
+ },
+ {
+  "source": "dfn.kontextovy-jazyk",
+  "target": "thm.kontextova-na-lba",
+  "reason": "cycle (round 1)"
+ },
+ {
+  "source": "dfn.jazyk",
+  "target": "dfn.gramatika",
+  "reason": "cycle (round 2)"
+ },
+ {
+  "source": "dfn.abeceda",
+  "target": "dfn.jazyk",
+  "reason": "cycle (round 3)"
+ },
+ {
+  "source": "dfn.abeceda",
+  "target": "dfn.slovo",
+  "reason": "cycle (round 4)"
+ },
+ {
+  "source": "dfn.gramatika",
+  "target": "def.chomskeho-hierarchia",
+  "reason": "cycle (round 1)"
+ },
+ {
+  "source": "def.vyska-binarneho-stromu",
+  "target": "thm.pumping-lema-bezkontextove",
+  "reason": "cycle (round 1)"
+ },
+ {
+  "source": "dfn.kontextovy-jazyk",
+  "target": "thm.kontextova-na-lba",
+  "reason": "cycle (round 1)"
+ },
+ {
+  "source": "dfn.jazyk",
+  "target": "dfn.gramatika",
+  "reason": "cycle (round 2)"
+ },
+ {
+  "source": "dfn.abeceda",
+  "target": "dfn.jazyk",
+  "reason": "cycle (round 3)"
+ },
+ {
+  "source": "dfn.abeceda",
+  "target": "dfn.slovo",
+  "reason": "cycle (round 4)"
+ }
+]

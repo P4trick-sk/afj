@@ -1,0 +1,678 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "doplnok-dbj",
+  "title": "Doplnok deterministických bezkontextových jazykov",
+  "course": "B",
+  "order": 21,
+  "sourceFiles": [
+   "Afjb08_DetBezDoplnok_P.pdf"
+  ],
+  "summary": "Každý deterministický zásobníkový automat možno nahradiť takým, ktorý na každom vstupe po konečnom počte krokov zastaví (eliminácia nekonečných ε-výpočtov). Z toho vyplýva uzavretosť deterministických bezkontextových jazykov na doplnok: stačí prehodiť prijímajúce a odmietajúce výsledky.",
+  "overview": "Doplnok jazyka rozpoznávaného deterministickým automatom by sa dal získať prehodením koncových stavov, ale deterministický PDA môže zacykliť v nekonečnej postupnosti ε-krokov a vtedy vstup ani neprijme ani neodmietne. Prednáška ukazuje, že takéto cykly sa dajú detegovať: lema hovorí, že viac ako $m$ po sebe idúcich ε-prechodov je nekonečná postupnosť. Funkcia $h(p,A)$ predpovie, či ε-postupnosť z $(p,A)$ skončí, alebo je nekonečná (s koncovým stavom alebo bez neho). Konštrukcia $M'$ so stavmi $q^0,q^-,q^+,e^-,e^+$ simuluje $M$ a vždy zastaví na konci vstupu; prehodením $F'$ na $F''$ vznikne automat pre doplnok.",
+  "keyQuestions": [
+   "Prečo deterministický PDA nemôže jednoducho prehodiť koncové stavy?",
+   "Ako sa detegujú nekonečné ε-výpočty?",
+   "Čo znamenajú stavy $q^0,q^-,q^+$?"
+  ],
+  "prerequisites": [
+   "det-zas-automaty",
+   "zas-automaty"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "def.nekonecne-eps-vypocty",
+   "type": "concept",
+   "topic": "doplnok-dbj",
+   "title": "Nekonečné ε-výpočty a prečo prekážajú doplnku",
+   "terms": [
+    {
+     "term": "nekonečný ε-výpočet",
+     "alt": "infinite epsilon computation"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb08_DetBezDoplnok_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "Deterministický PDA $M$ sa môže uprostred vstupu dostať do situácie, keď vykonáva nekonečnú postupnosť $\\varepsilon$-krokov bez toho, aby sa pohol po vstupe dopredu. Pre doplnok $M''$ je treba po prečítaní $a_1\\dots a_i$ zastaviť a prijať, ak $M$ neprijíma; ak $p_2\\in F$ pozdĺž nekonečnej postupnosti, treba zastaviť a odmietnuť; v oboch prípadoch má $M''$ pri ďalších symbole $a_{i+1},\\dots$ už vždy zastavovať v koncovom (resp. nekoncovom) stave.",
+   "explanation": {
+    "intuition": "Automat sa zacyklí vo vnútri: nič nečíta, ale ani nekončí.",
+    "detailed": "Príklad zo slajdu: $(p_1,\\varepsilon,B)\\to(p_2,AA)$, $(p_2,\\varepsilon,A)\\to(p_2,\\varepsilon)$, $(p_2,\\varepsilon,C)\\to(p_1,BC)$. Z konfigurácie so zásobníkom $BCCC$ prejde automat cez $(p_2,AACCC)$, $(p_2,ACCC)$, $(p_2,CCC)$ späť do $(p_1,BCCC)$, a tak donekonečna.",
+    "pitfalls": [
+     "Prehodenie $F\\leftrightarrow Q-F$ nefunguje, ak výpočet nikdy nekončí: slovo by sa neprijalo v oboch automatoch."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.dpda",
+    "def.else-eps-prechod"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.eps-slucka"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.lema-nekonecna-eps-postupnost",
+   "type": "theorem",
+   "topic": "doplnok-dbj",
+   "title": "Lema: viac ako m po sebe idúcich ε-prechodov je nekonečná postupnosť",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb08_DetBezDoplnok_P.pdf",
+     "page": 6
+    }
+   ],
+   "statement": "Ak $M$ (so zmenou zásobníka o najviac jeden symbol) štartujúci z konfigurácie $(p,\\varepsilon,A)$ vykoná viac ako $m=|Q|\\sum_{k=1}^{|Q||\\Gamma|+1}|\\Gamma|^k$ $\\varepsilon$-prechodov za sebou, tak táto postupnosť $\\varepsilon$-prechodov je nekonečná a $M$ sa už nikdy nezastaví.",
+   "explanation": {
+    "intuition": "Ak sa stav a zásobník nemôžu zopakovať, ale ε-prechodov je viac než možných konfigurácií, výpočet musí cyklovať.",
+    "detailed": "Dva prípady: (a) výška zásobníka nikdy neprekročí $|Q||\\Gamma|+1$ — počet rôznych dvojíc (stav, obsah zásobníka) je najviac $m$, takže sa niektorá zopakuje a cyklus sa opakuje donekonečna; (b) výška prekročí $|Q||\\Gamma|+1$ — pre každú výšku $i$ sa vyberie posledný časový okamih, keď bola výška presne $i$, a zo stavu a vrchu $[r_i,B_i]$ sa nájde zopakovanie, takže sekvencia $\\varepsilon$-krokov sa opakuje a zásobník rastie do nekonečna.",
+    "pitfalls": [
+     "Zmena zásobníka o najviac jeden symbol (normalizácia) je podstatná: inak by sa výška mohla preskočiť."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Prípad a: výška zásobníka počas výpočtu nikdy neprekročí $|Q||\\Gamma|+1$. Pre $i=1,\\dots,m+1$ nech $r_i$ je stav po $i$ krokoch a $x_{i,1}x_{i,2}\\dots$ obsah zásobníka. Počet rôznych dvojíc $[r_i,x_{i,1}x_{i,2}\\dots]$ je najviac $|Q|\\sum_{k=1}^{|Q||\\Gamma|+1}|\\Gamma|^k=m$.",
+      "why": "Spočítame všetky možné konfigurácie.",
+      "uses": []
+     },
+     {
+      "text": "V postupnosti $m+1$ dvojíc sa nejaká zopakuje: $[r_i,x_i]=[r_j,x_j]$, $i<j$. Keďže $M$ je deterministický a nečíta vstup, sekvencia $\\varepsilon$-prechodov od $i$ po $j$ sa opakuje do nekonečna.",
+      "why": "Holubníkový princíp a determinizmus.",
+      "uses": [
+       "def.holubnikovy-princip"
+      ]
+     },
+     {
+      "text": "Prípad b: výška zásobníka prekročí $|Q||\\Gamma|+1$ v čase $T\\le m$. Keďže sa výška mení najviac o jeden, pre každé $i=1,\\dots,|Q||\\Gamma|+1$ bola v čase $\\le T$ výška presne $i$. Nech $t_i$ je posledný okamih, keď bola výška presne $i$, $r_i$ stav a $B_i$ vrch zásobníka v čase $t_i$.",
+      "why": "Nespojitosť výšky vylúčená normalizáciou.",
+      "uses": []
+     },
+     {
+      "text": "Dvojíc $[r_i,B_i]$ je najviac $|Q||\\Gamma|$, takže sa niektorá zopakuje: $[r_i,B_i]=[r_j,B_j]$ pre $i<j$. V časovom úseku $t_i+1,\\dots,t_j$ je výška vždy aspoň $i+1$, takže výpočet nezávisí od obsahu pod $B_i$.",
+      "why": "Holubníkový princíp.",
+      "uses": []
+     },
+     {
+      "text": "Rovnaká sekvencia $\\varepsilon$-prechodov sa preto začne vykonávať aj v čase $t_j$ a zakaždým výška vzrastie o $j-i$. Zásobník rastie do nekonečna a $M$ sa nikdy nezastaví. Lema je dokázaná.",
+      "why": "Opakovanie s rastom zásobníka.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.dpda",
+    "thm.pda-zmena-o-jeden-symbol",
+    "dfn.konfiguracia-pda",
+    "def.holubnikovy-princip",
+    "def.dokaz-sporom"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajdy 6–15 sú čiastočne obrázky; text dôkazu je rekonštruovaný. Hodnota $m$ pre $|Q|=2$, $|\\Gamma|=3$ je $6558$ (overené výpočtom). Slajdy 3–4 príkladu cyklu overené simuláciou."
+    ]
+   }
+  },
+  {
+   "id": "dfn.funkcia-h",
+   "type": "definition",
+   "topic": "doplnok-dbj",
+   "title": "Funkcia h(p,A)",
+   "terms": [
+    {
+     "term": "funkcia h",
+     "alt": "the function h"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb08_DetBezDoplnok_P.pdf",
+     "page": 16
+    }
+   ],
+   "statement": "Pre $p\\in Q$, $A\\in\\Gamma$ definujeme: $h(p,A)=\\varepsilon$, ak postupnosť $\\varepsilon$-prechodov z konfigurácie $(p,\\varepsilon,A)$ je iba konečnej dĺžky (vrátane nulovej, t.j. $\\delta(p,\\varepsilon,A)=\\text{undef}$); $h(p,A)=-$, ak je postupnosť $\\varepsilon$-prechodov z $(p,\\varepsilon,A)$ nekonečná a nikdy neprejde cez koncový stav; $h(p,A)=+$, ak je nekonečná a prejde cez nejaký koncový stav.",
+   "explanation": {
+    "intuition": "$h$ povie, či ε-výpočet skončí, a ak nie, či sa v ňom objaví koncový stav.",
+    "detailed": "Zápis $h(p,A)\\in\\{\\varepsilon,-,+\\}$ je tabuľka s $|Q|\\cdot|\\Gamma|$ položkami. Vďaka lemme sa dá hodnota zistiť konečnou simuláciou.",
+    "pitfalls": [
+     "Hodnota $\\varepsilon$ tu značí „konečná postupnosť“, nie prázdne slovo."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "thm.lema-nekonecna-eps-postupnost",
+    "def.nekonecne-eps-vypocty"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.vypocet-tabulky-h",
+   "type": "algorithm",
+   "topic": "doplnok-dbj",
+   "title": "Výpočet tabuľky h",
+   "terms": [
+    {
+     "term": "výpočet tabuľky h",
+     "alt": "computing h"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb08_DetBezDoplnok_P.pdf",
+     "page": 17
+    }
+   ],
+   "statement": "Pre každé $p_i\\in Q$ a $A_j\\in\\Gamma$ odsimulujeme prvých $m=|Q|\\sum_{k=1}^{|Q||\\Gamma|+1}|\\Gamma|^k$ krokov $M$ z konfigurácie $(p_i,\\varepsilon,A_j)$ a z výsledku určíme $h(p_i,A_j)\\in\\{\\varepsilon,-,+\\}$: zastavenie pred $m$ krokmi dáva $\\varepsilon$, inak je postupnosť nekonečná a podľa toho, či prešla cez koncový stav, je hodnota $+$ alebo $-$.",
+   "explanation": {
+    "intuition": "Stačí konečná simulácia, lebo viac krokov znamená nekonečný výpočet.",
+    "detailed": "Výpočet je ohraničený číslom $m$, ktoré závisí iba od $|Q|$ a $|\\Gamma|$, nie od vstupu.",
+    "pitfalls": [
+     "Číslo $m$ je obrovské; ide o dôkaz existencie algoritmu, nie o praktický postup."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Ak z $(p,\\varepsilon,A)$ prebehne viac ako $m$ ε-krokov, podľa lemy je postupnosť nekonečná; stačí teda pozorovať prvých $m$ krokov a zaznamenať, či sa vyskytol koncový stav.",
+    "steps": []
+   },
+   "uses": [
+    "dfn.funkcia-h",
+    "thm.lema-nekonecna-eps-postupnost"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.konstrukcia-zastavujuceho-dpda",
+   "type": "algorithm",
+   "topic": "doplnok-dbj",
+   "title": "Konštrukcia vždy zastavujúceho DPDA",
+   "terms": [
+    {
+     "term": "zastavujúci DPDA",
+     "alt": "halting DPDA"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb08_DetBezDoplnok_P.pdf",
+     "page": 18
+    }
+   ],
+   "statement": "Pre [DPDA](dfn.dpda) $M=(Q,\\Sigma,\\Gamma,\\delta,q_I,z_I,F)$ so zmenou zásobníka o najviac jeden symbol zostrojíme $M'=(Q',\\Sigma,\\Gamma',\\delta',q_I',z_I',F')$: $\\Gamma'=\\Gamma\\cup\\{z_I'\\}$, $Q'=Q^0\\cup Q^-\\cup Q^+\\cup\\{q_I',e^-,e^+\\}$, kde $Q^0=\\{q^0\\}$, $Q^-=\\{q^-\\}$, $Q^+=\\{q^+\\}$. Význam: $q^0$ — $M$ je v $q$ a od posledného čítania nešiel cez koncový stav; $q^-$ — $M$ je v $q$, nešiel a už nepôjde cez koncový stav (čaká sa na ďalší symbol); $q^+$ — od posledného čítania už prešiel cez koncový stav; $e^-$ — výpočet $M$ sa zablokoval a [slovo](dfn.slovo) nepatrí do $L(M)$; $e^+$ — zablokoval sa a slovo patrí do $L(M)$. Pravidlá: štart $\\delta'(q_I',\\varepsilon,z_I')=(q_I^0,z_Iz_I')$ ak $q_I\\notin F$, inak $(q_I^+,z_Iz_I')$; krok $\\varepsilon$ podľa $h$; čítanie symbolu zo stavov $q^-,q^+$; zablokovanie do $e^-,e^+$; dočítanie vstupu v $e^\\pm$. $F'=Q^+\\cup\\{e^+\\}$ pre $M'$ ($L(M')=L(M)$) a $F''=Q^-\\cup\\{e^-\\}$ pre $M''$ ($L(M'')=L(M)^c$).",
+   "explanation": {
+    "intuition": "Automat si pamätá, či na tomto vstupnom znaku už videl koncový stav, a vďaka $h$ vie, kedy sa zacyklí.",
+    "detailed": "Pre prípad (1) $\\delta(p,\\varepsilon,A)=(q,\\varepsilon)$ s $h(p,A)=\\varepsilon$ prechádza $\\delta'(p^0,\\varepsilon,A)=(q^0,\\varepsilon)$ alebo $(q^+,\\varepsilon)$ podľa $q\\in F$, a z $p^+$ ostáva v $+$. Pre $h(p,A)\\in\\{-,+\\}$ s nekonečnou postupnosťou sa prejde do $e^-$ alebo $e^+$. Pre nedefinované $\\delta(p,\\varepsilon,A)$ sa prejde do $p^-$ a čaká na symbol. Pri prázdnom zásobníku ($z_I'$) sa prejde do $e^-$.",
+    "pitfalls": [
+     "Falošné dno $z_I'$ zachytí vyprázdnenie zásobníka $M$.",
+     "Iba prvý moment, keď sa stane $F$, sa musí zapamätať v rámci jedného čítania (stavy $+$)."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Korektnosť: po prečítaní $a_1\\dots a_i$ je $M'$ v stave $q^+$ práve vtedy, keď $M$ po $a_1\\dots a_i$ (a následných ε-krokoch) prešiel koncovým stavom, a v $q^-$ práve vtedy, keď nie. Zastavenie plynie z toho, že každá ε-postupnosť sa nahradí jedným krokom podľa $h$ alebo prechodom do $e^\\pm$.",
+    "steps": []
+   },
+   "uses": [
+    "dfn.funkcia-h",
+    "alg.vypocet-tabulky-h",
+    "dfn.dpda",
+    "dfn.slovo"
+   ],
+   "relations": [
+    {
+     "type": "algorithm-for",
+     "target": "thm.dpda-vzdy-zastavi",
+     "note": "dôkaz"
+    }
+   ],
+   "figures": [
+    "fig.stavy-zastavujuceho"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.dpda-vzdy-zastavi",
+   "type": "theorem",
+   "topic": "doplnok-dbj",
+   "title": "Veta: každý DPDA sa dá nahradiť DPDA, ktorý vždy zastaví",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb08_DetBezDoplnok_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "(a) Každý [deterministický zásobníkový automat](dfn.dpda) $M$ sa dá nahradiť ekvivalentným deterministickým [zásobníkovým automatom](dfn.zasobnikovy-automat) $M'$, t.j. $L(M')=L(M)$, ktorý na každom vstupe po konečnom počte krokov zastaví. (b) Ako dôsledok, každý deterministický zásobníkový automat $M$ sa dá nahradiť deterministickým zásobníkovým automatom $M''$ pre doplnok pôvodného [jazyka](dfn.jazyk), t.j. $L(M'')=L(M)^c$.",
+   "explanation": {
+    "intuition": "Ak sa automat nikdy nezasekne a vždy skončí, jeho „nie“ môžeme zameniť za „áno“.",
+    "detailed": "Prvé krok: normalizácia zásobníka na zmenu o najviac jeden symbol (prednáška 1). Druhé: pomocná lema o nekonečných ε-postupnostiach. Tretie: funkcia $h$ a konštrukcia $M'$. Štvrté: zámena $F'\\leftrightarrow F''$ dáva automat pre doplnok.",
+    "pitfalls": [
+     "Zastavenie na konci vstupu nestačí: treba zastať v správnom koncovom/nekoncovom stave.",
+     "Akceptovanie sa tu rieši koncovými stavmi."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "sketch",
+    "steps": [
+     {
+      "text": "Bez ujmy na všeobecnosti $M$ nemení zásobník o viac ako jeden symbol; inak ho upravíme podľa lemy z prednášky 1.",
+      "why": "Normalizácia.",
+      "uses": [
+       "thm.pda-zmena-o-jeden-symbol"
+      ]
+     },
+     {
+      "text": "Pomocnou lemou a funkciou $h$ vieme pre každý stav a vrch zásobníka rozhodnúť, či ε-výpočet skončí alebo je nekonečný (cez koncový stav alebo bez).",
+      "why": "Lema a tabuľka $h$.",
+      "uses": [
+       "thm.lema-nekonecna-eps-postupnost",
+       "dfn.funkcia-h"
+      ]
+     },
+     {
+      "text": "$M'$ simuluje $M$ so stavmi $q^0,q^-,q^+$, pamätá, či sa po poslednom prečítaní prešlo koncovým stavom, a pri nekonečnom ε-výpočte alebo zablokovaní prejde do $e^-$ alebo $e^+$, v ktorých dočíta zvyšok vstupu.",
+      "why": "Konštrukcia 0–7.",
+      "uses": [
+       "alg.konstrukcia-zastavujuceho-dpda"
+      ]
+     },
+     {
+      "text": "Pre $M'$ je $F'=Q^+\\cup\\{e^+\\}$, takže $L(M')=L(M)$. Každý výpočet $M'$ je konečný, lebo žiadne ε-kroky sa nevykonávajú donekonečna.",
+      "why": "Slajd 29.",
+      "uses": []
+     },
+     {
+      "text": "Pre $M''$ je $F''=Q^-\\cup\\{e^-\\}$; keďže $M'$ vždy zastaví v práve jednom z $Q^+\\cup\\{e^+\\}$ alebo $Q^-\\cup\\{e^-\\}$, je $L(M'')=L(M)^c$.",
+      "why": "Každý vstup skončí buď v prijímajúcom, alebo odmietajúcom stave.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "alg.konstrukcia-zastavujuceho-dpda",
+    "thm.lema-nekonecna-eps-postupnost",
+    "dfn.funkcia-h",
+    "thm.pda-zmena-o-jeden-symbol",
+    "dfn.dpda",
+    "dfn.zasobnikovy-automat",
+    "dfn.jazyk"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajdy 18–29 popisujú konštrukciu pravidlami 0–8 bez formálneho dôkazu správnosti; tu je náčrt. Konštrukcia nebola implementovaná, preto nie je overená simuláciou."
+    ]
+   }
+  },
+  {
+   "id": "thm.dcfl-uzavrete-doplnok",
+   "type": "theorem",
+   "topic": "doplnok-dbj",
+   "title": "Deterministické bezkontextové jazyky sú uzavreté na doplnok",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb08_DetBezDoplnok_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "Trieda deterministických [bezkontextových jazykov](dfn.bezkontextovy-jazyk) je [uzavretá](def.uzavretost) na doplnok: ak $L$ je DCFL, tak aj $L^c=\\Sigma^*-L$ je DCFL.",
+   "explanation": {
+    "intuition": "Determinizmus sa „vyplatí“: doplnok sa dá vyrobiť, čo pre nedeterministické [jazyky](dfn.jazyk) nejde.",
+    "detailed": "Dôsledok Vety o zastavujúcom [DPDA](dfn.dpda). Táto vlastnosť je podstatná pre dôkaz, že niektoré CFL nie sú DCFL (prednáška 9).",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Ak $L=L(M)$ pre DPDA $M$, podľa vety existuje DPDA $M''$ s $L(M'')=L(M)^c$.",
+      "why": "Veta o zastavujúcom DPDA.",
+      "uses": [
+       "thm.dpda-vzdy-zastavi"
+      ]
+     },
+     {
+      "text": "Teda $L^c$ je rozpoznávaný deterministickým zásobníkovým automatom, t.j. je DCFL.",
+      "why": "Definícia DCFL.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "thm.dpda-vzdy-zastavi",
+    "def.uzavretost",
+    "dfn.bezkontextovy-jazyk",
+    "dfn.jazyk",
+    "dfn.dpda"
+   ],
+   "relations": [
+    {
+     "type": "contrasts-with",
+     "target": "thm.cfl-nie-uzavrete-doplnok",
+     "note": "pre všeobecné CFL neplatí"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.eps-slucka",
+   "title": "Nekonečná ε-slučka zo slajdu 3 (vypočítaná)",
+   "caption": "Po $4$ ε-krokoch sa konfigurácia opakuje.",
+   "origin": "generated",
+   "illustrates": [
+    "def.nekonecne-eps-vypocty"
+   ],
+   "sources": [],
+   "kind": "table",
+   "columns": [
+    "krok",
+    "stav",
+    "zásobník (vrch vľavo)"
+   ],
+   "rows": [
+    [
+     "0",
+     "p1",
+     "BCCC"
+    ],
+    [
+     "1",
+     "p2",
+     "AACCC"
+    ],
+    [
+     "2",
+     "p2",
+     "ACCC"
+    ],
+    [
+     "3",
+     "p2",
+     "CCC"
+    ],
+    [
+     "4",
+     "p1",
+     "BCCC"
+    ]
+   ]
+  },
+  {
+   "id": "fig.stavy-zastavujuceho",
+   "title": "Stavy zastavujúceho automatu",
+   "caption": "Slajdy 19–20.",
+   "origin": "slides",
+   "illustrates": [
+    "alg.konstrukcia-zastavujuceho-dpda"
+   ],
+   "sources": [
+    {
+     "file": "Afjb08_DetBezDoplnok_P.pdf",
+     "page": 19
+    }
+   ],
+   "kind": "table",
+   "columns": [
+    "stav",
+    "význam"
+   ],
+   "rows": [
+    [
+     "$q^0$",
+     "$M$ v $q$, od posledného čítania nešiel cez $F$"
+    ],
+    [
+     "$q^-$",
+     "$M$ v $q$, nešiel a už nepôjde cez $F$"
+    ],
+    [
+     "$q^+$",
+     "$M$ už prešiel cez $F$"
+    ],
+    [
+     "$e^-$",
+     "$M$ sa zablokoval, slovo $\\notin L(M)$"
+    ],
+    [
+     "$e^+$",
+     "$M$ sa zablokoval, slovo $\\in L(M)$"
+    ]
+   ]
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.vzdy-zastavujuce-kontroly",
+   "title": "Kontrolóry, ktoré musia vždy skončiť",
+   "summary": "Úplnosť a bezpečnosť.",
+   "scenario": "Validátor vstupu nesmie zamrznúť pri žiadnom vstupe.",
+   "modelling": "Deterministický PDA s ε-krokmi môže zacykliť; po úprave nie.",
+   "solution": "Konštrukcia $M'$ zaručí zastavenie a rozhodnutie pre každý vstup.",
+   "connects": [
+    "thm.dpda-vzdy-zastavi"
+   ],
+   "figures": [],
+   "tags": [
+    "spoľahlivosť"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.negacia-parserov",
+   "title": "Negácia jazyka v parseroch",
+   "summary": "Doplnok deterministického jazyka.",
+   "scenario": "Chceme prijať všetko, čo nespĺňa deterministickú špecifikáciu (napr. detekcia nevalidných vstupov).",
+   "modelling": "Doplnok DCFL.",
+   "solution": "Je opäť DCFL, takže môžeme použiť deterministický parser.",
+   "connects": [
+    "thm.dcfl-uzavrete-doplnok"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.detekcia-cyklov",
+   "title": "Detekcia nekonečných cyklov v zásobníkových systémoch",
+   "summary": "Opakovanie konfigurácie.",
+   "scenario": "Zásobníkový systém (napr. rekurzívny program) môže cyklovať bez čítania vstupu.",
+   "modelling": "Konfigurácia je (stav, zásobník).",
+   "solution": "Lema o $m$ krokoch dáva ohraničenie, po ktorom sa dá cyklus rozpoznať.",
+   "connects": [
+    "thm.lema-nekonecna-eps-postupnost"
+   ],
+   "figures": [],
+   "tags": [
+    "verifikácia"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.dbj-1",
+   "kind": "truefalse",
+   "prompt": "Deterministický PDA vždy zastaví na každom vstupe.",
+   "answer": false,
+   "explanation": "Môže vykonávať nekonečnú postupnosť ε-krokov.",
+   "about": [
+    "def.nekonecne-eps-vypocty"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.dbj-2",
+   "kind": "mcq",
+   "prompt": "Koľko je $m$ pre $|Q|=2$, $|\\Gamma|=3$?",
+   "options": [
+    "6558",
+    "81",
+    "243",
+    "2187"
+   ],
+   "answer": 0,
+   "explanation": "$2\\cdot(3+9+27+81+243+729+2187)=6558$.",
+   "about": [
+    "thm.lema-nekonecna-eps-postupnost"
+   ],
+   "difficulty": 2,
+   "check": {
+    "verifier": "expr",
+    "expr": "2*(3+9+27+81+243+729+2187)"
+   }
+  },
+  {
+   "id": "quiz.dbj-3",
+   "kind": "mcq",
+   "prompt": "Čo znamená $h(p,A)=+$?",
+   "options": [
+    "ε-postupnosť z $(p,A)$ je nekonečná a prejde cez koncový stav",
+    "ε-postupnosť je konečná",
+    "ε-postupnosť je nekonečná bez koncového stavu",
+    "$\\delta(p,\\varepsilon,A)$ nie je definované"
+   ],
+   "answer": 0,
+   "explanation": "Hodnoty $\\varepsilon,-,+$.",
+   "about": [
+    "dfn.funkcia-h"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.dbj-4",
+   "kind": "mcq",
+   "prompt": "Ktoré koncové stavy má $M''$ pre doplnok?",
+   "options": [
+    "$Q^+\\cup\\{e^+\\}$",
+    "$Q^-\\cup\\{e^-\\}$",
+    "$Q^0$",
+    "$F$"
+   ],
+   "answer": 1,
+   "explanation": "Prehodenie úlohy $F'$.",
+   "about": [
+    "alg.konstrukcia-zastavujuceho-dpda"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.dbj-5",
+   "kind": "truefalse",
+   "prompt": "Deterministické bezkontextové jazyky sú uzavreté na doplnok.",
+   "answer": true,
+   "explanation": "Dôsledok vety o zastavujúcom DPDA.",
+   "about": [
+    "thm.dcfl-uzavrete-doplnok"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.dbj-6",
+   "kind": "open",
+   "prompt": "Prečo nestačí prehodiť koncové a nekoncové stavy deterministického PDA?",
+   "answer": "Automat môže na niektorom vstupe zacykliť v ε-krokoch a vstup ani neprijme ani neodmietne; po prehodení by ho neprijal ani doplnkový automat.",
+   "explanation": "Nekonečné ε-postupnosti.",
+   "about": [
+    "def.nekonecne-eps-vypocty"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.dbj-7",
+   "kind": "flashcard",
+   "prompt": "Aká normalizácia sa použije pred konštrukciou zastavujúceho DPDA?",
+   "answer": "Zmena zásobníka o najviac jeden symbol v kroku.",
+   "explanation": "Lema z prednášky 1.",
+   "about": [
+    "thm.pda-zmena-o-jeden-symbol"
+   ],
+   "difficulty": 1
+  }
+ ]
+}

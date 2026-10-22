@@ -1,0 +1,524 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "pumping2",
+  "title": "Pumping lema pre bezkontextové jazyky II",
+  "course": "B",
+  "order": 19,
+  "sourceFiles": [
+   "Afjb06_Pumping-II_P.pdf"
+  ],
+  "summary": "Na troch príkladoch ($a^nb^nc^n$, $a^{n_1}b^{n_2}a^{n_1}b^{n_2}$ a $a^p$ pre prvočísla $p$) sa ukazuje, ako sa pumping lema používa na dôkaz, že jazyk nie je bezkontextový: dôkaz sporom, voľba vhodného slova a rozbor všetkých možností rozdelenia $uvxyz$.",
+  "overview": "Prednáška aplikuje pumping lemu. Spoločný postup: predpokladáme sporom, že jazyk je bezkontextový; lema dá konštantu $m$; zvolíme slovo $w\\in L$ s $|w|\\ge m$ (typicky závislé od $m$); lema ho rozdelí na $uvxyz$; ukážeme, že pre každé povolené rozdelenie existuje $k$, pre ktoré $uv^kxy^kz\\notin L$; spor. Pre $a^nb^nc^n$ ide o tri prípady podľa umiestnenia $vxy$ voči $a$, $b$, $c$. Pre $a^{n_1}b^{n_2}a^{n_1}b^{n_2}$ ide o analogický rozbor. Pre prvočísla sa používa aritmetický argument $A+kB$.",
+  "keyQuestions": [
+   "Aké sú kroky dôkazu nebezkontextovosti pomocou pumping lemy?",
+   "Prečo pre $a^nb^nc^n$ stačia tri prípady?",
+   "Ako sa zvolí $k$ v dôkaze pre prvočísla?"
+  ],
+  "prerequisites": [
+   "pumping1"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "def.schema-pumping",
+   "type": "concept",
+   "topic": "pumping2",
+   "title": "Schéma dôkazu nebezkontextovosti pomocou pumping lemy",
+   "terms": [
+    {
+     "term": "schéma dôkazu pumping lemou",
+     "alt": "pumping-lemma proof scheme"
+    }
+   ],
+   "aliases": [],
+   "tags": [
+    "metóda"
+   ],
+   "origin": "supplement",
+   "statement": "Dôkaz, že [jazyk](dfn.jazyk) $L$ nie je bezkontextový: (1) [sporom](def.dokaz-sporom) predpokladáme, že $L$ je bezkontextový; (2) [pumping lema](thm.pumping-lema-bezkontextove) dá konštantu $m$; (3) zvolíme $w\\in L$ s $|w|\\ge m$ závislé od $m$; (4) lema dá rozdelenie $w=uvxyz$ s $|vxy|\\le m$ a $vy\\ne\\varepsilon$; (5) pre všetky možné polohy $vxy$ nájdeme $k$ s $uv^kxy^kz\\notin L$; spor s tým, že $uv^kxy^kz\\in L$ pre všetky $k$.",
+   "explanation": {
+    "intuition": "My volíme [slovo](dfn.slovo), lema volí rozdelenie; musíme poraziť každé rozdelenie.",
+    "detailed": "Voľba [slova](dfn.slovo) je kľúčová: musí byť dostatočne dlhé a „zviazané“, aby ľubovoľné krátke $vxy$ narušilo rovnováhu. Pri $a^nb^nc^n$ stačí slovo $a^{m+1}b^{m+1}c^{m+1}$. Najčastejšia chyba: voliť konkrétne rozdelenie namiesto toho, aby sa pokryli všetky.",
+    "pitfalls": [
+     "Nesmieme určovať rozdelenie $uvxyz$ my, iba slovo $w$; rozdelenie je „najhoršie možné“.",
+     "Treba pokryť všetky polohy $vxy$ vrátane tých, kde $v$ alebo $y$ je prázdne."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "thm.pumping-lema-bezkontextove",
+    "def.dokaz-sporom",
+    "dfn.jazyk",
+    "dfn.slovo"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.anbncn-nie-je-bezkontextovy",
+   "type": "theorem",
+   "topic": "pumping2",
+   "title": "Jazyk a^n b^n c^n nie je bezkontextový",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb06_Pumping-II_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "Jazyk $L_1=\\{a^nb^nc^n:n\\ge1\\}=\\{abc,aabbcc,aaabbbccc,\\dots\\}$ nie je bezkontextový.",
+   "explanation": {
+    "intuition": "Pumpovaním krátkeho úseku sa nikdy nezväčšia všetky tri skupiny súčasne.",
+    "detailed": "Keďže $|vxy|\\le m<m+1$, úsek $vxy$ nemôže obsahovať zároveň $a$ aj $c$ (medzi nimi je celý blok $b^{m+1}$). Preto $vxy$ sa dotýka najviac dvoch susedných písmen a pumpovanie zmení počet najviac dvoch symbolov, nie tretieho.",
+    "pitfalls": [
+     "Slovo musí byť $a^{m+1}b^{m+1}c^{m+1}$ (nie $a^mb^mc^m$), aby sa dalo rozhodnúť prípad 3 striktnou nerovnosťou $|vxy|<m+1$."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Sporom predpokladáme, že $L_1$ je bezkontextový. Podľa pumping lemy existuje $m$ také, že každé $w\\in L_1$ s $|w|\\ge m$ sa dá rozdeliť na $uvxyz$ s $uv^kxy^kz\\in L_1$, $|vxy|\\le m$, $vy\\ne\\varepsilon$.",
+      "why": "Použitie lemy.",
+      "uses": [
+       "thm.pumping-lema-bezkontextove"
+      ]
+     },
+     {
+      "text": "Zoberme $w=a^{m+1}b^{m+1}c^{m+1}\\in L_1$, $|w|\\ge m$. Rozdelíme na $uvxyz$; pozrieme sa, kde je $vxy$.",
+      "why": "Slovo vhodné pre pumping.",
+      "uses": []
+     },
+     {
+      "text": "Prípad 1: $vxy$ neobsahuje žiadne $c$. Keďže $vy\\ne\\varepsilon$, niektoré z $v,y$ obsahuje $a$ alebo $b$. Slovo $uvvxyyz$ obsahuje viac ako $m+1$ symbolov $a$ alebo viac ako $m+1$ symbolov $b$, počet $c$ ostáva $m+1$, takže $uvvxyyz\\notin L_1$.",
+      "why": "Počty $a,b,c$ nie sú rovnaké.",
+      "uses": []
+     },
+     {
+      "text": "Prípad 2: $vxy$ obsahuje aspoň jedno $c$, ale žiadne $a$. Analogicky obsahuje $v$ alebo $y$ symbol $b$ alebo $c$; $uvvxyyz$ má viac ako $m+1$ symbolov $b$ alebo $c$ a $m+1$ symbolov $a$, teda $\\notin L_1$.",
+      "why": "Symetrický argument.",
+      "uses": []
+     },
+     {
+      "text": "Prípad 3: $vxy$ obsahuje aspoň jedno $c$ aj aspoň jedno $a$. Potom je celý úsek $b^{m+1}$ súčasťou $vxy$, takže $|vxy|\\ge m+2>m$ — spor s $|vxy|\\le m$.",
+      "why": "Medzi $a$ a $c$ je celý blok $b^{m+1}$.",
+      "uses": []
+     },
+     {
+      "text": "Všetky prípady vedú ku sporu, preto $L_1$ nie je bezkontextový.",
+      "why": "Pokryté všetky polohy $vxy$.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "thm.pumping-lema-bezkontextove",
+    "def.schema-pumping",
+    "def.dokaz-sporom"
+   ],
+   "relations": [
+    {
+     "type": "counterexample-to",
+     "target": "thm.cfl-nie-uzavrete-prienik",
+     "note": "poskytuje protipríklad uzavretosti na prienik"
+    }
+   ],
+   "figures": [
+    "fig.pumping-pripady"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajd 4–6 používa v prípade 3 odhad $|vxy|\\ge m+1$; presnejšie $|vxy|\\ge m+2$ (blok $b^{m+1}$ plus aspoň jedno $a$ a jedno $c$). Obe sú v spore s $|vxy|\\le m$. Overené brute-force: pre $m=1,\\dots,4$ žiadne rozdelenie slova $a^{m+1}b^{m+1}c^{m+1}$ nespĺňa lemu."
+    ]
+   }
+  },
+  {
+   "id": "thm.kopirovanie-nie-je-bezkontextove",
+   "type": "theorem",
+   "topic": "pumping2",
+   "title": "Jazyk a^{n1} b^{n2} a^{n1} b^{n2} nie je bezkontextový",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb06_Pumping-II_P.pdf",
+     "page": 7
+    }
+   ],
+   "statement": "Jazyk $L_2=\\{a^{n_1}b^{n_2}a^{n_1}b^{n_2}:n_1\\ge1,n_2\\ge1\\}$ nie je bezkontextový. Napríklad $aaabbbbbaaabbbbb\\in L_2$.",
+   "explanation": {
+    "intuition": "„Skopírovať“ dvojicu čísel nedokáže ani zásobník: porovnáva len jednu skupinu a LIFO nestačí na dve.",
+    "detailed": "Dôkaz je analogický prvému príkladu. Slovo $a^{m+1}b^{m+1}a^{m+1}b^{m+1}$ nemožno rozdeliť tak, aby $uv^2xy^2z\\in L_2$ a $|vxy|\\le m$: úsek $vxy$ sa dotýka najviac dvoch susedných blokov, takže nezmení všetky štyri bloky rovnako.",
+    "pitfalls": [
+     "Podobný jazyk $\\{a^nb^na^nb^n\\}$ nie je zhodou okolností tiež bezkontextový, ale jazyk $\\{a^nb^nb^na^n\\}$ áno."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "sketch",
+    "steps": [
+     {
+      "text": "Sporom: nech $L_2$ je bezkontextový s konštantou $m$ z pumping lemy; zoberme $w=a^{m+1}b^{m+1}a^{m+1}b^{m+1}$.",
+      "why": "Slovo má štyri bloky dĺžky $m+1$.",
+      "uses": []
+     },
+     {
+      "text": "Úsek $vxy$ má dĺžku najviac $m$, takže zasahuje do najviac dvoch susedných blokov. Pumpovaním (napr. $k=2$) sa zmení dĺžka najviac dvoch blokov, a to tak, že prvá a tretia, resp. druhá a štvrtá dĺžka nie sú rovnaké.",
+      "why": "Blok dĺžky $m+1$ nie je celý pokrytý.",
+      "uses": []
+     },
+     {
+      "text": "Slovo $uv^2xy^2z$ potom nie je tvaru $a^{n_1}b^{n_2}a^{n_1}b^{n_2}$ — spor.",
+      "why": "Slajd 7 uvádza dôkaz analogicky ako v prvom príklade.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "thm.pumping-lema-bezkontextove",
+    "def.schema-pumping",
+    "def.dokaz-sporom"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajd 7 uvádza iba, že dôkaz je analogický; rozbor prípadov je náčrt. Overené brute-force pre $m=1,2,3$: žiadne rozdelenie slova nespĺňa lemu."
+    ]
+   }
+  },
+  {
+   "id": "thm.prvocisla-nie-su-bezkontextove",
+   "type": "theorem",
+   "topic": "pumping2",
+   "title": "Jazyk a^p, p prvočíslo, nie je bezkontextový",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb06_Pumping-II_P.pdf",
+     "page": 8
+    }
+   ],
+   "statement": "Jazyk $L_3=\\{a^p:p$ je prvočíslo$\\}=\\{aa,aaa,aaaaa,\\dots\\}$ nie je bezkontextový.",
+   "explanation": {
+    "intuition": "Pumpovaním sa dĺžka mení aritmeticky a postupnosť $A+kB$ nemôže byť samé prvočísla.",
+    "detailed": "Pre [slovo](dfn.slovo) $a^p$ sú všetky rozdelenia určené dĺžkami $h_u,h_v,h_x,h_y,h_z$. Označíme $A=h_u+h_x+h_z\\ge0$ a $B=h_v+h_y\\ge1$. Pumpovaním vznikne dĺžka $A+kB$. Treba ukázať, že pre nejaké $k$ nie je prvočíslom.",
+    "pitfalls": [
+     "Prípad $A=0$ treba ošetriť osobitne (dĺžka $kB$ je zložená pre $k\\ge2$, $B\\ge2$ alebo $k\\ge$ ...); slajd volí $k=4$: $4B=2^2B$ je zložené."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Sporom: nech $L_3$ je bezkontextový s konštantou $m$ a nech $p$ je prvé prvočíslo väčšie ako $m$. Slovo $a^p$ sa dá rozdeliť na $uvxyz$ s dĺžkami $h_u,h_v,h_x,h_y,h_z$.",
+      "why": "Slovo $a^p\\in L_3$ s $|a^p|\\ge m$.",
+      "uses": []
+     },
+     {
+      "text": "Označme $A=h_u+h_x+h_z\\ge0$ a $B=h_v+h_y\\ge1$ (lebo $vy\\ne\\varepsilon$). Podľa lemy musí byť $A+kB$ prvočíslo pre každé $k\\ge0$.",
+      "why": "$uv^kxy^kz=a^{A+kB}$.",
+      "uses": []
+     },
+     {
+      "text": "Prípad $A\\ge2$: zoberme $k=A$. $A+AB=A(1+B)$ nie je prvočíslo ($A\\ge2$ aj $1+B\\ge2$).",
+      "why": "Súčin dvoch čísel $\\ge2$.",
+      "uses": []
+     },
+     {
+      "text": "Prípad $A=1$: zoberme $k=2+B$. $1+(2+B)B=(1+B)^2$ nie je prvočíslo.",
+      "why": "Druhá mocnina čísla $\\ge2$.",
+      "uses": []
+     },
+     {
+      "text": "Prípad $A=0$: zoberme $k=4$. $4B=2^2B$ nie je prvočíslo.",
+      "why": "$4B$ je deliteľné $2$ a $B\\ge1$ dáva $4B\\ge4$.",
+      "uses": []
+     },
+     {
+      "text": "Všetky prípady vedú ku sporu, $L_3$ nie je bezkontextový.",
+      "why": "Overené: pre $A=0,\\dots,11$ a $B=1,\\dots,11$ je $A+kB$ s uvedeným $k$ zložené číslo.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "thm.pumping-lema-bezkontextove",
+    "def.schema-pumping",
+    "def.dokaz-sporom",
+    "dfn.slovo"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.pumping-prvocisla"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.pumping-pripady",
+   "title": "Prípady rozdelenia pre a^{m+1} b^{m+1} c^{m+1}",
+   "caption": "Slajdy 4–6.",
+   "origin": "slides",
+   "illustrates": [
+    "thm.anbncn-nie-je-bezkontextovy"
+   ],
+   "sources": [
+    {
+     "file": "Afjb06_Pumping-II_P.pdf",
+     "page": 4
+    }
+   ],
+   "kind": "table",
+   "columns": [
+    "prípad",
+    "poloha $vxy$",
+    "prečo spor"
+   ],
+   "rows": [
+    [
+     "1",
+     "bez $c$",
+     "počet $a$ alebo $b$ vzrastie, $c$ nie"
+    ],
+    [
+     "2",
+     "obsahuje $c$, bez $a$",
+     "počet $b$ alebo $c$ vzrastie, $a$ nie"
+    ],
+    [
+     "3",
+     "obsahuje $a$ aj $c$",
+     "celý blok $b^{m+1}$ v $vxy$, $|vxy|>m$"
+    ]
+   ]
+  },
+  {
+   "id": "fig.pumping-prvocisla",
+   "title": "Voľba k pre prvočísla",
+   "caption": "Slajd 10, overené výpočtom pre $A\\le11$, $B\\le11$.",
+   "origin": "slides",
+   "illustrates": [
+    "thm.prvocisla-nie-su-bezkontextove"
+   ],
+   "sources": [
+    {
+     "file": "Afjb06_Pumping-II_P.pdf",
+     "page": 10
+    }
+   ],
+   "kind": "table",
+   "columns": [
+    "$A$",
+    "$k$",
+    "$A+kB$",
+    "dôvod"
+   ],
+   "rows": [
+    [
+     "$\\ge2$",
+     "$A$",
+     "$A(1+B)$",
+     "súčin dvoch čísel $\\ge2$"
+    ],
+    [
+     "$1$",
+     "$2+B$",
+     "$(1+B)^2$",
+     "štvorec"
+    ],
+    [
+     "$0$",
+     "$4$",
+     "$4B$",
+     "deliteľné $2$"
+    ]
+   ]
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.deklaracie-nie-cfg",
+   "title": "Prečo deklarácie a použitia nie sú bezkontextové",
+   "summary": "Požiadavka „identifikátor musí byť deklarovaný“.",
+   "scenario": "Kompilátor kontroluje, že každý použitý identifikátor bol deklarovaný.",
+   "modelling": "Jazyk $\\{w\\,\\#\\,w\\}$ (kopírovanie) podobne ako $L_2$ nie je bezkontextový.",
+   "solution": "Pumping lema ukazuje hranice bezkontextovej syntaxe; takéto kontroly robí sémantická analýza.",
+   "connects": [
+    "thm.kopirovanie-nie-je-bezkontextove"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.rovnake-pocty",
+   "title": "Rovnaké počty troch kľúčových slov",
+   "summary": "Návrh formátu súborov.",
+   "scenario": "Formát má vyžadovať rovnaký počet záznamov troch typov v sekciách.",
+   "modelling": "Jazyk typu $a^nb^nc^n$.",
+   "solution": "Nebezkontextový: bezkontextová gramatika to nevyjadrí, treba dodatočnú kontrolu.",
+   "connects": [
+    "thm.anbncn-nie-je-bezkontextovy"
+   ],
+   "figures": [],
+   "tags": [
+    "formáty"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.unarne-prvocisla",
+   "title": "Hranice rozpoznávania aritmetických vlastností slov",
+   "summary": "Prvočíselnosť dĺžky.",
+   "scenario": "Chceme rozpoznať, či má vstup prvočíselnú dĺžku.",
+   "modelling": "Unárne slová $a^n$ s vlastnosťou „$n$ je prvočíslo“.",
+   "solution": "Ani zásobníkový automat to nevie; vlastnosť dĺžky vyžaduje silnejší stroj.",
+   "connects": [
+    "thm.prvocisla-nie-su-bezkontextove"
+   ],
+   "figures": [],
+   "tags": [
+    "teória"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.pump2-1",
+   "kind": "mcq",
+   "prompt": "Prečo sa v dôkaze pre $a^nb^nc^n$ volí slovo $a^{m+1}b^{m+1}c^{m+1}$?",
+   "options": [
+    "aby $|vxy|\\le m$ nepokrylo naraz $a$ aj $c$",
+    "lebo $m+1$ je prvočíslo",
+    "aby bolo slovo kratšie",
+    "nie je dôležité"
+   ],
+   "answer": 0,
+   "explanation": "Medzi $a$ a $c$ je blok $b$ dĺžky $m+1>m$.",
+   "about": [
+    "thm.anbncn-nie-je-bezkontextovy"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.pump2-2",
+   "kind": "truefalse",
+   "prompt": "V dôkaze pumping lemou si môžeme zvoliť rozdelenie $uvxyz$.",
+   "answer": false,
+   "explanation": "Rozdelenie volí lema (najhoršie možné); my volíme len slovo.",
+   "about": [
+    "def.schema-pumping"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.pump2-3",
+   "kind": "mcq",
+   "prompt": "Koľko prípadov treba preskúmať pre $a^nb^nc^n$?",
+   "options": [
+    "1",
+    "2",
+    "3",
+    "4"
+   ],
+   "answer": 2,
+   "explanation": "Bez $c$; s $c$ bez $a$; s $a$ aj $c$.",
+   "about": [
+    "thm.anbncn-nie-je-bezkontextovy"
+   ],
+   "difficulty": 1,
+   "check": {
+    "verifier": "expr",
+    "expr": "1+1+1"
+   }
+  },
+  {
+   "id": "quiz.pump2-4",
+   "kind": "mcq",
+   "prompt": "Aké $k$ zvolíme pre $A=1$ v dôkaze o prvočíslach?",
+   "options": [
+    "$A$",
+    "$2+B$",
+    "$4$",
+    "$B$"
+   ],
+   "answer": 1,
+   "explanation": "$1+(2+B)B=(1+B)^2$.",
+   "about": [
+    "thm.prvocisla-nie-su-bezkontextove"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.pump2-5",
+   "kind": "open",
+   "prompt": "Dokážte, že pre $A\\ge2$ a $k=A$ nie je $A+kB$ prvočíslo.",
+   "answer": "$A+AB=A(1+B)$ s $A\\ge2$ a $1+B\\ge2$ je súčin dvoch čísel $\\ge2$.",
+   "explanation": "Vyňatie $A$.",
+   "about": [
+    "thm.prvocisla-nie-su-bezkontextove"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.pump2-6",
+   "kind": "truefalse",
+   "prompt": "Jazyk $\\{a^nb^nc^n\\}$ je bezkontextový.",
+   "answer": false,
+   "explanation": "Pumping lema.",
+   "about": [
+    "thm.anbncn-nie-je-bezkontextovy"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.pump2-7",
+   "kind": "open",
+   "prompt": "Ako sa zistí, že jazyk $\\{a^{n_1}b^{n_2}a^{n_1}b^{n_2}\\}$ nie je bezkontextový?",
+   "answer": "Pumping lemou so slovom $a^{m+1}b^{m+1}a^{m+1}b^{m+1}$: $vxy$ zasahuje najviac dva susedné bloky, preto pumpovaním sa nezachová rovnosť všetkých štyroch blokov.",
+   "explanation": "Analogicky ako pre $a^nb^nc^n$.",
+   "about": [
+    "thm.kopirovanie-nie-je-bezkontextove"
+   ],
+   "difficulty": 2
+  }
+ ]
+}

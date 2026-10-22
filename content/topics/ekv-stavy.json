@@ -1,0 +1,1023 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "ekv-stavy",
+  "title": "Redukcia automatov II: ekvivalentné stavy",
+  "course": "A",
+  "order": 4,
+  "sourceFiles": [
+   "Afja04_redukcia_ekviv_P.pdf"
+  ],
+  "summary": "Dva stavy sú ekvivalentné, ak sa automat z nich správa rovnako na každom vstupe. Ekvivalentnosť sa počíta cez k-ekvivalenciu, ktorú možno rekurzívne vyjadriť pomocou nasledovníkov a postupne zjemňovať rozklad stavov.",
+  "overview": "Redukcia automatov pokračuje odstránením ekvivalentných stavov. Priame porovnávanie výstupov na všetkých vstupoch nie je možné, preto zavedieme k-ekvivalenciu (porovnávame iba slová dĺžky najviac $k$) a dokážeme, že ekvivalencia a k-ekvivalencia sú skutočné ekvivalencie (Lema 4.1), že ekvivalencia je „limitou“ k-ekvivalencií (Lema 4.2) a že $(k+1)$-ekvivalenciu možno vyjadriť cez $k$-ekvivalenciu a nasledovníkov (Veta 4.3). Z toho vyplýva algoritmus, ktorý začína rozkladom podľa výstupov a opakovane ho zjemňuje, až sa prestane meniť. Ekvivalentné stavy sa nakoniec zlepia do jedného. Korektnosť algoritmu a minimálnosť výsledku sa dokazujú v nasledujúcej prednáške.",
+  "keyQuestions": [
+   "Prečo stačí porovnávať výstupy na slovách ohraničenej dĺžky?",
+   "Ako sa $(k+1)$-ekvivalencia vyjadrí pomocou $k$-ekvivalencie?",
+   "Ako sa z rozkladu na triedy ekvivalencie zostrojí menší automat?"
+  ],
+  "prerequisites": [
+   "gramatiky",
+   "automaty-vystup",
+   "nedosiahnutelne"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "dfn.ekvivalentne-stavy",
+   "type": "definition",
+   "topic": "ekv-stavy",
+   "title": "Ekvivalentné stavy",
+   "terms": [
+    {
+     "term": "ekvivalentné stavy",
+     "alt": "equivalent states",
+     "symbol": "q_1\\sim q_2"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja04_redukcia_ekviv_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "Dva stavy $q_1,q_2\\in Q$ v [automate](dfn.konecnostavovy-automat) $M$ sú **ekvivalentné**, píšeme $q_1\\sim q_2$, ak platí $g^*(q_1,\\omega)=g^*(q_2,\\omega)$ pre každé $\\omega\\in\\Sigma^*$.",
+   "explanation": {
+    "intuition": "Z oboch stavov by automat vydal rovnaký výstup na každý možný vstup, preto sa stavy nedajú rozlíšiť.",
+    "detailed": "Ekvivalencia stavov je vnútorná verzia ekvivalencie automatov: automaty $M_1,M_2$ sú ekvivalentné práve vtedy, keď ich počiatočné stavy sú ekvivalentné (v disjunktnom zjednotení). Ak $q_1\\sim q_2$, môžeme jeden z nich zrušiť a hrany doň vedúce presmerovať do druhého.",
+    "pitfalls": [
+     "Ekvivalentné stavy nemusia mať rovnaké nasledovníky, iba ekvivalentné."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.rozsirene-funkcie",
+    "dfn.konecnostavovy-automat"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.k-ekvivalentne-stavy",
+   "type": "definition",
+   "topic": "ekv-stavy",
+   "title": "k-ekvivalentné stavy",
+   "terms": [
+    {
+     "term": "k-ekvivalentné stavy",
+     "alt": "k-equivalent states",
+     "symbol": "q_1\\sim_k q_2"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja04_redukcia_ekviv_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "Pre $k\\ge0$ sú dva stavy $q_1,q_2\\in Q$ **$k$-ekvivalentné**, píšeme $q_1\\sim_k q_2$, ak $g^*(q_1,\\omega)=g^*(q_2,\\omega)$ pre každé $\\omega\\in\\Sigma^*$ s $|\\omega|\\le k$.",
+   "explanation": {
+    "intuition": "Stavy sa správajú rovnako, pokiaľ sa pozeráme iba $k$ krokov dopredu.",
+    "detailed": "Pre $k=0$ je každá dvojica stavov $0$-ekvivalentná (porovnáva sa iba prázdne [slovo](dfn.slovo), ktoré dá prázdny výstup). $1$-ekvivalencia porovnáva výstupy na jednotlivé symboly. Čím väčšie $k$, tým jemnejšie rozlíšenie. Pre automat s $|Q|$ stavmi už rozlišuje všetko aj $k=|Q|-1$.",
+    "pitfalls": [
+     "$0$-ekvivalencia je triviálna, preto začíname rozklad pri $k=1$."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.ekvivalentne-stavy",
+    "dfn.slovo"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "def.motivacia-k-ekvivalencie",
+   "type": "concept",
+   "topic": "ekv-stavy",
+   "title": "Prečo práve k-ekvivalencia",
+   "terms": [
+    {
+     "term": "motivácia k-ekvivalencie",
+     "alt": "motivation of k-equivalence"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja04_redukcia_ekviv_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "Ak sú dva stavy ekvivalentné, môžeme jeden zrušiť a hrany doň vedúce presmerovať do druhého; správanie automatu sa nezmení. Overiť ekvivalenciu priamo z definície by však vyžadovalo porovnať výstupy pre nekonečne veľa vstupov. Naopak, $k$-ekvivalenciu možno testovať priamo z definície (konečne veľa slov), ale presmerovanie podľa $k$-ekvivalencie by mohlo zachovať rovnaký výstup len pre vstupy dĺžky najviac $k$.",
+   "explanation": {
+    "intuition": "Z nekonečného porovnávania urobíme konečné: ekvivalencia je limita $k$-ekvivalencií.",
+    "detailed": "Veta 4.3 umožní počítať $(k+1)$-ekvivalenciu z $k$-ekvivalencie a Lema 4.2 zaručí, že rozklad sa po konečne veľa krokoch ustáli a vtedy je rovný skutočnej ekvivalencii (Lema 5.3).",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "dfn.k-ekvivalentne-stavy"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.lema-4-1-ekvivalencie",
+   "type": "theorem",
+   "topic": "ekv-stavy",
+   "title": "Lema 4.1: ekvivalencia a k-ekvivalencia sú ekvivalencie",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja04_redukcia_ekviv_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "[Ekvivalencia](dfn.ekvivalentne-stavy) $\\sim$ je reflexívna, symetrická a tranzitívna relácia nad množinou stavov $Q$: pre každé $q_1,q_2,q_3\\in Q$ platí $q_1\\sim q_1$; ak $q_1\\sim q_2$, tak $q_2\\sim q_1$; ak $q_1\\sim q_2$ a $q_2\\sim q_3$, tak $q_1\\sim q_3$. Rovnaké vlastnosti má aj $k$-ekvivalencia $\\sim_k$ pre každé $k\\ge0$.",
+   "explanation": {
+    "intuition": "Názov „ekvivalencia“ je opodstatnený: ide o reláciu, ktorá rozdelí stavy do tried.",
+    "detailed": "Vďaka tejto leme tvoria $k$-[ekvivalentné stavy](dfn.ekvivalentne-stavy) triedy a tieto triedy tvoria rozklad $Q$ (pozri definíciu rozkladu nižšie). Dôkaz sa redukuje na vlastnosti rovnosti slov.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Tranzitivita: nech $q_1\\sim q_2$ a $q_2\\sim q_3$. Potom $g^*(q_1,\\omega)=g^*(q_2,\\omega)$ aj $g^*(q_2,\\omega)=g^*(q_3,\\omega)$ pre každé $\\omega\\in\\Sigma^*$.",
+      "why": "Rozpíšeme definíciu pre obe predpokladané ekvivalencie.",
+      "uses": []
+     },
+     {
+      "text": "Z tranzitivity rovnosti dostávame $g^*(q_1,\\omega)=g^*(q_3,\\omega)$ pre každé $\\omega$, čiže $q_1\\sim q_3$.",
+      "why": "Rovnosť slov je tranzitívna.",
+      "uses": []
+     },
+     {
+      "text": "Reflexivita a symetria sú ešte jednoduchšie (rovnosť je reflexívna a symetrická). Pri $k$-ekvivalencii stačí v kvantifikátoroch obmedziť $|\\omega|\\le k$.",
+      "why": "Obmedzenie dĺžky slova nič nemení na argumente.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.ekvivalentne-stavy",
+    "dfn.k-ekvivalentne-stavy",
+    "def.ekvivalencia-rozklad"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.lema-4-2-monotonnost",
+   "type": "theorem",
+   "topic": "ekv-stavy",
+   "title": "Lema 4.2: monotónnosť k-ekvivalencie a charakterizácia ekvivalencie",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja04_redukcia_ekviv_P.pdf",
+     "page": 5
+    }
+   ],
+   "statement": "Pre každé $q_1,q_2\\in Q$ platí: (1) pre každé $k\\ge0$: ak $q_1\\sim_{k+1}q_2$, tak $q_1\\sim_kq_2$; dôsledok: $q_1\\not\\sim_kq_2$ implikuje $q_1\\not\\sim_{k+1}q_2$. (2) $q_1\\sim q_2$ práve vtedy, keď $q_1\\sim_kq_2$ pre každé $k\\ge0$.",
+   "explanation": {
+    "intuition": "Čím viac krokov porovnávame, tým prísnejšia podmienka; ekvivalencia je prienik všetkých $k$-ekvivalencií.",
+    "detailed": "Rozklady na triedy $k$-ekvivalencie sa teda s rastúcim $k$ len zjemňujú. Všimnite si, že pre „$\\Leftarrow$“ v (2) použijeme $k=|\\omega|$ pre konkrétne [slovo](dfn.slovo) $\\omega$.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "(1) Ak $g^*(q_1,\\omega)=g^*(q_2,\\omega)$ pre všetky $\\omega$ dĺžky najviac $k+1$, tým skôr platí pre všetky $\\omega$ dĺžky najviac $k$.",
+      "why": "Podmnožina slov má slabšiu podmienku.",
+      "uses": []
+     },
+     {
+      "text": "(2) „$\\Rightarrow$“: ak $q_1\\sim q_2$, rovnosť platí pre všetky slová, teda aj pre slová dĺžky najviac $k$, pre každé $k$.",
+      "why": "Triviálne.",
+      "uses": []
+     },
+     {
+      "text": "(2) „$\\Leftarrow$“: nech $q_1\\sim_kq_2$ pre každé $k\\ge0$. Vezmime ľubovoľné $\\omega$ a $k'=|\\omega|$. Z $q_1\\sim_{k'}q_2$ je $g^*(q_1,\\omega')=g^*(q_2,\\omega')$ pre všetky $|\\omega'|\\le k'$, teda aj pre $\\omega'=\\omega$.",
+      "why": "Slovo $\\omega$ má dĺžku práve $k'$, preto ho $k'$-ekvivalencia pokrýva.",
+      "uses": []
+     },
+     {
+      "text": "Keďže $\\omega$ bolo ľubovoľné, platí $q_1\\sim q_2$.",
+      "why": "Definícia ekvivalencie stavov.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.k-ekvivalentne-stavy",
+    "dfn.ekvivalentne-stavy",
+    "dfn.slovo"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.veta-4-3-rekurzia-k-ekvivalencie",
+   "type": "theorem",
+   "topic": "ekv-stavy",
+   "title": "Veta 4.3: (k+1)-ekvivalencia pomocou k-ekvivalencie",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja04_redukcia_ekviv_P.pdf",
+     "page": 6
+    }
+   ],
+   "statement": "Pre každé $k\\ge1$ a každé $q_1,q_2\\in Q$ platí: $q_1\\sim_{k+1}q_2$ práve vtedy, keď (1) $q_1\\sim_kq_2$ a súčasne (2) $f(q_1,a)\\sim_kf(q_2,a)$ pre každé $a\\in\\Sigma$.",
+   "explanation": {
+    "intuition": "Dva stavy sa správajú rovnako $k+1$ krokov, ak sa správajú rovnako $k$ krokov a ich nasledovníci tiež.",
+    "detailed": "Veta je základom algoritmu: rozklad $A_{k+1}$ sa vypočíta z rozkladu $A_k$ bez ďalšieho zdĺhavého porovnávania výstupov. Slovo dĺžky $k+1$ sa rozloží na prvý symbol $a$ a zvyšok dĺžky $k$, ktorý číta nasledovník.",
+    "pitfalls": [
+     "Podmienka $k\\ge1$ je nutná: $\\sim_1$ porovnáva výstupy $g(q,a)$, ktoré $\\sim_0$ nevidí; pre $k=0$ by veta neplatila.",
+     "Podmienka (1) je podstatná: nasledovníci môžu byť $k$-ekvivalentní aj pri rôznych okamžitých výstupoch."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "„$\\Rightarrow$“, (1): $q_1\\sim_kq_2$ plynie z Lemy 4.2(1) a predpokladu $q_1\\sim_{k+1}q_2$.",
+      "why": "Monotónnosť.",
+      "uses": [
+       "thm.lema-4-2-monotonnost"
+      ]
+     },
+     {
+      "text": "„$\\Rightarrow$“, (2): rovnosť $g^*(q_1,\\omega)=g^*(q_2,\\omega)$ musí platiť aj pre $\\omega=a\\omega'$ s $|\\omega'|\\le k$. Rozpísaním podľa definície $g^*$ a Lemy 2.2: $g(q_1,a)\\,g^*(f(q_1,a),\\omega')=g(q_2,a)\\,g^*(f(q_2,a),\\omega')$.",
+      "why": "Slovo dĺžky najviac $k+1$ začínajúce symbolom $a$ sa rozloží na $a$ a $\\omega'$.",
+      "uses": [
+       "thm.lema-2-2-zretazenie"
+      ]
+     },
+     {
+      "text": "Výstupy $g(q_1,a)$, $g(q_2,a)$ majú dĺžku $1$, preto sa rovnajú a po ich odstránení ostane $g^*(f(q_1,a),\\omega')=g^*(f(q_2,a),\\omega')$ pre všetky $|\\omega'|\\le k$, teda $f(q_1,a)\\sim_kf(q_2,a)$.",
+      "why": "Slová rovnakej dĺžky sa rovnajú po zložkách.",
+      "uses": []
+     },
+     {
+      "text": "„$\\Leftarrow$“: z (1) a $k\\ge1$ dostaneme (opakovane Lemou 4.2) $q_1\\sim_1q_2$, teda $g(q_1,a)=g(q_2,a)$ pre všetky $a$ (A).",
+      "why": "$1$-ekvivalencia hovorí o výstupoch na symbol.",
+      "uses": []
+     },
+     {
+      "text": "Z (2) vyplýva $g^*(f(q_1,a),\\omega')=g^*(f(q_2,a),\\omega')$ pre $|\\omega'|\\le k$ (B). Spojením (A) a (B) cez Lemu 2.2 je $g^*(q_1,a\\omega')=g^*(q_2,a\\omega')$ pre všetky $a$ a $|\\omega'|\\le k$.",
+      "why": "Výstup na $a\\omega'$ je zreťazením výstupu na $a$ a výstupu z nasledovníka.",
+      "uses": []
+     },
+     {
+      "text": "Pre $\\omega=\\varepsilon$ platí $g^*(q_1,\\varepsilon)=g^*(q_2,\\varepsilon)=\\varepsilon$ z definície, teda $q_1\\sim_{k+1}q_2$.",
+      "why": "Pokryli sme všetky slová dĺžky najviac $k+1$.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.k-ekvivalentne-stavy",
+    "thm.lema-4-2-monotonnost",
+    "thm.lema-2-2-zretazenie",
+    "dfn.rozsirene-funkcie"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.rozklad-stavov",
+   "type": "definition",
+   "topic": "ekv-stavy",
+   "title": "Rozklad stavov na triedy k-ekvivalentných stavov",
+   "terms": [
+    {
+     "term": "rozklad na triedy k-ekvivalencie",
+     "alt": "partition into k-equivalence classes",
+     "symbol": "A_k"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja04_redukcia_ekviv_P.pdf",
+     "page": 9
+    }
+   ],
+   "statement": "**Rozklad** množiny stavov na triedy $k$-[ekvivalentných stavov](dfn.ekvivalentne-stavy) je systém neprázdnych množín $A_k=\\{A_{k,1},\\dots,A_{k,n_k}\\}$ takých, že $\\bigcup_iA_{k,i}=Q$, $A_{k,i'}\\cap A_{k,i''}=\\emptyset$ pre $i'\\ne i''$ a $q\\sim_kq'$ práve vtedy, keď existuje $i$ také, že $q,q'\\in A_{k,i}$.",
+   "explanation": {
+    "intuition": "Stavy rozdelíme do skupín tak, že v jednej skupine sú práve navzájom $k$-[ekvivalentné stavy](dfn.ekvivalentne-stavy).",
+    "detailed": "Rozklad $A_{k+1}$ vzniká zjemnením rozkladu $A_k$: každá trieda $A_k$ sa môže rozdeliť na viaceré, ale triedy sa nikdy nespájajú (Lema 4.2). Slajd 10 ilustruje, že dvojica $q_1,q_2$ ostáva v jednej triede $A_{k+1}$ iba ak je v jednej triede $A_k$ a ich nasledovníci sú tiež v spoločných triedach $A_k$.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "dfn.k-ekvivalentne-stavy",
+    "thm.lema-4-1-ekvivalencie",
+    "def.ekvivalencia-rozklad",
+    "dfn.ekvivalentne-stavy"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.rozklad-ekvivalentnych-stavov",
+   "type": "algorithm",
+   "topic": "ekv-stavy",
+   "title": "Rozklad na triedy ekvivalentných stavov",
+   "terms": [
+    {
+     "term": "rozklad na triedy ekvivalentných stavov",
+     "alt": "partition refinement"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja04_redukcia_ekviv_P.pdf",
+     "page": 11
+    }
+   ],
+   "statement": "1. **Rozklad $A_1$:** stavy $q,q'$ vložíme do tej istej množiny, ak $g(q,a)=g(q',a)$ pre všetky $a\\in\\Sigma$, inak do rôznych. 2. **Rozklad $A_{k+1}$ z $A_k$:** $q,q'$ vložíme do tej istej množiny, ak (a) patria do rovnakej množiny rozkladu $A_k$ a zároveň (b) pre každé $a\\in\\Sigma$ patria $f(q,a),f(q',a)$ do rovnakej množiny rozkladu $A_k$; inak do rôznych. 3. Krok 2 opakujeme pre $k=1,2,3,\\dots$, až kým sa $A_k$ a $A_{k+1}$ nezhodujú. Posledný rozklad $A=A_{k+1}$ je výstupom.",
+   "explanation": {
+    "intuition": "Začneme hrubým delením podľa výstupov a opakovane rozdeľujeme triedy, ktorých stavy majú nasledovníkov v rôznych triedach.",
+    "detailed": "Krok 2 priamo implementuje Vetu 4.3. Algoritmus sa zastaví najneskôr po $|Q|-1$ zjemneniach, lebo každé skutočné zjemnenie zvýši počet tried. Jeho korektnosť, zastavenie a to, že výstup je rozklad na plne [ekvivalentné stavy](dfn.ekvivalentne-stavy), sa dokazujú v Lemách 5.1–5.3.",
+    "pitfalls": [
+     "Zhoda $A_k=A_{k+1}$ znamená ustálenie, nie to, že sú všetky stavy ekvivalentné."
+    ],
+    "examples": [
+     "Pre $M'$: $A_1=\\{ABEF,CD\\}$, $A_2=\\{ABE,F,CD\\}$, $A_3=A_2$."
+    ]
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Korektnosť vyplýva z Vety 4.3 (indukcia podľa $k$, Lema 5.1), zastavenie z toho, že počet tried rastie a je ohraničený $|Q|$ (Lema 5.2), a správnosť výsledku z Lemy 5.3.",
+    "steps": []
+   },
+   "uses": [
+    "thm.veta-4-3-rekurzia-k-ekvivalencie",
+    "dfn.rozklad-stavov",
+    "dfn.ekvivalentne-stavy"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "thm.lema-5-3-korektnost-rozkladu",
+     "note": "dôkaz korektnosti"
+    },
+    {
+     "type": "analogue",
+     "target": "alg.minimalizacia-akceptora"
+    }
+   ],
+   "figures": [
+    "fig.rozklady-k-ekvivalencie"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.odstranenie-ekvivalentnych-stavov",
+   "type": "algorithm",
+   "topic": "ekv-stavy",
+   "title": "Odstraňovanie ekvivalentných stavov",
+   "terms": [
+    {
+     "term": "odstránenie ekvivalentných stavov",
+     "alt": "merging equivalent states"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja04_redukcia_ekviv_P.pdf",
+     "page": 12
+    }
+   ],
+   "statement": "Pre automat $M=(Q,\\Sigma,\\Delta,q_I,f,g)$ najprv zostrojíme rozklad $A=\\{A_1,\\dots,A_n\\}$ na triedy [ekvivalentných stavov](dfn.ekvivalentne-stavy). V každej triede vyberieme reprezentanta $q_i\\in A_i$ tak, aby $q_I\\in Q'=\\{q_1,\\dots,q_n\\}$. Potom nahradíme $M$ automatom $M'=(Q',\\Sigma,\\Delta,q_I,f',g')$, kde $f'(q_i,a)=q_j$ taký, že $f(q_i,a)\\in A_j$, a $g'(q_i,a)=g(q_i,a)$.",
+   "explanation": {
+    "intuition": "Z každej skupiny nerozlíšiteľných stavov necháme jedného zástupcu a všetky hrany smerujúce do skupiny presmerujeme na neho.",
+    "detailed": "Presmerovanie je dobre definované, lebo všetky stavy triedy $A_j$ sú ekvivalentné a výber reprezentanta nezmení správanie. Počiatočný stav musí zostať medzi reprezentantmi (alebo sa nahradí reprezentantom jeho triedy). Korektnosť (ekvivalencia $M'$ a $M$) dokazuje Veta 5.4.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Ekvivalentnosť $M'$ a $M$ dokazuje Veta 5.4: indukciou podľa dĺžky slova sa ukáže, že $g'^*(q_i,\\omega)=g^*(q_i,\\omega)$ pre reprezentantov.",
+    "steps": []
+   },
+   "uses": [
+    "alg.rozklad-ekvivalentnych-stavov",
+    "dfn.ekvivalentne-stavy"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "thm.veta-5-4-redukcia-zachovava-ekvivalenciu",
+     "note": "dôkaz korektnosti"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.redukcia-automatu",
+   "type": "example",
+   "topic": "ekv-stavy",
+   "title": "Redukcia automatu: triedy 1-, 2- a 3-ekvivalencie",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja04_redukcia_ekviv_P.pdf",
+     "page": 13
+    }
+   ],
+   "statement": "Pre dosiahnuteľnú časť $M'$ automatu $M_1$ so stavmi $A,\\dots,F$: $A_1=\\{\\{A,B,E,F\\},\\{C,D\\}\\}$ (podľa výstupov $a/b$, $b/b$ a $a/a$, $b/a$), $A_2=\\{\\{A,B,E\\},\\{F\\},\\{C,D\\}\\}$, $A_3=A_2$, takže triedy ekvivalencie sú $\\{A,B,E\\}$, $\\{F\\}$, $\\{C,D\\}$. Ako reprezentantov zvolíme $A$, $F$ a $C$; vznikne trojstavový automat $M_2$ s pôvodnými výstupmi.",
+   "explanation": {
+    "intuition": "Stavy $A,B,E$ sa rozlíšiť nedajú, rovnako $C,D$.",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "alg.odstranenie-ekvivalentnych-stavov"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.redukcia-M1",
+    "fig.redukcia-M2"
+   ],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Prechody $M'$ sú zrekonštruované zo zhrnutia tried na slajde 13; výsledné triedy a $M_2$ sú overené výpočtom (porovnanie výstupov na všetkých slovách do dĺžky 10)."
+    ]
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.redukcia-M1",
+   "title": "Automat M' pred redukciou a po nej (M2)",
+   "caption": "Dosiahnuteľná časť $M_1$ so stavmi $A,\\dots,F$. Triedy ekvivalencie: $\\{A,B,E\\},\\{C,D\\},\\{F\\}$.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.redukcia-automatu"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "A",
+     "x": 0,
+     "y": 100,
+     "label": "▸ A"
+    },
+    {
+     "id": "B",
+     "x": 150,
+     "y": 20,
+     "label": "B"
+    },
+    {
+     "id": "D",
+     "x": 150,
+     "y": 180,
+     "label": "D"
+    },
+    {
+     "id": "E",
+     "x": 300,
+     "y": 20,
+     "label": "E"
+    },
+    {
+     "id": "C",
+     "x": 300,
+     "y": 100,
+     "label": "C"
+    },
+    {
+     "id": "F",
+     "x": 300,
+     "y": 180,
+     "label": "F"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "A",
+     "target": "B",
+     "label": "a/b",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "A",
+     "target": "D",
+     "label": "b/b",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "B",
+     "target": "E",
+     "label": "a/b",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "B",
+     "target": "C",
+     "label": "b/b",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "C",
+     "target": "D",
+     "label": "a/a",
+     "directed": true
+    },
+    {
+     "id": "e5",
+     "source": "C",
+     "target": "F",
+     "label": "b/a",
+     "directed": true
+    },
+    {
+     "id": "e6",
+     "source": "D",
+     "target": "C",
+     "label": "a/a",
+     "directed": true
+    },
+    {
+     "id": "e7",
+     "source": "D",
+     "target": "F",
+     "label": "b/a",
+     "directed": true
+    },
+    {
+     "id": "e8",
+     "source": "E",
+     "target": "A",
+     "label": "a/b",
+     "directed": true
+    },
+    {
+     "id": "e9",
+     "source": "E",
+     "target": "C",
+     "label": "b/b",
+     "directed": true
+    },
+    {
+     "id": "e10",
+     "source": "F",
+     "target": "C",
+     "label": "a/b",
+     "directed": true
+    },
+    {
+     "id": "e11",
+     "source": "F",
+     "target": "D",
+     "label": "b/b",
+     "directed": true
+    }
+   ],
+   "animations": [
+    {
+     "title": "Triedy ekvivalencie",
+     "steps": [
+      {
+       "caption": "A1: podľa výstupov — {A,B,E,F} a {C,D}.",
+       "highlight": [
+        "A",
+        "B",
+        "E",
+        "F"
+       ]
+      },
+      {
+       "caption": "A2: F sa oddelí, lebo jeho nasledovníci sú obaja v {C,D}.",
+       "highlight": [
+        "F"
+       ]
+      },
+      {
+       "caption": "A3 = A2 — algoritmus končí; triedy {A,B,E}, {C,D}, {F}.",
+       "highlight": [
+        "A",
+        "B",
+        "E",
+        "C",
+        "D",
+        "F"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fig.redukcia-M2",
+   "title": "Redukovaný automat M2",
+   "caption": "Reprezentanti $A,C,F$.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.redukcia-automatu"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "A",
+     "x": 0,
+     "y": 60,
+     "label": "▸ A"
+    },
+    {
+     "id": "C",
+     "x": 150,
+     "y": 0,
+     "label": "C"
+    },
+    {
+     "id": "F",
+     "x": 300,
+     "y": 60,
+     "label": "F"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "A",
+     "target": "A",
+     "label": "a/b",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "A",
+     "target": "C",
+     "label": "b/b",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "C",
+     "target": "C",
+     "label": "a/a",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "C",
+     "target": "F",
+     "label": "b/a",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "F",
+     "target": "C",
+     "label": "a/b, b/b",
+     "directed": true
+    }
+   ],
+   "animations": []
+  },
+  {
+   "id": "fig.rozklady-k-ekvivalencie",
+   "title": "Rozklady A1, A2, A3",
+   "caption": "Slajd 13, overené výpočtom.",
+   "origin": "slides",
+   "illustrates": [
+    "alg.rozklad-ekvivalentnych-stavov"
+   ],
+   "sources": [
+    {
+     "file": "Afja04_redukcia_ekviv_P.pdf",
+     "page": 13
+    }
+   ],
+   "kind": "table",
+   "columns": [
+    "k",
+    "rozklad"
+   ],
+   "rows": [
+    [
+     "1",
+     "$\\{A,B,E,F\\},\\{C,D\\}$"
+    ],
+    [
+     "2",
+     "$\\{A,B,E\\},\\{F\\},\\{C,D\\}$"
+    ],
+    [
+     "3",
+     "$\\{A,B,E\\},\\{F\\},\\{C,D\\}$ (zhoda, koniec)"
+    ]
+   ]
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.minimalizacia-hardver",
+   "title": "Minimalizácia stavových strojov v hardvéri",
+   "summary": "Menší automat = menej logiky.",
+   "scenario": "Konečný automat sa implementuje v obvode; počet stavov určuje veľkosť stavového registra a kombinačnej logiky.",
+   "modelling": "Automat s výstupom sa zjednoduší zlepením ekvivalentných stavov.",
+   "solution": "Algoritmus zjemňovania rozkladu nájde triedy ekvivalentných stavov v polynomiálnom čase a zostrojí z nich minimálny automat.",
+   "connects": [
+    "alg.rozklad-ekvivalentnych-stavov",
+    "alg.odstranenie-ekvivalentnych-stavov"
+   ],
+   "figures": [],
+   "tags": [
+    "hardvér"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.lexery",
+   "title": "Optimalizácia lexikálnych analyzátorov",
+   "summary": "Generátor lexerov minimalizuje automat tokenov.",
+   "scenario": "Z regulárnych výrazov pre tokeny vznikne veľký deterministický automat; jeho veľkosť ovplyvňuje pamäť aj rýchlosť.",
+   "modelling": "Zlepením ekvivalentných stavov získame automat s najmenšou tabuľkou prechodov.",
+   "solution": "Minimalizácia rozkladom zachová rozpoznávané tokeny a zmenší tabuľku.",
+   "connects": [
+    "alg.rozklad-ekvivalentnych-stavov",
+    "dfn.ekvivalentne-stavy"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.test-implementacii",
+   "title": "Porovnanie dvoch implementácií",
+   "summary": "Rovnaké správanie bez testovania všetkých vstupov.",
+   "scenario": "Dva tímy napísali stavový stroj; chceme vedieť, či sa správajú rovnako.",
+   "modelling": "Oba stroje sú automaty; ekvivalentné sú, ak sú ekvivalentné ich počiatočné stavy.",
+   "solution": "Rozklad stavov v disjunktnom zjednotení rozhodne ekvivalenciu v konečnom čase (pozri Algoritmus testovania ekvivalencie).",
+   "connects": [
+    "dfn.ekvivalentne-stavy",
+    "alg.rozklad-ekvivalentnych-stavov"
+   ],
+   "figures": [],
+   "tags": [
+    "verifikácia"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.ekv-1",
+   "kind": "mcq",
+   "prompt": "Čo platí o $0$-ekvivalencii stavov automatu s výstupom?",
+   "options": [
+    "Stavy sú $0$-ekvivalentné práve vtedy, keď majú rovnaké výstupy",
+    "Každé dva stavy sú $0$-ekvivalentné",
+    "Žiadne dva stavy nie sú $0$-ekvivalentné",
+    "Iba dva stavy"
+   ],
+   "answer": 1,
+   "explanation": "Porovnáva sa iba prázdne slovo; $g^*(q,\\varepsilon)=\\varepsilon$ pre každé $q$.",
+   "about": [
+    "dfn.k-ekvivalentne-stavy"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ekv-2",
+   "kind": "truefalse",
+   "prompt": "Ak $q_1\\sim_5q_2$, tak $q_1\\sim_3q_2$.",
+   "answer": true,
+   "explanation": "Lema 4.2(1): $k$-ekvivalencia pre väčšie $k$ implikuje pre menšie.",
+   "about": [
+    "thm.lema-4-2-monotonnost"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ekv-3",
+   "kind": "mcq",
+   "prompt": "Ktoré tvrdenie je Veta 4.3?",
+   "options": [
+    "$q_1\\sim_{k+1}q_2\\iff q_1\\sim_kq_2\\wedge\\forall a:\\ f(q_1,a)\\sim_kf(q_2,a)$",
+    "$q_1\\sim_{k+1}q_2\\iff f(q_1,a)\\sim_{k+1}f(q_2,a)$",
+    "$q_1\\sim q_2\\iff g(q_1,a)=g(q_2,a)$",
+    "$q_1\\sim_kq_2\\iff q_1\\sim_{k+1}q_2$"
+   ],
+   "answer": 0,
+   "explanation": "$(k+1)$-ekvivalencia sa dá vyjadriť cez $k$-ekvivalenciu a nasledovníkov.",
+   "about": [
+    "thm.veta-4-3-rekurzia-k-ekvivalencie"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ekv-4",
+   "kind": "mcq",
+   "prompt": "Pre aké $k$ platí Veta 4.3 pre automaty s výstupom?",
+   "options": [
+    "$k\\ge0$",
+    "$k\\ge1$",
+    "iba $k=1$",
+    "pre žiadne"
+   ],
+   "answer": 1,
+   "explanation": "Pre $k=0$ by $\\sim_1$ vyžadovalo rovnaké okamžité výstupy, ktoré $\\sim_0$ a nasledovníci $\\sim_0$ nezaručujú.",
+   "about": [
+    "thm.veta-4-3-rekurzia-k-ekvivalencie"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.ekv-5",
+   "kind": "mcq",
+   "prompt": "Koľko tried má rozklad $A_2$ pre $M'$?",
+   "options": [
+    "2",
+    "3",
+    "4",
+    "6"
+   ],
+   "answer": 1,
+   "explanation": "$A_2=\\{\\{A,B,E\\},\\{F\\},\\{C,D\\}\\}$ má $3$ triedy.",
+   "about": [
+    "ex.redukcia-automatu"
+   ],
+   "difficulty": 1,
+   "check": {
+    "verifier": "expr",
+    "expr": "3"
+   }
+  },
+  {
+   "id": "quiz.ekv-6",
+   "kind": "truefalse",
+   "prompt": "Rozklad $A_{k+1}$ môže spájať triedy rozkladu $A_k$.",
+   "answer": false,
+   "explanation": "$A_{k+1}$ je zjemnením $A_k$: triedy sa iba delia.",
+   "about": [
+    "dfn.rozklad-stavov"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ekv-7",
+   "kind": "flashcard",
+   "prompt": "Opíšte krok 2 algoritmu rozkladu stavov.",
+   "answer": "Dva stavy ostanú v jednej triede $A_{k+1}$ práve vtedy, keď sú v jednej triede $A_k$ a pre každý symbol sú ich nasledovníci tiež v jednej triede $A_k$.",
+   "explanation": "To je Veta 4.3.",
+   "about": [
+    "alg.rozklad-ekvivalentnych-stavov"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ekv-8",
+   "kind": "open",
+   "prompt": "Dokážte tranzitivitu relácie $\\sim_k$.",
+   "answer": "Ak $g^*(q_1,\\omega)=g^*(q_2,\\omega)$ a $g^*(q_2,\\omega)=g^*(q_3,\\omega)$ pre $|\\omega|\\le k$, tak $g^*(q_1,\\omega)=g^*(q_3,\\omega)$.",
+   "explanation": "Rovnosť slov je tranzitívna.",
+   "about": [
+    "thm.lema-4-1-ekvivalencie"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.ekv-9",
+   "kind": "mcq",
+   "prompt": "Čo je postačujúce, aby sme zastavili rozklad stavov?",
+   "options": [
+    "$A_{k+1}=A_k$",
+    "$|A_k|=|Q|$",
+    "$A_k$ má jednu triedu",
+    "$k=|\\Sigma|$"
+   ],
+   "answer": 0,
+   "explanation": "Keď sa rozklad prestane meniť, už sa nezmení nikdy (dokazuje sa v prednáške 5).",
+   "about": [
+    "alg.rozklad-ekvivalentnych-stavov"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ekv-10",
+   "kind": "truefalse",
+   "prompt": "Pri odstraňovaní ekvivalentných stavov musí medzi reprezentantmi zostať počiatočný stav.",
+   "answer": true,
+   "explanation": "Inak by nebolo jasné, kam má automat začať (alebo sa nahradí reprezentantom jeho triedy).",
+   "about": [
+    "alg.odstranenie-ekvivalentnych-stavov"
+   ],
+   "difficulty": 1
+  }
+ ]
+}

@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.sg/scratch/
+sources/text/
+sources/*.pdf

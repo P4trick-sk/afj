@@ -1,0 +1,855 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "uzaver-kont",
+  "title": "Uzáverové vlastnosti kontextových jazykov",
+  "course": "B",
+  "order": 25,
+  "sourceFiles": [
+   "Afjb12_UzKontJazyky_P.pdf"
+  ],
+  "summary": "Pre LBA platí, že ak slovo akceptuje, akceptuje v menej než $d^n$ krokoch; preto sa každý LBA dá upraviť tak, aby vždy zastavil (pomocou počítadla krokov). Z toho plynie uzavretosť deterministických kontextových jazykov na doplnok; uzavretosť kontextových jazykov na doplnok je dôsledok všeobecnej vety (Immerman–Szelepcsényi). Kontextové jazyky sú uzavreté aj na prienik, zjednotenie, zreťazenie, iteráciu a zrkadlo.",
+  "overview": "Kontextové jazyky majú najpríjemnejšie uzáverové vlastnosti zo všetkých štyroch tried Chomského hierarchie okrem regulárnych. Kľúčom je lema o dĺžke akceptujúceho výpočtu: počet konfigurácií je ohraničený $(n+2)|Q||\\Gamma|^n<d^n$, takže najkratší akceptujúci výpočet nikdy nezopakuje konfiguráciu. LBA sa dá preto doplniť o počítadlo krokov v číselnej sústave so základom $d$ (uložené na ďalšej stope), čím vždy zastaví. Z toho doplnok pre deterministické LBA vznikne prehodením prijatia a odmietnutia. Prienik sa realizuje sériovou simuláciou dvoch strojov na dvoch kópiách vstupu. Záver prináša otvorený problém: sú deterministické a nedeterministické kontextové jazyky rovnaké?",
+  "keyQuestions": [
+   "Prečo má akceptujúci výpočet LBA nanajvýš $d^n$ krokov?",
+   "Ako sa LBA nútene zastaví?",
+   "Ktoré operácie zachovávajú kontextovosť?"
+  ],
+  "prerequisites": [
+   "kontextove",
+   "doplnok-dbj"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "thm.lba-kratky-vypocet",
+   "type": "theorem",
+   "topic": "uzaver-kont",
+   "title": "Lema: akceptujúci výpočet LBA kratší ako d^n",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb12_UzKontJazyky_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "Pre každý [LBA](dfn.lba) $M=(Q,\\Sigma,\\Gamma,q_I,q_F,\\vdash,\\dashv,H)$ existuje konštanta $d>1$ taká, že pre každé $w=a_1\\dots a_n\\in\\Sigma^*$ dĺžky $n\\ge2$ platí: $M$ má akceptujúci výpočet na $w$ vtedy a len vtedy, ak má akceptujúci výpočet, ktorý vykoná menej ako $d^n$ krokov.",
+   "explanation": {
+    "intuition": "Ak by výpočet bol dlhší než počet všetkých konfigurácií, niektorá by sa zopakovala a dala by sa vynechať.",
+    "detailed": "Počet rôznych konfigurácií na vstupe dĺžky $n$ je najviac $(n+2)|Q||\\Gamma|^n$ (poloha hlavy $0,\\dots,n+1$, stav, obsah pásky). Pre $n\\ge2$ platí $(n+2)|Q||\\Gamma|^n<3^n|Q|^n|\\Gamma|^n=(3|Q||\\Gamma|)^n=d^n$ s $d=3|Q||\\Gamma|$.",
+    "pitfalls": [
+     "Nerovnosť $(n+2)<3^n$ platí pre $n\\ge2$; preto lema vylučuje $n<2$."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Počet konfigurácií na vstupe dĺžky $n\\ge2$ je najviac $(n+2)\\cdot|Q|\\cdot|\\Gamma|^n<(3|Q||\\Gamma|)^n=d^n$, kde $d=3|Q||\\Gamma|$ nezávisí od vstupu.",
+      "why": "Poloha hlavy, stav a obsah pásky určujú konfiguráciu.",
+      "uses": [
+       "def.holubnikovy-princip"
+      ]
+     },
+     {
+      "text": "Graf všetkých výpočtov na $w$ má uzly zodpovedajúce konfiguráciám, preto menej ako $d^n$ rôznych uzlov.",
+      "why": "Slajd 4.",
+      "uses": []
+     },
+     {
+      "text": "Ak akceptujúca vetva vykoná $d^n$ alebo viac krokov, niektorá konfigurácia sa v nej zopakuje: $C_i=C_j$ pre $0\\le i<j\\le d^n$.",
+      "why": "Holubníkový princíp.",
+      "uses": []
+     },
+     {
+      "text": "Vynechaním úseku medzi $C_i$ a $C_j$ dostaneme akceptujúci výpočet s menším počtom krokov. Preto najkratší akceptujúci výpočet nezopakuje konfiguráciu a vykoná menej ako $d^n$ krokov.",
+      "why": "Skrátenie výpočtu.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.lba",
+    "dfn.akceptovanie-lba",
+    "def.holubnikovy-princip"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Nerovnosť $(n+2)|Q||\\Gamma|^n<(3|Q||\\Gamma|)^n$ overená výpočtom pre $|Q|\\le5$, $|\\Gamma|\\le7$, $2\\le n\\le11$."
+    ]
+   }
+  },
+  {
+   "id": "alg.lba-s-pocitadlom",
+   "type": "algorithm",
+   "topic": "uzaver-kont",
+   "title": "Konštrukcia vždy zastavujúceho LBA s počítadlom krokov",
+   "terms": [
+    {
+     "term": "počítadlo krokov",
+     "alt": "step counter"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb12_UzKontJazyky_P.pdf",
+     "page": 7
+    }
+   ],
+   "statement": "Pre [LBA](dfn.lba) $M$ a konštantu $d$ z predošlej lemy zostrojíme LBA $M'$, ktorý simuluje $M$ po nedeterministicky zvolenej vetve a súčasne počíta kroky od $d^n-1$ do $0$. Páska má dve stopy plus stav: obsah pracovnej pásky $M$ s označením polohy hlavy a stavu, a počítadlo $T$ v číselnej sústave so základom $d$ (číslice $0,\\dots,d-1$, zapísané sprava doľava, dĺžky $n$; začiatočná hodnota $d-1\\dots d-1$). Fázy: (1) inicializácia, (2) simulácia jedného kroku $M$, (3a) presun na ľavý okraj, (3b) zníženie počítadla o jednotku, (3c) zníženie na pravom okraji, (3d) obnovenie simulácie, (4) štandardné zastavenie $p_E$ alebo $p_F$, (5) vstupy kratšie ako dva. Ak $M$ zastaví, zastaví rovnako $M'$; ak počítadlo vyprší (hodnota $0$), $M'$ zastaví v $p_E$ (odmietne).",
+   "explanation": {
+    "intuition": "Stroj nosí so sebou odpočítavač a keď dojde na nulu, zastaví a odmietne.",
+    "detailed": "Počítadlo má $n$ číslic základu $d$, preto vie reprezentovať až $d^n$ hodnôt: presne toľko, koľko je treba. Pri každom odsimulovanom kroku sa zníži o jedna s „požičiavaním“ ako pri odpočítavaní v číselnej sústave. Stavy $M'$: $p_I,p_E,p_F,p_1,\\dots,p_6$ a stavy $Q$.",
+    "pitfalls": [
+     "Pri vstupoch dĺžky $0$ a $1$ lema neplatí; treba ich spracovať osobitne (fáza 5).",
+     "Počítadlo je uložené na tej istej páske ako vstup; preto ostáva pamäť lineárna."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Ak $M$ akceptuje $w$, má akceptujúci výpočet kratší ako $d^n$ (lema), ktorý $M'$ nájde nedeterministicky skôr, než počítadlo vyprší. Ak $M$ neakceptuje, žiadna vetva $M'$ nedosiahne $p_F$. Každý výpočet $M'$ je konečný, lebo počítadlo klesá. Overené: odpočítanie z $d^n-1$ do $0$ trvá $d^n-1$ dekrementov.",
+    "steps": []
+   },
+   "uses": [
+    "thm.lba-kratky-vypocet",
+    "dfn.lba"
+   ],
+   "relations": [
+    {
+     "type": "algorithm-for",
+     "target": "thm.lba-vzdy-zastavi",
+     "note": "dôkaz"
+    }
+   ],
+   "figures": [
+    "fig.cisla-lba"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.lba-vzdy-zastavi",
+   "type": "theorem",
+   "topic": "uzaver-kont",
+   "title": "Veta: každý LBA sa dá nahradiť vždy zastavujúcim LBA",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb12_UzKontJazyky_P.pdf",
+     "page": 7
+    }
+   ],
+   "statement": "Každý lineárne ohraničený [Turingov stroj](dfn.turingov-stroj) $M$ sa dá nahradiť ekvivalentným [lineárne ohraničeným Turingovým strojom](dfn.lba) $M'$, t.j. $L(M')=L(M)$, takým, že každý výpočet na každom vstupe po konečnom počte krokov zastaví. Navyše, ak $M$ je deterministický, tak aj $M'$ je deterministický.",
+   "explanation": {
+    "intuition": "Zastavenie sa dá vynútiť odpočítavaním, lebo na akceptovanie stačí menej než $d^n$ krokov.",
+    "detailed": "Rozdiel oproti [Turingovým strojom](dfn.turingov-stroj): pri lineárne ohraničených je počet konfigurácií konečný, preto sa dá počítať čas v rámci tej istej pásky. Pre všeobecné Turingove stroje (prednáška 13) to nejde: halting problém je nerozhodnuteľný.",
+    "pitfalls": [
+     "Zachovanie determinizmu plynie z toho, že počítadlo sa mení deterministicky."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "sketch",
+    "steps": [
+     {
+      "text": "Nech $d$ je konštanta z lemy. Pre vstup dĺžky $n\\ge2$ simuluje $M'$ vetvu $M$ a odpočítava $d^n-1,\\dots,0$ po jednom na každý odsimulovaný krok.",
+      "why": "Slajd 8.",
+      "uses": [
+       "alg.lba-s-pocitadlom"
+      ]
+     },
+     {
+      "text": "Ak $M$ zastaví a akceptuje/odmietne, rovnako zastaví $M'$. Ak sa $M$ nezastaví počas $d^n$ krokov, $M'$ zastaví a odmietne.",
+      "why": "Lema zaručuje, že akceptujúci výpočet existuje aj medzi kratšími.",
+      "uses": []
+     },
+     {
+      "text": "Počítadlo sa udržuje na pásku ako druhá stopa; stavy a pásku $M'$ tvorí konečná množina symbolov, takže $M'$ je naozaj LBA.",
+      "why": "Slajd 20.",
+      "uses": []
+     },
+     {
+      "text": "Pre vstupy dĺžky $0$ a $1$ sa výsledok zakóduje priamo do stavov podľa toho, či patria do $L(M)$.",
+      "why": "Fáza 5.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "alg.lba-s-pocitadlom",
+    "thm.lba-kratky-vypocet",
+    "dfn.lba"
+   ],
+   "relations": [
+    {
+     "type": "analogue",
+     "target": "thm.dpda-vzdy-zastavi",
+     "note": "zastavenie pomocou pomocnej konštrukcie"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.turingov-stroj"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.dcsl-uzavrete-doplnok",
+   "type": "theorem",
+   "topic": "uzaver-kont",
+   "title": "Deterministické kontextové jazyky sú uzavreté na doplnok",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb12_UzKontJazyky_P.pdf",
+     "page": 21
+    }
+   ],
+   "statement": "Každý deterministický lineárne ohraničený [Turingov stroj](dfn.turingov-stroj) $M$ sa dá nahradiť deterministickým [LBA](dfn.lba) $M''$ pre doplnok pôvodného [jazyka](dfn.jazyk), t.j. $L(M'')=L(M)^c$. Teda trieda deterministických [kontextových jazykov](dfn.kontextovy-jazyk) je [uzavretá](def.uzavretost) na doplnok.",
+   "explanation": {
+    "intuition": "Ak vždy zastaví v $p_F$ alebo $p_E$, stačí tieto dva stavy prehodiť.",
+    "detailed": "Rozdiel oproti PDA: tam bolo treba riešiť nekonečné ε-výpočty zložitou konštrukciou, tu stačí počítadlo.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Konštrukciou z predošlej vety nahradíme $M$ ekvivalentným deterministickým $M'$, ktorý vždy po konečnom počte krokov zastaví v $p_F$ alebo $p_E$ podľa toho, či $w\\in L(M)$.",
+      "why": "Veta o zastavení.",
+      "uses": [
+       "thm.lba-vzdy-zastavi"
+      ]
+     },
+     {
+      "text": "$M''$ vznikne prehodením úloh $p_F$ a $p_E$: $p_F$ bude nekoncový a $p_E$ koncový stav.",
+      "why": "Doplnok.",
+      "uses": []
+     },
+     {
+      "text": "Potom $M''$ akceptuje práve slová, ktoré $M'$ odmieta, teda $L(M'')=L(M)^c$.",
+      "why": "Obe vetvy sú jednoznačné.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "thm.lba-vzdy-zastavi",
+    "def.uzavretost",
+    "dfn.kontextovy-jazyk",
+    "dfn.lba",
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "analogue",
+     "target": "thm.dcfl-uzavrete-doplnok"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.turingov-stroj"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.csl-uzavrete-doplnok",
+   "type": "theorem",
+   "topic": "uzaver-kont",
+   "title": "Kontextové jazyky sú uzavreté na doplnok",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb12_UzKontJazyky_P.pdf",
+     "page": 22
+    }
+   ],
+   "statement": "Každý nedeterministický [LBA](dfn.lba) $M$ sa dá nahradiť nedeterministickým LBA $M''$ pre doplnok pôvodného [jazyka](dfn.jazyk), t.j. $L(M'')=L(M)^c$. Teda trieda [kontextových jazykov](dfn.kontextovy-jazyk) je [uzavretá](def.uzavretost) na doplnok.",
+   "explanation": {
+    "intuition": "Aj nedeterministický stroj vie „dokázať, že [slovo](dfn.slovo) neprijme“, bez použitia viac pamäte.",
+    "detailed": "Tvrdenie je špeciálnym prípadom všeobecnej vety: ak sa [jazyk](dfn.jazyk) dá rozpoznávať nedeterministicky v pamäti $s(n)$, tak aj jeho doplnok (pre $s(n)=n$ ide o [LBA](dfn.lba)). Dôkaz (technika spočítavania dosiahnuteľných konfigurácií) na slajdoch nie je, odkazuje na Boveta a Crescenzi, Veta 8.3.",
+    "pitfalls": [
+     "Prehodenie koncových a nekoncových stavov nestačí: nedeterministický stroj môže mať prijímajúcu aj odmietajúcu vetvu."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Slajd 22 dôkaz neuvádza; je to špeciálny prípad vety o uzavretosti nedeterministických priestorových tried na doplnok (D. P. Bovet, P. Crescenzi, Introduction to the theory of complexity, Veta 8.3). Princíp: stroj spočíta počet konfigurácií dosiahnuteľných z počiatočnej v $k$ krokoch induktívne v $k$ (nedeterministicky overuje, že každú konfiguráciu našiel), a tak zistí, že akceptujúca konfigurácia medzi nimi nie je.",
+    "steps": []
+   },
+   "uses": [
+    "thm.lba-vzdy-zastavi",
+    "dfn.kontextovy-jazyk",
+    "dfn.lba",
+    "dfn.jazyk",
+    "def.uzavretost",
+    "dfn.slovo"
+   ],
+   "relations": [
+    {
+     "type": "contrasts-with",
+     "target": "thm.cfl-nie-uzavrete-doplnok",
+     "note": "kontextové áno, bezkontextové nie"
+    }
+   ],
+   "figures": [],
+   "attribution": "Immerman–Szelepcsényi (1987)",
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Dôkaz nie je na slajdoch; je to citovaný výsledok (Immerman–Szelepcsényi). Náčrt myšlienky doplnený."
+    ]
+   }
+  },
+  {
+   "id": "thm.csl-uzavrete-prienik-zjednotenie",
+   "type": "theorem",
+   "topic": "uzaver-kont",
+   "title": "Kontextové jazyky sú uzavreté na prienik a zjednotenie",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb12_UzKontJazyky_P.pdf",
+     "page": 23
+    }
+   ],
+   "statement": "Ak $L_1,L_2$ sú kontextové (deterministické kontextové) [jazyky](dfn.jazyk), tak aj $L_1\\cap L_2$ aj $L_1\\cup L_2$ sú kontextové (deterministické kontextové). Teda aj trieda kontextových, aj trieda deterministických [kontextových jazykov](dfn.kontextovy-jazyk) je [uzavretá](def.uzavretost) na prienik a zjednotenie.",
+   "explanation": {
+    "intuition": "Zásobník nevie dve veci naraz, ale pásku môžeme rozdeliť na dve stopy a použiť obe.",
+    "detailed": "Na vstupe $w$ sa na dvoch stopách vyrobia dve kópie. Najprv sa simuluje $M_1$ na hornej stope; ak odmietne, odmietne celok. Ak akceptuje, simuluje sa $M_2$ na dolnej stope. Zastavovanie oboch strojov je zaručené predošlou vetou. Pre zjednotenie sa po akceptovaní $M_1$ ihneď akceptuje.",
+    "pitfalls": [
+     "Bez vety o zastavovaní by $M_1$ mohol bežať donekonečna a $M_2$ by sa nikdy nespustil."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Pre $L_1=L(M_1)$, $L_2=L(M_2)$ bez ujmy na všeobecnosti $Q_1\\cap Q_2=\\emptyset$ a obe zastavujú po konečnom počte krokov (predošlá veta).",
+      "why": "Zastavenie zaručí postupné spustenie.",
+      "uses": [
+       "thm.lba-vzdy-zastavi"
+      ]
+     },
+     {
+      "text": "$M$ najprv na dvoch stopách vyrobí dve kópie vstupu $w$ (inicializácia: stopa $a_i/a_i$).",
+      "why": "Dve kópie.",
+      "uses": []
+     },
+     {
+      "text": "Na prvej kópii simuluje $M_1$: ak zastaví a odmietne, aj $M$ zastaví a odmietne; ak akceptuje, simuluje $M_2$ na druhej kópii.",
+      "why": "Prienik: oba musia akceptovať.",
+      "uses": []
+     },
+     {
+      "text": "Ak aj $M_2$ akceptuje, $M$ akceptuje: $L(M)=L_1\\cap L_2$. Pre zjednotenie $M$ po akceptovaní $M_1$ akceptuje bez spúšťania $M_2$, a po odmietnutí $M_1$ spustí $M_2$ a prijme, ak $M_2$ akceptuje.",
+      "why": "Zmena v bode 2.",
+      "uses": []
+     },
+     {
+      "text": "Ak sú $M_1,M_2$ deterministické, je aj $M$ deterministický.",
+      "why": "Žiadna nová voľba.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "thm.lba-vzdy-zastavi",
+    "dfn.lba",
+    "def.uzavretost",
+    "dfn.kontextovy-jazyk",
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "analogue",
+     "target": "thm.uzavretost-prienik",
+     "note": "paralelná simulácia dvoch strojov"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.csl-uzavrete-zretazenie-iteracia-zrkadlo",
+   "type": "theorem",
+   "topic": "uzaver-kont",
+   "title": "Uzavretosť na zreťazenie, iteráciu a zrkadlový obraz",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb12_UzKontJazyky_P.pdf",
+     "page": 29
+    }
+   ],
+   "statement": "Ak $L_1,L_2$ sú kontextové (deterministické kontextové) [jazyky](dfn.jazyk), tak aj $L_1L_2$, $L_1^*$, $L_1^R$ sú kontextové (deterministické kontextové).",
+   "explanation": {
+    "intuition": "S gramatikami sa dá postupovať ako pri bezkontextových; pri deterministickom [LBA](dfn.lba) treba zvoliť rozdelenie [slova](dfn.slovo).",
+    "detailed": "Pre nedeterministické [kontextové jazyky](dfn.kontextovy-jazyk) sa používajú [gramatiky](dfn.gramatika) (konštrukcia je podobná ako pre [frázové gramatiky](dfn.frazova-gramatika), prednáška 13). Pre deterministické [LBA](dfn.lba) vykoná $M$ cyklus cez $i=0,\\dots,n$: skopíruje hornú stopu na dolnú, simuluje $M_1$ na $a_1\\dots a_i$ a $M_2$ na $a_{i+1}\\dots a_n$, a akceptuje, ak obe akceptujú.",
+    "pitfalls": [
+     "Slajd 30 pre deterministický prípad len naznačuje schému; formálny dôkaz chýba."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "sketch",
+    "steps": [
+     {
+      "text": "Nedeterministický prípad: pre kontextové gramatiky $G_1,G_2$ sa zostrojí gramatika pre $L_1L_2$, $L_1^*$, $L_1^R$ podobne ako pre bezkontextové (a ako pre frázové v prednáške 13) — pri zreťazení a iterácii treba oddeliť úseky pomocnými značkami, aby sa pravidlá neinterferovali.",
+      "why": "Slajd 29.",
+      "uses": []
+     },
+     {
+      "text": "Deterministický prípad pre $L_1L_2$: pre $i=0,\\dots,n$ stroj skopíruje hornú stopu na dolnú, simuluje $M_1$ na $a_1\\dots a_i$ a $M_2$ na $a_{i+1}\\dots a_n$; ak oba akceptujú, akceptuje, inak posunie $i$ doprava.",
+      "why": "Slajd 30.",
+      "uses": []
+     },
+     {
+      "text": "Pre zrkadlo a iteráciu sa postupuje analogicky.",
+      "why": "Podobná schéma.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "thm.lba-vzdy-zastavi",
+    "dfn.kontextova-gramatika",
+    "dfn.zrkadlovy-obraz",
+    "dfn.jazyk",
+    "dfn.lba",
+    "dfn.slovo",
+    "dfn.kontextovy-jazyk",
+    "dfn.gramatika"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.frazova-gramatika"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajdy 29–30 uvádzajú len schému; konštrukcie pre iteráciu a zrkadlo nie sú rozpísané."
+    ]
+   }
+  },
+  {
+   "id": "def.prehlad-uzavretosti-csl",
+   "type": "concept",
+   "topic": "uzaver-kont",
+   "title": "Prehľad uzavretosti: CSL, DCSL, CFL, DCFL a REG",
+   "terms": [
+    {
+     "term": "prehľad uzavretosti kontextových jazykov",
+     "alt": "closure summary for CSL"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb12_UzKontJazyky_P.pdf",
+     "page": 31
+    }
+   ],
+   "statement": "Uzavretosť tried kontextových (CSL), deterministických kontextových (DCSL), bezkontextových (CFL), deterministických bezkontextových (DCFL) a regulárnych (REG) [jazykov](dfn.jazyk): doplnok: áno, áno, nie, áno, áno; prienik: áno, áno, nie, nie, áno; zjednotenie: áno, áno, áno, nie, áno; [zreťazenie](dfn.zretazenie-slov): áno, áno, áno, nie, áno; iterácia: áno, áno, áno, nie, áno; zrkadlo: áno, áno, áno, nie, áno; prienik s regulárnym: áno vo všetkých; zjednotenie s regulárnym: áno vo všetkých.",
+   "explanation": {
+    "intuition": "CSL majú všetky bežné uzáverové vlastnosti — preto sú „najbezpečnejšou“ triedou medzi bezkontextovými a rekurzívne vyčísliteľnými.",
+    "detailed": "Pozoruhodné je, že CSL a DCSL sa zhodujú v tabuľke, hoci nie je známe, či sú rovnaké triedy.",
+    "pitfalls": [
+     "Vo svojej tabuľke slajd 31 uvádza pri „prienik s regulárnym“ vo všetkých stĺpcoch áno."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "thm.dcsl-uzavrete-doplnok",
+    "thm.csl-uzavrete-doplnok",
+    "thm.csl-uzavrete-prienik-zjednotenie",
+    "def.prehlad-uzavretosti-dcfl",
+    "dfn.zretazenie-slov",
+    "dfn.jazyk"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.uzavretost-vsetko-csl"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "prob.lba-problem",
+   "type": "problem",
+   "topic": "uzaver-kont",
+   "title": "Otvorený problém: DCSL = CSL?",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb12_UzKontJazyky_P.pdf",
+     "page": 32
+    }
+   ],
+   "statement": "Doteraz nie je známe, či sa trieda deterministických [kontextových jazykov](dfn.kontextovy-jazyk) zhoduje s triedou kontextových [jazykov](dfn.jazyk), t.j. či je možné nedeterministický [LBA](dfn.lba) nahradiť ekvivalentným deterministickým LBA. Nedeterminizmus síce vieme odstrániť (Savitchova konštrukcia), ale iba ak pre vstup dĺžky $n$ použijeme páskovú pamäť veľkosti $n^2$, takže skonštruovaný stroj nie je lineárne ohraničený. Takisto nie je známe, či sa nedá použiť páska kratšia ako $n^2$.",
+   "explanation": {
+    "intuition": "Jedna z klasických otvorených otázok teórie formálnych [jazykov](dfn.jazyk).",
+    "detailed": "Otázka je ekvivalentná otázke, či $\\text{NSPACE}(n)=\\text{DSPACE}(n)$. Pre [bezkontextové jazyky](dfn.bezkontextovy-jazyk) je situácia opačná: tam je rozdiel dokázaný (DCFL $\\subsetneq$ CFL).",
+    "pitfalls": [
+     "Savitchova veta dáva len $\\text{NSPACE}(n)\\subseteq\\text{DSPACE}(n^2)$."
+    ],
+    "examples": []
+   },
+   "uses": [],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.kontextovy-jazyk"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.lba"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.jazyk"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.bezkontextovy-jazyk"
+    }
+   ],
+   "figures": [],
+   "attribution": "problém LBA (Kuroda, 1964)",
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.uzavretost-vsetko-csl",
+   "title": "Uzavretosť tried jazykov",
+   "caption": "Slajd 31.",
+   "origin": "slides",
+   "illustrates": [
+    "def.prehlad-uzavretosti-csl"
+   ],
+   "sources": [
+    {
+     "file": "Afjb12_UzKontJazyky_P.pdf",
+     "page": 31
+    }
+   ],
+   "kind": "table",
+   "columns": [
+    "operácia",
+    "CSL",
+    "DCSL",
+    "CFL",
+    "DCFL",
+    "REG"
+   ],
+   "rows": [
+    [
+     "doplnok",
+     "+",
+     "+",
+     "−",
+     "+",
+     "+"
+    ],
+    [
+     "prienik",
+     "+",
+     "+",
+     "−",
+     "−",
+     "+"
+    ],
+    [
+     "zjednotenie",
+     "+",
+     "+",
+     "+",
+     "−",
+     "+"
+    ],
+    [
+     "zreťazenie",
+     "+",
+     "+",
+     "+",
+     "−",
+     "+"
+    ],
+    [
+     "iterácia",
+     "+",
+     "+",
+     "+",
+     "−",
+     "+"
+    ],
+    [
+     "zrkadlo",
+     "+",
+     "+",
+     "+",
+     "−",
+     "+"
+    ],
+    [
+     "prienik s REG",
+     "+",
+     "+",
+     "+",
+     "+",
+     "+"
+    ],
+    [
+     "zjednotenie s REG",
+     "+",
+     "+",
+     "+",
+     "+",
+     "+"
+    ]
+   ]
+  },
+  {
+   "id": "fig.cisla-lba",
+   "title": "Odpočítavač v LBA",
+   "caption": "Slajd 18.",
+   "origin": "generated",
+   "illustrates": [
+    "alg.lba-s-pocitadlom"
+   ],
+   "sources": [],
+   "kind": "mermaid",
+   "code": "flowchart TD\n  S[\"simuluj 1 krok M\"] --> D[\"zníž počítadlo o 1\"]\n  D --> Z{\"počítadlo = 0?\"}\n  Z -- nie --> S\n  Z -- áno --> E[\"zastav a odmietni (p_E)\"]\n  S -- \"M zastavil\" --> R[\"zastav ako M\"]"
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.clenstvo-rozhodnutelne",
+   "title": "Rozhodovanie o členstve slova v kontextovom jazyku",
+   "summary": "Vždy zastavujúci algoritmus.",
+   "scenario": "Chceme algoritmus, ktorý o ľubovoľnom slove rozhodne, či patrí do kontextového jazyka.",
+   "modelling": "LBA s počítadlom je vždy zastavujúci.",
+   "solution": "Preto je členský problém pre kontextové jazyky rozhodnuteľný (v exponenciálnom čase a lineárnej pamäti).",
+   "connects": [
+    "thm.lba-vzdy-zastavi"
+   ],
+   "figures": [],
+   "tags": [
+    "algoritmy"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.doplnok-priestorovych-tried",
+   "title": "Uzavretosť pod negáciou v teórii zložitosti",
+   "summary": "NSPACE(n) je uzavretá na doplnok.",
+   "scenario": "Pre dôkaz, že niektoré problémy „nie“ sú tak ľahké ako „áno“.",
+   "modelling": "Dôsledok Immermanovej–Szelepcsényiho vety.",
+   "solution": "Kontextové jazyky sú uzavreté na doplnok, na rozdiel od bezkontextových.",
+   "connects": [
+    "thm.csl-uzavrete-doplnok"
+   ],
+   "figures": [],
+   "tags": [
+    "zložitosť"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.kompozicia-pravidiel",
+   "title": "Skladanie špecifikácií cez prienik",
+   "summary": "Prienik kontextových jazykov.",
+   "scenario": "Dve špecifikácie vstupného formátu sa majú spĺňať súčasne.",
+   "modelling": "Špecifikácie sú kontextové jazyky.",
+   "solution": "Dvojstopové LBA rozhodne prienik a zostane kontextový.",
+   "connects": [
+    "thm.csl-uzavrete-prienik-zjednotenie"
+   ],
+   "figures": [],
+   "tags": [
+    "formáty"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.uzk-1",
+   "kind": "truefalse",
+   "prompt": "Kontextové jazyky sú uzavreté na doplnok.",
+   "answer": true,
+   "explanation": "Immerman–Szelepcsényi.",
+   "about": [
+    "thm.csl-uzavrete-doplnok"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.uzk-2",
+   "kind": "mcq",
+   "prompt": "Koľko konfigurácií má LBA na vstupe dĺžky $n$ (horný odhad)?",
+   "options": [
+    "$(n+2)|Q||\\Gamma|^n$",
+    "$n|Q|$",
+    "$|Q|^n$",
+    "$2^{|Q|}$"
+   ],
+   "answer": 0,
+   "explanation": "Poloha hlavy, stav a obsah pásky.",
+   "about": [
+    "thm.lba-kratky-vypocet"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.uzk-3",
+   "kind": "mcq",
+   "prompt": "Prečo LBA vie vždy zastaviť?",
+   "options": [
+    "akceptujúci výpočet má menej ako $d^n$ krokov, preto stačí počítadlo",
+    "lebo je deterministický",
+    "lebo je lineárny",
+    "nevie"
+   ],
+   "answer": 0,
+   "explanation": "Lema o krátkom výpočte.",
+   "about": [
+    "thm.lba-vzdy-zastavi"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.uzk-4",
+   "kind": "truefalse",
+   "prompt": "Nie je známe, či DCSL = CSL.",
+   "answer": true,
+   "explanation": "Otvorený problém LBA.",
+   "about": [
+    "prob.lba-problem"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.uzk-5",
+   "kind": "mcq",
+   "prompt": "Aký základ má číselná sústava počítadla?",
+   "options": [
+    "2",
+    "$d$",
+    "10",
+    "$|Q|$"
+   ],
+   "answer": 1,
+   "explanation": "Počítadlo reprezentuje hodnoty $0,\\dots,d^n-1$.",
+   "about": [
+    "alg.lba-s-pocitadlom"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.uzk-6",
+   "kind": "open",
+   "prompt": "Ako sa zostrojí LBA pre $L_1\\cap L_2$?",
+   "answer": "Dve kópie vstupu na dvoch stopách; simulácia $M_1$ na prvej, ak akceptuje, $M_2$ na druhej; akceptuje, ak oba akceptujú. Obe vždy zastavujú.",
+   "explanation": "Veta o zastavovaní.",
+   "about": [
+    "thm.csl-uzavrete-prienik-zjednotenie"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.uzk-7",
+   "kind": "open",
+   "prompt": "Prečo prehodenie koncových stavov nestačí pre nedeterministický LBA?",
+   "answer": "Slovo môže mať prijímajúcu aj odmietajúcu vetvu; prehodením by ho prijali obe verzie.",
+   "explanation": "Doplnok vyžaduje spočítanie konfigurácií (Immerman–Szelepcsényi).",
+   "about": [
+    "thm.csl-uzavrete-doplnok"
+   ],
+   "difficulty": 2
+  }
+ ]
+}

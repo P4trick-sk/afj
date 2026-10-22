@@ -1,0 +1,826 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "zas-bezgram",
+  "title": "Zásobníkové automaty a bezkontextové gramatiky",
+  "course": "B",
+  "order": 17,
+  "sourceFiles": [
+   "Afjb04_ZasAut-BezGram_P.pdf"
+  ],
+  "summary": "Zásobníkové automaty a bezkontextové gramatiky rozpoznávajú tú istú triedu jazykov. Z gramatiky v Chomského tvare sa zostrojí jednostavový PDA simulujúci ľavé odvodenie, a z PDA sa zostrojí gramatika s neterminálmi $[q,A,r]$. Trieda deterministických bezkontextových jazykov je vlastnou nadmnožinou regulárnych jazykov.",
+  "overview": "Hlavný výsledok kurzu: bezkontextové gramatiky a zásobníkové automaty sú ekvivalentné. Smer CFG $\\to$ PDA používa Chomského normálny tvar: zásobník obsahuje neprepísané neterminály a automat simuluje ľavé odvodenie. Smer PDA $\\to$ CFG je zložitejší: zavedú sa neterminály $[q,A,r]$ s významom „PDA vo stave $q$ s vrchom $A$ môže prečítať slovo a skončiť v stave $r$ s vybraným $A$“; pravidlá sa zostrojujú podľa tvaru inštrukcie (po úprave na zmenu zásobníka o najviac jeden symbol). Záver zavádza triedu bezkontextových a deterministických bezkontextových jazykov a ukazuje, že regulárne jazyky sú vlastnou podmnožinou deterministických bezkontextových (príklad $\\{a^nb^n\\}$).",
+  "keyQuestions": [
+   "Ako zásobníkový automat simuluje odvodenie v gramatike?",
+   "Čo vyjadrujú neterminály $[q,A,r]$?",
+   "Aký je vzťah regulárnych, deterministických bezkontextových a bezkontextových jazykov?"
+  ],
+  "prerequisites": [
+   "zas-automaty",
+   "det-zas-automaty",
+   "bezkontextove-gramatiky",
+   "konstrukcie"
+  ],
+  "alsoCovers": [
+   "thm.veta-13-4-anbn-nie-je-regularny"
+  ],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "alg.pda-z-gramatiky",
+   "type": "algorithm",
+   "topic": "zas-bezgram",
+   "title": "Konštrukcia PDA z gramatiky v Chomského tvare",
+   "terms": [
+    {
+     "term": "PDA z gramatiky",
+     "alt": "PDA from a grammar"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb04_ZasAut-BezGram_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "Pre [gramatiku](dfn.gramatika) $G'=(N,T,P,S)$ v [Chomského normálnom tvare](dfn.chomskeho-normalny-tvar) zostrojíme PDA $M'$: $Q'=\\{q\\}$, $\\Sigma=T$, $\\Gamma'=N$, počiatočný stav $q$, počiatočný zásobníkový symbol $S$, $F'=\\emptyset$. Inštrukcie: (1) ak $A\\to BC\\in P$, tak $\\delta'(q,\\varepsilon,A)\\ni(q,BC)$; (2) ak $A\\to a\\in P$, tak $\\delta'(q,a,A)\\ni(q,\\varepsilon)$.",
+   "explanation": {
+    "intuition": "Zásobník je zoznam neprepísaných neterminálov; každý krok automatu je jedno prepísanie pravidlom.",
+    "detailed": "Pravidlo $A\\to BC$ nahradí vrch $A$ dvojicou $BC$ bez čítania vstupu, pravidlo $A\\to a$ odstráni $A$ a prečíta $a$. Výpočet zodpovedá [ľavému odvodeniu](dfn.lave-odvodenie): zásobník obsahuje neterminály vľavo-sprava nasledujúce za doteraz vygenerovanou časťou [slova](dfn.slovo).",
+    "pitfalls": [
+     "Gramatika musí byť v CNF (alebo aspoň bez $\\varepsilon$-pravidiel); inak PDA nevie spracovať $\\varepsilon$ vo vnútri."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Korektnosť je obsahom Vety (CFG $\\to$ PDA). Overené simuláciou na gramatikách $S\\to aSb\\mid ab$ a aritmetických výrazoch (slová do dĺžky 5, resp. 10).",
+    "steps": []
+   },
+   "uses": [
+    "dfn.chomskeho-normalny-tvar",
+    "dfn.zasobnikovy-automat",
+    "dfn.gramatika",
+    "dfn.lave-odvodenie",
+    "dfn.slovo"
+   ],
+   "relations": [
+    {
+     "type": "algorithm-for",
+     "target": "thm.bezgram-na-pda",
+     "note": "dôkaz korektnosti"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.bezgram-na-pda",
+   "type": "theorem",
+   "topic": "zas-bezgram",
+   "title": "Veta (CFG → PDA): ku každej bezkontextovej gramatike existuje PDA",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb04_ZasAut-BezGram_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "Ak pre nejaký [jazyk](dfn.jazyk) $L$ máme [bezkontextovú gramatiku](dfn.bezkontextova-gramatika) $G$, tak pre tento jazyk vieme zostrojiť aj [zásobníkový automat](dfn.zasobnikovy-automat) $M$, ktorý rozpoznáva $L$ pomocou prázdneho zásobníka, t.j. $N(M)=L(G)=L$. ($M$ nie je nutne deterministický.)",
+   "explanation": {
+    "intuition": "Čokoľvek, čo vieme vygenerovať [gramatikou](dfn.gramatika), vieme rozpoznať zásobníkom.",
+    "detailed": "Najprv sa $G$ nahradí $G'$ v CNF s $L(G')=L(G)-\\{\\varepsilon\\}$. Ak $\\varepsilon\\notin L$, stačí $M'$. Ak $\\varepsilon\\in L$, pridá sa nový počiatočný stav $q_I$ s inštrukciou $\\delta(q_I,\\varepsilon,z_I)=\\{(q_I,\\varepsilon),(q,S)\\}$: buď sa hneď vyprázdni zásobník (prijme sa len prázdne [slovo](dfn.slovo)), alebo sa spustí $M'$.",
+    "pitfalls": [
+     "CNF nepokrýva $\\varepsilon$; osobitný stav $q_I$ rieši prázdne slovo."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Gramatiku $G$ nahradíme $G'$ v Chomského normálnom tvare, $L(G')=L(G)-\\{\\varepsilon\\}$, a zostrojíme $M'$ podľa konštrukcie.",
+      "why": "CNF umožní jednoduché inštrukcie.",
+      "uses": [
+       "thm.chomskeho-normalny-tvar",
+       "alg.pda-z-gramatiky"
+      ]
+     },
+     {
+      "text": "Pri simulácii ľavého odvodenia $G'$ platí: $S\\Rightarrow\\dots\\Rightarrow a_1\\dots a_{i-1}A_1\\dots A_h\\Rightarrow\\dots$ práve vtedy, keď $(q,a_1\\dots a_n,S)\\vdash\\dots\\vdash(q,a_i\\dots a_n,A_1\\dots A_h)\\vdash\\dots$.",
+      "why": "Zásobník obsahuje zvyšok vetnej formy po už vygenerovanej terminálovej časti.",
+      "uses": []
+     },
+     {
+      "text": "Krok odvodenia $A_1\\to BC$ zodpovedá $(q,a_i\\dots,A_1A_2\\dots A_h)\\vdash(q,a_i\\dots,BCA_2\\dots A_h)$; krok $A_1\\to a_i$ zodpovedá $(q,a_i\\dots,A_1\\dots)\\vdash(q,a_{i+1}\\dots,A_2\\dots)$.",
+      "why": "Inštrukcie (1) a (2).",
+      "uses": []
+     },
+     {
+      "text": "Odvodenie sa končí slovom $a_1\\dots a_n$ bez neterminálov práve vtedy, keď výpočet skončí v konfigurácii $(q,\\varepsilon,\\varepsilon)$. Teda $N(M')=L(G')=L(G)-\\{\\varepsilon\\}$.",
+      "why": "Prázdny zásobník a prečítaný vstup.",
+      "uses": []
+     },
+     {
+      "text": "Ak $\\varepsilon\\notin L(G)$, je $N(M')=L(G)$ a $M=M'$. Ak $\\varepsilon\\in L(G)$, pridáme nový počiatočný stav $q_I$ s $\\delta(q_I,\\varepsilon,z_I)=\\{(q_I,\\varepsilon),(q,S)\\}$; ostatné inštrukcie sú ako v $M'$. Potom $N(M)=N(M')\\cup\\{\\varepsilon\\}=L(G)$.",
+      "why": "Vetva $(q_I,\\varepsilon)$ prijme iba prázdne slovo.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "alg.pda-z-gramatiky",
+    "thm.chomskeho-normalny-tvar",
+    "dfn.akceptovanie-pda",
+    "dfn.lave-odvodenie",
+    "dfn.zasobnikovy-automat",
+    "dfn.bezkontextova-gramatika",
+    "dfn.jazyk",
+    "dfn.gramatika",
+    "dfn.slovo"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.trojicova-konstrukcia",
+   "type": "algorithm",
+   "topic": "zas-bezgram",
+   "title": "Trojicová konštrukcia gramatiky z PDA",
+   "terms": [
+    {
+     "term": "trojicová konštrukcia",
+     "alt": "triple construction"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb04_ZasAut-BezGram_P.pdf",
+     "page": 7
+    }
+   ],
+   "statement": "Pre PDA $M'=(Q,\\Sigma,\\Gamma,\\delta,q_I,z_I,F)$, ktorý pri každom kroku mení veľkosť zásobníka o najviac jeden symbol a rozpoznáva prázdnym zásobníkom, zostrojíme [gramatiku](dfn.gramatika) $G=(N,T,P,S)$: $T=\\Sigma$, $N=\\{S\\}\\cup Q\\times\\Gamma\\times Q$ (neterminály $[q,A,q']$). Pre každé $q,q'\\in Q$, $a\\in\\Sigma\\cup\\{\\varepsilon\\}$, $A\\in\\Gamma$: (1) ak $(q,a,A)\\to(q',\\varepsilon)$, tak $[q,A,q']\\to a\\in P$; (2) ak $(q,a,A)\\to(q',B)$, tak $[q,A,r]\\to a[q',B,r]\\in P$ pre každé $r\\in Q$; (3) ak $(q,a,A)\\to(q',BC)$, tak $[q,A,r]\\to a[q',B,s][s,C,r]\\in P$ pre každé $r,s\\in Q$; (4) $S\\to[q_I,z_I,r]\\in P$ pre každé $r\\in Q$.",
+   "explanation": {
+    "intuition": "$[q,A,r]$ znamená „zo stavu $q$ s vrchom $A$ sa dá prečítať niečo a skončiť v stave $r$ s odstráneným $A$“.",
+    "detailed": "Pre pravidlo $A\\to BC$ je potrebné „uhádnuť“ medzistav $s$ medzi odstránením $B$ a $C$, preto sa pravidlo vytvorí pre všetky $s\\in Q$. Počet pravidiel je polynomiálny: $O(|Q|^3\\cdot|\\delta|)$.",
+    "pitfalls": [
+     "Nepoužité kombinácie $[q,A,r]$ nevedú k terminálnemu slovu; gramatika obsahuje veľa nepotrebných neterminálov.",
+     "PDA musí byť v normalizovanom tvare, inak pravidlá (2), (3) nepokrývajú všetky inštrukcie."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Korektnosť je obsahom Vety (PDA $\\to$ CFG): $(q,w,A)\\vdash^*(r,\\varepsilon,\\varepsilon)\\iff[q,A,r]\\Rightarrow^*w$. Overené simuláciou na PDA pre $a^nb^n$ a $ww^R$ (jazyky gramatiky sa zhodujú s $N(M)$ do dĺžky 8).",
+    "steps": []
+   },
+   "uses": [
+    "thm.pda-zmena-o-jeden-symbol",
+    "dfn.bezkontextova-gramatika",
+    "dfn.zasobnikovy-automat",
+    "dfn.gramatika"
+   ],
+   "relations": [
+    {
+     "type": "algorithm-for",
+     "target": "thm.pda-na-bezgram",
+     "note": "dôkaz korektnosti"
+    }
+   ],
+   "figures": [
+    "fig.trojice-pravidla"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.pda-na-bezgram",
+   "type": "theorem",
+   "topic": "zas-bezgram",
+   "title": "Veta (PDA → CFG): ku každému PDA existuje bezkontextová gramatika",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb04_ZasAut-BezGram_P.pdf",
+     "page": 6
+    }
+   ],
+   "statement": "Ak pre nejaký [jazyk](dfn.jazyk) $L$ máme [zásobníkový automat](dfn.zasobnikovy-automat) $M$, ktorý ho rozpoznáva pomocou prázdneho zásobníka, tak pre tento jazyk vieme zostrojiť aj [bezkontextovú gramatiku](dfn.bezkontextova-gramatika) $G$ takú, že $L(G)=N(M)=L$.",
+   "explanation": {
+    "intuition": "Neterminál $[q,A,r]$ generuje práve slová, ktoré PDA spotrebuje pri ceste od vrchu $A$ vo stave $q$ po odstránenie $A$ vo stave $r$.",
+    "detailed": "Najprv sa $M$ nahradí ekvivalentným $M'$ so zmenou zásobníka o najviac jeden symbol (možno aj pre $F=\\emptyset$). Hlavné tvrdenie: $(q,b_1\\dots b_m,A)\\vdash^*(r,\\varepsilon,\\varepsilon)\\iff[q,A,r]\\Rightarrow^*b_1\\dots b_m$. Z toho $L(G)=N(M)$, lebo $S$ sa prepisuje iba pravidlami (4).",
+    "pitfalls": [
+     "Ak $M$ rozpoznáva koncovými stavmi, treba najprv použiť lemu o prevode na prázdny zásobník."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Nahradíme $M$ automatom $M'$ s inštrukciami iba typov $(q,a,A)\\to(q',\\varepsilon)$, $(q,a,A)\\to(q',B)$, $(q,a,A)\\to(q',BC)$ a zostrojíme $G$ trojicovou konštrukciou.",
+      "why": "Normalizácia zmeny zásobníka.",
+      "uses": [
+       "thm.pda-zmena-o-jeden-symbol"
+      ]
+     },
+     {
+      "text": "Pomocné tvrdenie (indukciou podľa počtu krokov výpočtu): ak $(q,b_1\\dots b_m,A)\\vdash\\dots\\vdash(r,\\varepsilon,\\varepsilon)$, tak $[q,A,r]\\Rightarrow^*b_1\\dots b_m$. Prvý krok výpočtu môže byť tri typy.",
+      "why": "Rozbor podľa prvého kroku.",
+      "uses": [
+       "def.indukcia"
+      ]
+     },
+     {
+      "text": "Prvý krok $(q,a,A)\\to(q',\\varepsilon)$: celý výpočet je jeden krok, $q'=r$, $b_1\\dots b_m=a$ a pravidlo (1) $[q,A,q']\\to a$ dáva $[q,A,r]\\Rightarrow a$.",
+      "why": "Najjednoduchší prípad.",
+      "uses": []
+     },
+     {
+      "text": "Prvý krok $(q,a,A)\\to(q',B)$: zvyšok výpočtu $(q',b_1'\\dots b_k',B)\\vdash^*(r,\\varepsilon,\\varepsilon)$, kde $b_1\\dots b_m=ab_1'\\dots b_k'$. Indukčný predpoklad $[q',B,r]\\Rightarrow^*b_1'\\dots b_k'$ a pravidlo (2) $[q,A,r]\\to a[q',B,r]$ dávajú $[q,A,r]\\Rightarrow^*b_1\\dots b_m$.",
+      "why": "Symbol $A$ sa nahradí $B$.",
+      "uses": []
+     },
+     {
+      "text": "Prvý krok $(q,a,A)\\to(q',BC)$: výpočet sa rozdelí na časť, ktorá odstráni $B$ a skončí v $s$, a časť, ktorá odstráni $C$ a skončí v $r$. Z indukčného predpokladu $[q',B,s]\\Rightarrow^*b_1'\\dots b_k'$, $[s,C,r]\\Rightarrow^*c_1\\dots c_l$ a pravidlo (3) dáva $[q,A,r]\\Rightarrow^*ab_1'\\dots b_k'c_1\\dots c_l$.",
+      "why": "Stav $s$ je stav v okamihu, keď sa $B$ odstráni.",
+      "uses": []
+     },
+     {
+      "text": "Opačná implikácia ($[q,A,r]\\Rightarrow^*w\\implies(q,w,A)\\vdash^*(r,\\varepsilon,\\varepsilon)$) sa dokáže indukciou podľa počtu krokov odvodenia, podľa tvaru prvého použitého pravidla (1), (2) alebo (3).",
+      "why": "Symetrický argument.",
+      "uses": []
+     },
+     {
+      "text": "Keďže $S$ sa prepisuje iba pravidlami $S\\to[q_I,z_I,r]$, platí $b_1\\dots b_m\\in L(G)\\iff\\exists r:[q_I,z_I,r]\\Rightarrow^*b_1\\dots b_m\\iff\\exists r:(q_I,b_1\\dots b_m,z_I)\\vdash^*(r,\\varepsilon,\\varepsilon)\\iff b_1\\dots b_m\\in N(M')=N(M)$.",
+      "why": "Použitie pomocného tvrdenia pre $q=q_I$, $A=z_I$.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "alg.trojicova-konstrukcia",
+    "thm.pda-zmena-o-jeden-symbol",
+    "thm.pda-koncove-na-prazdny",
+    "def.indukcia",
+    "dfn.zasobnikovy-automat",
+    "dfn.bezkontextova-gramatika",
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "converse-of",
+     "target": "thm.bezgram-na-pda"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.bezkontextovy-jazyk",
+   "type": "definition",
+   "topic": "zas-bezgram",
+   "title": "Bezkontextový a deterministický bezkontextový jazyk",
+   "terms": [
+    {
+     "term": "bezkontextový jazyk",
+     "alt": "context-free language, CFL"
+    },
+    {
+     "term": "deterministický bezkontextový jazyk",
+     "alt": "deterministic context-free language, DCFL"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb04_ZasAut-BezGram_P.pdf",
+     "page": 13
+    }
+   ],
+   "statement": "Vzhľadom na predošlé dve vety [zásobníkové automaty](dfn.zasobnikovy-automat) a [bezkontextové gramatiky](dfn.bezkontextova-gramatika) reprezentujú tú istú triedu [jazykov](dfn.jazyk), ktorá sa nazýva trieda **bez[kontextových jazykov](dfn.kontextovy-jazyk)**. Trieda jazykov, pre ktoré existuje nejaký [deterministický zásobníkový automat](dfn.dpda), sa nazýva trieda **deterministických bezkontextových jazykov**.",
+   "explanation": {
+    "intuition": "Bez[kontextové jazyky](dfn.kontextovy-jazyk) sú [jazyky](dfn.jazyk) [zásobníkových automatov](dfn.zasobnikovy-automat) a súčasne bezkontextových gramatík.",
+    "detailed": "Pre bez[kontextové jazyky](dfn.kontextovy-jazyk) platí hierarchia $\\text{REG}\\subsetneq\\text{DCFL}\\subsetneq\\text{CFL}$. Prvá ostrá inklúzia sa dokazuje na [jazyku](dfn.jazyk) $\\{a^nb^n\\}$ (tu), druhá na doplnku $\\{a^nb^nc^n\\}^c$ (prednáška 9).",
+    "pitfalls": [
+     "Pri deterministických automatoch sa akceptuje koncovými stavmi; akceptovanie prázdnym zásobníkom je slabšie (nerozpoznajú sa všetky DCFL)."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.bezkontextova-gramatika",
+    "dfn.zasobnikovy-automat",
+    "dfn.akceptovanie-pda",
+    "thm.bezgram-na-pda",
+    "thm.pda-na-bezgram",
+    "dfn.dpda",
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.kontextovy-jazyk"
+    }
+   ],
+   "figures": [
+    "fig.triedy-jazykov"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.regularne-v-dcfl",
+   "type": "theorem",
+   "topic": "zas-bezgram",
+   "title": "Regulárne jazyky sú deterministické bezkontextové",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb04_ZasAut-BezGram_P.pdf",
+     "page": 14
+    }
+   ],
+   "statement": "Trieda [regulárnych jazykov](dfn.regularny-jazyk) je podmnožinou triedy deterministických [bezkontextových jazykov](dfn.bezkontextovy-jazyk): [konečnostavový akceptor](dfn.konecnostavovy-akceptor) sa dá triviálnym spôsobom transformovať na [deterministický zásobníkový automat](dfn.dpda).",
+   "explanation": {
+    "intuition": "Akceptor je [zásobníkový automat](dfn.zasobnikovy-automat), ktorý zásobník nepoužíva.",
+    "detailed": "Stačí zásobníkový symbol $z_I$ nechať stále na vrchu: $\\delta(q,a,z_I)=(f(q,a),z_I)$ a akceptovať koncovými stavmi.",
+    "pitfalls": [
+     "Pri akceptovaní prázdnym zásobníkom by sa musel zásobník na konci vyprázdniť; tu preto rozhodujú koncové stavy."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Pre DFA $M=(Q,\\Sigma,q_I,f,F)$ definujeme DPDA s $\\Gamma=\\{z_I\\}$ a $\\delta(q,a,z_I)=(f(q,a),z_I)$, koncové stavy $F$. Výpočet kopíruje výpočet $M$ a zásobník sa nemení, takže $L(M')=L(M)$ a $M'$ je deterministický.",
+    "steps": []
+   },
+   "uses": [
+    "dfn.bezkontextovy-jazyk",
+    "dfn.konecnostavovy-akceptor",
+    "dfn.dpda",
+    "dfn.regularny-jazyk",
+    "dfn.zasobnikovy-automat"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.dpda-anbn",
+   "type": "example",
+   "topic": "zas-bezgram",
+   "title": "DPDA pre a^n b^n",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb04_ZasAut-BezGram_P.pdf",
+     "page": 15
+    }
+   ],
+   "statement": "Pre $L=\\{a^nb^n:n\\ge1\\}$ existuje [deterministický zásobníkový automat](dfn.dpda) s $Q=\\{q,r\\}$: kopírovanie do zásobníka $(q,a,Z)=(q,A)$, $(q,a,A)=(q,AA)$; výber zo zásobníka $(q,b,A)=(r,\\varepsilon)$, $(r,b,A)=(r,\\varepsilon)$. Slovo sa prijme prázdnym zásobníkom. Výpočet: $(q,aaabbb,Z)\\vdash(q,aabbb,A)\\vdash(q,abbb,AA)\\vdash(q,bbb,AAA)\\vdash(r,bb,AA)\\vdash(r,b,A)\\vdash(r,\\varepsilon,\\varepsilon)$.",
+   "explanation": {
+    "intuition": "Pre každé $a$ vložíme $A$, pre každé $b$ jedno vyberieme; prázdny zásobník znamená rovnaký počet.",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "dfn.dpda"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.dpda-anbn"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Overené simuláciou na všetkých slovách nad $\\{a,b\\}$ do dĺžky 12: akceptuje presne $\\{a^nb^n:n\\ge1\\}$."
+    ]
+   }
+  },
+  {
+   "id": "thm.anbn-dcfl-nie-regularny",
+   "type": "theorem",
+   "topic": "zas-bezgram",
+   "title": "Lema: a^n b^n je deterministický bezkontextový, ale nie regulárny",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb04_ZasAut-BezGram_P.pdf",
+     "page": 15
+    }
+   ],
+   "statement": "Existujú [jazyky](dfn.jazyk), pre ktoré máme [zásobníkový automat](dfn.zasobnikovy-automat) (dokonca deterministický), ale pre ktoré neexistuje žiadny [konečnostavový akceptor](dfn.konecnostavovy-akceptor). Príkladom je $L=\\{a^nb^n:n\\ge1\\}$. Teda $L$ je deterministický bezkontextový, ale nie regulárny, a trieda [regulárnych jazykov](dfn.regularny-jazyk) je vlastnou podmnožinou triedy deterministických [bezkontextových jazykov](dfn.bezkontextovy-jazyk).",
+   "explanation": {
+    "intuition": "Zásobník vie počítať, konečný automat nie.",
+    "detailed": "Táto lema opakuje argument Vety 13.4 (pozri tam) a dopĺňa [deterministický zásobníkový automat](dfn.dpda) z príkladu. Argument: pre konečný akceptor so $|Q|$ stavmi a $n>|Q|$ sa na $a^n$ zopakuje stav, a vynechaním cyklu dostaneme prijaté $a^ib^n$ s $i<n$.",
+    "pitfalls": [
+     "Nezabudnite, že deterministický PDA tu akceptuje prázdnym zásobníkom; pre koncové stavy by stačila malá úprava."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Deterministický PDA z príkladu prijíma $\\{a^nb^n:n\\ge1\\}$ prázdnym zásobníkom: deterministickosť je zrejmá z inštrukcií.",
+      "why": "Každá dvojica (stav, vrch zásobníka) má najviac jednu inštrukciu pre daný vstup.",
+      "uses": [
+       "dfn.dpda"
+      ]
+     },
+     {
+      "text": "Sporom predpokladáme konečnostavový akceptor $M=(Q,\\Sigma,f,q_I,F)$ pre $L$. Pre $n>|Q|$ sa v postupnosti stavov $q_1,\\dots,q_n$ po $a^n$ zopakuje stav: $q_j=q_k$, $j<k$.",
+      "why": "Holubníkový princíp.",
+      "uses": [
+       "def.holubnikovy-princip",
+       "def.dokaz-sporom"
+      ]
+     },
+     {
+      "text": "Vynechaním úseku $q_j\\dots q_k$ dostaneme prijímajúci výpočet na $a^ib^n$ s $i=n-(k-j)<n$, a $a^ib^n\\notin L$ — spor.",
+      "why": "Prijaté slovo mimo jazyka.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.dpda",
+    "thm.regularne-v-dcfl",
+    "thm.veta-13-4-anbn-nie-je-regularny",
+    "def.dokaz-sporom",
+    "def.holubnikovy-princip",
+    "dfn.zasobnikovy-automat",
+    "dfn.regularny-jazyk",
+    "dfn.bezkontextovy-jazyk",
+    "dfn.konecnostavovy-akceptor",
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "thm.veta-13-4-anbn-nie-je-regularny",
+     "note": "rovnaký argument už zaznel v prednáške 13"
+    },
+    {
+     "type": "see-also",
+     "target": "ex.dpda-anbn",
+     "note": "konkrétny DPDA"
+    }
+   ],
+   "figures": [
+    "fig.triedy-jazykov"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Dôkaz neexistencie akceptora zhodný s Vetou 13.4 (prednáška 13); tu je nový iba DPDA. Odkaz v meta.alsoCovers."
+    ]
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.dpda-anbn",
+   "title": "DPDA pre a^n b^n",
+   "caption": "Hrany $a,A/\\beta$; prijíma prázdnym zásobníkom.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.dpda-anbn"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "q",
+     "x": 0,
+     "y": 60,
+     "label": "▸ q"
+    },
+    {
+     "id": "r",
+     "x": 240,
+     "y": 60,
+     "label": "r"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "q",
+     "target": "q",
+     "label": "a,Z/A, a,A/AA",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "q",
+     "target": "r",
+     "label": "b,A/ε",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "r",
+     "target": "r",
+     "label": "b,A/ε",
+     "directed": true
+    }
+   ],
+   "animations": []
+  },
+  {
+   "id": "fig.trojice-pravidla",
+   "title": "Pravidlá trojicovej konštrukcie",
+   "caption": "Slajd 7.",
+   "origin": "slides",
+   "illustrates": [
+    "alg.trojicova-konstrukcia"
+   ],
+   "sources": [
+    {
+     "file": "Afjb04_ZasAut-BezGram_P.pdf",
+     "page": 7
+    }
+   ],
+   "kind": "table",
+   "columns": [
+    "inštrukcia",
+    "pravidlá gramatiky"
+   ],
+   "rows": [
+    [
+     "$(q,a,A)\\to(q',\\varepsilon)$",
+     "$[q,A,q']\\to a$"
+    ],
+    [
+     "$(q,a,A)\\to(q',B)$",
+     "$[q,A,r]\\to a[q',B,r]$ pre každé $r$"
+    ],
+    [
+     "$(q,a,A)\\to(q',BC)$",
+     "$[q,A,r]\\to a[q',B,s][s,C,r]$ pre každé $r,s$"
+    ],
+    [
+     "počiatok",
+     "$S\\to[q_I,z_I,r]$ pre každé $r$"
+    ]
+   ]
+  },
+  {
+   "id": "fig.triedy-jazykov",
+   "title": "Regulárne, deterministické bezkontextové a bezkontextové jazyky",
+   "caption": "Inklúzie sú ostré: $a^nb^n$ oddeľuje prvú, $\\{a^nb^nc^n\\}^c$ druhú (prednáška 9).",
+   "origin": "generated",
+   "illustrates": [
+    "dfn.bezkontextovy-jazyk",
+    "thm.anbn-dcfl-nie-regularny"
+   ],
+   "sources": [],
+   "kind": "mermaid",
+   "code": "flowchart LR\n  R[\"regulárne\"] -->|podmnožina| D[\"deterministické bezkontextové\"]\n  D -->|podmnožina| C[\"bezkontextové\"]"
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.generatory-parserov-pda",
+   "title": "Generátory parserov",
+   "summary": "Gramatika $\\to$ zásobníkový automat.",
+   "scenario": "Generátor parserov z gramatiky vyrobí zásobníkový stroj, ktorý rozbor vykoná.",
+   "modelling": "Gramatika je špecifikácia; zásobník je implementácia.",
+   "solution": "Ekvivalencia gramatiky a PDA zaručuje, že implementácia rozpozná presne ten istý jazyk.",
+   "connects": [
+    "thm.bezgram-na-pda",
+    "alg.pda-z-gramatiky"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.ekvivalencia-popisov",
+   "title": "Ekvivalencia dvoch popisov syntaxe",
+   "summary": "Gramatika alebo automat?",
+   "scenario": "Jeden tím popísal formát gramatikou, druhý zásobníkovým automatom.",
+   "modelling": "Oba popisy sú reprezentácie bezkontextového jazyka.",
+   "solution": "Konštrukcie dovolia jeden popis previesť na druhý.",
+   "connects": [
+    "thm.pda-na-bezgram",
+    "thm.bezgram-na-pda"
+   ],
+   "figures": [],
+   "tags": [
+    "konverzia"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.kontrola-dokumentov",
+   "title": "Kontrola štruktúr dokumentov",
+   "summary": "Vnorenie ako zásobník.",
+   "scenario": "Overujeme, že dokument má správne vnorené bloky.",
+   "modelling": "Bloky sú neterminály, uzávierky zodpovedajú pop.",
+   "solution": "Deterministický PDA stačí, ak je gramatika jednoznačne rozložiteľná.",
+   "connects": [
+    "dfn.bezkontextovy-jazyk",
+    "ex.dpda-anbn"
+   ],
+   "figures": [],
+   "tags": [
+    "dokumenty"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.zbg-1",
+   "kind": "mcq",
+   "prompt": "Aký je zásobník PDA zostrojeného z gramatiky v CNF?",
+   "options": [
+    "zoznam neprepísaných neterminálov",
+    "zoznam prečítaných terminálov",
+    "stavy gramatiky",
+    "prázdny"
+   ],
+   "answer": 0,
+   "explanation": "Simuluje ľavé odvodenie.",
+   "about": [
+    "alg.pda-z-gramatiky"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.zbg-2",
+   "kind": "mcq",
+   "prompt": "Koľko stavov má PDA z konštrukcie CFG $\\to$ PDA?",
+   "options": [
+    "1",
+    "2",
+    "$|N|$",
+    "$|P|$"
+   ],
+   "answer": 0,
+   "explanation": "Stačí jeden stav $q$.",
+   "about": [
+    "alg.pda-z-gramatiky"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.zbg-3",
+   "kind": "mcq",
+   "prompt": "Čo vyjadruje neterminál $[q,A,r]$?",
+   "options": [
+    "PDA z $q$ s vrchom $A$ sa dostane do $r$ s odstráneným $A$ po prečítaní slova",
+    "stav $r$ je koncový",
+    "vrch zásobníka je $A$",
+    "gramatika má pravidlo $A\\to r$"
+   ],
+   "answer": 0,
+   "explanation": "Pomocné tvrdenie dôkazu.",
+   "about": [
+    "alg.trojicova-konstrukcia"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.zbg-4",
+   "kind": "truefalse",
+   "prompt": "V pravidle (3) trojicovej konštrukcie treba vyskúšať všetky dvojice $r,s\\in Q$.",
+   "answer": true,
+   "explanation": "Medzistav $s$ sa „háda“, preto sa pravidlo vytvára pre všetky $s$ (aj $r$).",
+   "about": [
+    "alg.trojicova-konstrukcia"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.zbg-5",
+   "kind": "mcq",
+   "prompt": "Prečo sa PDA pred trojicovou konštrukciou upraví tak, že mení zásobník o najviac jeden symbol?",
+   "options": [
+    "aby stačili tri typy pravidiel (1)–(3)",
+    "aby bol deterministický",
+    "aby mal menej stavov",
+    "aby sa vyhol $\\varepsilon$"
+   ],
+   "answer": 0,
+   "explanation": "Normalizácia obmedzuje tvary inštrukcií.",
+   "about": [
+    "thm.pda-na-bezgram"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.zbg-6",
+   "kind": "truefalse",
+   "prompt": "Každý regulárny jazyk je deterministický bezkontextový.",
+   "answer": true,
+   "explanation": "DFA je DPDA, ktorý zásobník nepoužíva.",
+   "about": [
+    "thm.regularne-v-dcfl"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.zbg-7",
+   "kind": "truefalse",
+   "prompt": "Jazyk $\\{a^nb^n\\}$ je regulárny.",
+   "answer": false,
+   "explanation": "Je deterministický bezkontextový, ale nie regulárny.",
+   "about": [
+    "thm.anbn-dcfl-nie-regularny"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.zbg-8",
+   "kind": "open",
+   "prompt": "Čo robí nový počiatočný stav $q_I$ v prípade $\\varepsilon\\in L(G)$?",
+   "answer": "Má inštrukciu $\\delta(q_I,\\varepsilon,z_I)=\\{(q_I,\\varepsilon),(q,S)\\}$: buď vyprázdni zásobník (prijme $\\varepsilon$), alebo začne simuláciu.",
+   "explanation": "CNF neobsahuje $\\varepsilon$-pravidlá.",
+   "about": [
+    "thm.bezgram-na-pda"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.zbg-9",
+   "kind": "flashcard",
+   "prompt": "Aký je vzťah REG, DCFL, CFL?",
+   "answer": "$\\text{REG}\\subsetneq\\text{DCFL}\\subsetneq\\text{CFL}$.",
+   "explanation": "Oddeľujú ich jazyky $a^nb^n$ a $\\{a^nb^nc^n\\}^c$.",
+   "about": [
+    "dfn.bezkontextovy-jazyk"
+   ],
+   "difficulty": 1
+  }
+ ]
+}

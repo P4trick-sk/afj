@@ -1,0 +1,530 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "pumping1",
+  "title": "Pumping lema pre bezkontextové jazyky I",
+  "course": "B",
+  "order": 18,
+  "sourceFiles": [
+   "Afjb05_Pumping-I_P.pdf"
+  ],
+  "summary": "Pumping lema pre bezkontextové jazyky: v dostatočne dlhom slove nekonečného bezkontextového jazyka sa dajú „napumpovať“ dve oddelené časti $v$ a $y$ a výsledné slová stále patria do jazyka. Dôkaz využíva Chomského normálny tvar: v dlhom binárnom derivačnom strome sa musí na ceste zopakovať neterminál.",
+  "overview": "Prednáška dokazuje základný nástroj na ukazovanie, že jazyk nie je bezkontextový. Pumping lema tvrdí, že existuje konštanta $m$ taká, že každé slovo $w\\in L$ s $|w|\\ge m$ sa dá rozdeliť na $w=uvxyz$ tak, že $uv^kxy^kz\\in L$ pre všetky $k\\ge0$, $|vxy|\\le m$ a aspoň jedno z $v,y$ je neprázdne. Dôkaz: gramatika v CNF s $|N|$ neterminálmi, $m=2^{|N|+2}$, binárny strom s aspoň $m$ listami má cestu s viac ako $|N|+1$ neterminálmi, na ktorej sa nejaký neterminál $A$ zopakuje. Horné $A$ generuje $vxy$, dolné $x$, a odvodenie $A\\Rightarrow^*vAy$ sa dá opakovať alebo vynechať.",
+  "keyQuestions": [
+   "Čo hovorí pumping lema a ako ju použiť?",
+   "Prečo sa v dlhom derivačnom strome musí zopakovať neterminál?",
+   "Prečo je aspoň jedno z $v,y$ neprázdne?"
+  ],
+  "prerequisites": [
+   "bezkontextove-gramatiky"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "def.vyska-binarneho-stromu",
+   "type": "concept",
+   "topic": "pumping1",
+   "title": "Výška binárneho stromu a počet listov",
+   "terms": [
+    {
+     "term": "výška binárneho stromu",
+     "alt": "height of a binary tree"
+    }
+   ],
+   "aliases": [],
+   "tags": [
+    "základy"
+   ],
+   "origin": "supplement",
+   "statement": "Binárny strom výšky $h$ má najviac $2^h$ listov; naopak, binárny strom s aspoň $2^{h}+1$ listami má výšku aspoň $h+1$ (teda obsahuje cestu z koreňa do listu s aspoň $h+2$ uzlami).",
+   "explanation": {
+    "intuition": "Strom, ktorý je široký (veľa listov), musí byť aj vysoký.",
+    "detailed": "Na každej úrovni sa počet uzlov najviac zdvojnásobí, takže na úrovni $h$ je najviac $2^h$ uzlov. V [pumping leme](thm.pumping-lema-bezkontextove) z toho plynie: ak je $|w|\\ge2^{|N|+2}$, má [derivačný strom](dfn.derivacny-strom) výšku aspoň $|N|+2$ a na najdlhšej ceste sa opakuje neterminál.",
+    "pitfalls": [
+     "Výška sa počíta v hranách; pri počte uzlov na ceste sa pripočíta $1$."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "def.strom",
+    "dfn.derivacny-strom"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "thm.pumping-lema-bezkontextove"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.pumping-lema-bezkontextove",
+   "type": "theorem",
+   "topic": "pumping1",
+   "title": "Pumping lema pre bezkontextové jazyky",
+   "terms": [
+    {
+     "term": "pumping lema pre bezkontextové jazyky",
+     "alt": "pumping lemma for context-free languages"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb05_Pumping-I_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "Ak $L\\subseteq\\Sigma^*$ je nekonečný [bezkontextový jazyk](dfn.bezkontextovy-jazyk), tak existuje konštanta $m\\ge0$ taká, že každé [slovo](dfn.slovo) $w\\in L$ dĺžky $|w|\\ge m$ sa dá rozdeliť na päť častí, t.j. $w=uvxyz$ pre nejaké $u,v,x,y,z\\in\\Sigma^*$, takých, že platí: $uv^kxy^kz\\in L$ pre každé $k\\ge0$, celková dĺžka úseku $vxy$ je najviac $m$ ($|vxy|\\le m$) a aspoň jeden z reťazcov $v,y$ je rôzny od $\\varepsilon$.",
+   "explanation": {
+    "intuition": "V dlhom [slove](dfn.slovo) existuje „pumpovateľná“ dvojica častí $v,y$, ktoré sa dajú zopakovať rovnako veľakrát alebo vynechať.",
+    "detailed": "Úlohou $v$ a $y$ je, že sú to dva úseky, ktoré vznikli rekurzívnym opakovaním neterminálu $A\\Rightarrow^*vAy$. Preto sa dajú zopakovať $k$-krát bez zmeny, že [slovo](dfn.slovo) zostane v [jazyku](dfn.jazyk). Obmedzenie $|vxy|\\le m$ hovorí, že pumpované časti sú blízko seba. Na ilustráciu: v programe v Jave sa $v=($ a $y=)$ dajú zopakovať v $k$ vnorených zátvorkách. Lema sa používa na dôkaz negatívnych výsledkov: ak jazyk túto vlastnosť nemá, nie je bezkontextový.",
+    "pitfalls": [
+     "Pumping lema je nutná, nie postačujúca podmienka: existujú nebezkontextové jazyky, ktoré ju spĺňajú.",
+     "Pre konečné jazyky lema neplatí ani nemá zmysel (preto predpoklad „nekonečný“).",
+     "Konštantu $m$ nevolíme my; pri dôkaze sporom je daná lemou, a my vyberáme slovo $w$ podľa $m$."
+    ],
+    "examples": [
+     "V jazyku $\\{a^nb^n\\}$: pre $w=a^mb^m$ je $v=a^i$, $y=b^i$ a $uv^kxy^kz=a^{m-i+ik}b^{m-i+ik}\\in L$."
+    ]
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Pre nekonečný bezkontextový $L$ existuje gramatika $G$; nahradíme ju $G'=(N,T,P,S)$ v Chomského normálnom tvare s $L(G')=L(G)-\\{\\varepsilon\\}=L-\\{\\varepsilon\\}$. Aj $L(G')$ je nekonečný. Definujeme $m=2^{|N|+2}$ a zoberme $w=a_1\\dots a_n\\in L$ s $|w|\\ge m$.",
+      "why": "CNF dáva binárny derivačný strom.",
+      "uses": [
+       "thm.chomskeho-normalny-tvar"
+      ]
+     },
+     {
+      "text": "Derivačný strom $w$ v $G'$ je binárny: vnútorný uzol (neterminál $X$) má dvoch synov pre pravidlo $X\\to YZ$, a uzol nad listom má jedného pre $X\\to a_i$. Má aspoň $2^{|N|+2}$ listov, a teda výšku aspoň $|N|+2$.",
+      "why": "Strom s mnohými listami musí byť vysoký.",
+      "uses": [
+       "def.vyska-binarneho-stromu"
+      ]
+     },
+     {
+      "text": "Zoberme cestu od listu $a_i$ s najväčšou vzdialenosťou ku koreňu a nech $a_i,A_1,A_2,\\dots,A_h=S$ sú uzly. Keďže $G'$ má iba $|N|$ neterminálov, v $A_1,\\dots,A_{|N|+1}$ sa niektorý zopakuje: $A_i=A_j=A$ pre $1\\le i<j\\le|N|+1$.",
+      "why": "Holubníkový princíp: $|N|+1$ uzlov a $|N|$ možných značiek.",
+      "uses": [
+       "def.holubnikovy-princip"
+      ]
+     },
+     {
+      "text": "Z odvodenia $S\\Rightarrow^*w$ vynecháme kroky, ktoré prepisujú horné $A$: $S\\Rightarrow^*uAz$ $(*)$, kde $u,z$ sú úseky pred a za úsekom generovaným horným $A$. Dolné $A\\Rightarrow^*x$ $(**)$ pre úsek $x$ generovaný dolným $A$.",
+      "why": "Rozdelenie slova podľa dvoch výskytov $A$.",
+      "uses": []
+     },
+     {
+      "text": "Úsek $x$ je podúsekom úseku generovaného horným $A$; pred a za ním sú podúseky $v,y$: horné $A\\Rightarrow^*vxy$ a po vynechaní krokov prepisujúcich dolné $A$: $A\\Rightarrow^*vAy$ $(***)$. Teda $w=uvxyz$.",
+      "why": "Definícia $v,y$.",
+      "uses": []
+     },
+     {
+      "text": "Z $(*),(**),(***)$: $S\\Rightarrow^*uAz\\Rightarrow^*uvAyz\\Rightarrow^*uvvAyyz\\Rightarrow^*\\dots\\Rightarrow^*uv^kAy^kz\\Rightarrow^*uv^kxy^kz$ pre každé $k\\ge0$, teda $uv^kxy^kz\\in L$.",
+      "why": "Opakované použitie odvodenia $A\\Rightarrow^*vAy$.",
+      "uses": [
+       "def.indukcia"
+      ]
+     },
+     {
+      "text": "Výška podstromu s koreňom v hornom $A$ je najviac $|N|+2$, takže má najviac $2^{|N|+2}=m$ listov, teda $|vxy|\\le m$.",
+      "why": "Počet listov binárneho stromu výšky $h$ je najviac $2^h$.",
+      "uses": []
+     },
+     {
+      "text": "Aspoň jedno z $v,y$ je neprázdne: horné $A$ sa prepísalo pravidlom $A\\to BC$ a dolné $A$ je buď v ľavom podstrome (pod $B$), alebo v pravom (pod $C$). V prvom prípade $y=y_1y_2$ s $C\\Rightarrow^*y_2$ a $|y_2|>0$ (v CNF každý neterminál generuje neprázdny reťazec), teda $y\\ne\\varepsilon$. V druhom prípade symetricky $v\\ne\\varepsilon$.",
+      "why": "CNF nemá $\\varepsilon$-pravidlá, každý neterminál generuje aspoň jeden terminál.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.chomskeho-normalny-tvar",
+    "thm.chomskeho-normalny-tvar",
+    "dfn.derivacny-strom",
+    "def.vyska-binarneho-stromu",
+    "def.holubnikovy-princip",
+    "def.indukcia",
+    "dfn.bezkontextovy-jazyk",
+    "dfn.slovo",
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "analogue",
+     "target": "thm.veta-13-4-anbn-nie-je-regularny",
+     "note": "pumping lema pre regulárne jazyky je analogická"
+    }
+   ],
+   "figures": [
+    "fig.pumping-rozdelenie",
+    "fig.pumping-strom"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajdy 5–18 sú obrázky derivačných stromov; text dôkazu je rekonštruovaný z popisov. Dôkaz je overený na konkrétnom strome: pre $a^nb^n$ v CNF ($|N|=4$, $m=64$) sa pre $n=32,35,40$ nájdu $u,v,x,y,z$ s $|vxy|\\le m$, $vy\\ne\\varepsilon$ a $uv^kxy^kz\\in L$ pre $k=0,\\dots,4$."
+    ]
+   }
+  },
+  {
+   "id": "ex.pumping-java",
+   "type": "example",
+   "topic": "pumping1",
+   "title": "Ilustrácia pumpovania na programe v Jave",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb05_Pumping-I_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "Zoberme ako $w$ program v Jave obsahujúci priradenie $j=(k+1)+2;$ a rozdeľme ho na päť častí tak, že $v=($ a $y=)$, $x=k+1$. Potom $uv^0xy^0z$ obsahuje $j=k+1+2;$, $uvxyz$ pôvodné $j=(k+1)+2;$, $uv^2xy^2z$ obsahuje $j=((k+1))+2;$, $uv^3xy^3z$ obsahuje $j=(((k+1)))+2;$ a všetky sú opäť syntakticky korektné programy v Jave.",
+   "explanation": {
+    "intuition": "Zátvorky okolo podvýrazu môžeme pridať alebo odobrať, program ostane korektný.",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "thm.pumping-lema-bezkontextove"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.pumping-rozdelenie",
+   "title": "Rozdelenie slova a^32 b^32 podľa dôkazu pumping lemy (vypočítané)",
+   "caption": "Pre derivačný strom v CNF a $m=2^{|N|+2}=64$; $|vxy|\\le m$, $vy\\ne\\varepsilon$.",
+   "origin": "generated",
+   "illustrates": [
+    "thm.pumping-lema-bezkontextove"
+   ],
+   "sources": [],
+   "kind": "table",
+   "columns": [
+    "časť",
+    "reťazec"
+   ],
+   "rows": [
+    [
+     "$u$",
+     "$a^{30}$"
+    ],
+    [
+     "$v$",
+     "$a^{1}$"
+    ],
+    [
+     "$x$",
+     "$a^{1}b^{2}$"
+    ],
+    [
+     "$y$",
+     "$b^{1}$"
+    ],
+    [
+     "$z$",
+     "$b^{29}$"
+    ]
+   ]
+  },
+  {
+   "id": "fig.pumping-strom",
+   "title": "Schéma: derivačný strom s opakujúcim sa neterminálom",
+   "caption": "Horné $A$ generuje $vxy$, dolné $x$; $S\\Rightarrow^*uAz$, $A\\Rightarrow^*vAy$, $A\\Rightarrow^*x$.",
+   "origin": "generated",
+   "illustrates": [
+    "thm.pumping-lema-bezkontextove"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": false,
+   "vertices": [
+    {
+     "id": "S",
+     "x": 150,
+     "y": 0,
+     "label": "S"
+    },
+    {
+     "id": "A1",
+     "x": 150,
+     "y": 60,
+     "label": "A"
+    },
+    {
+     "id": "A2",
+     "x": 150,
+     "y": 120,
+     "label": "A"
+    },
+    {
+     "id": "u",
+     "x": 0,
+     "y": 120,
+     "label": "u"
+    },
+    {
+     "id": "v",
+     "x": 90,
+     "y": 120,
+     "label": "v"
+    },
+    {
+     "id": "x",
+     "x": 150,
+     "y": 190,
+     "label": "x"
+    },
+    {
+     "id": "y",
+     "x": 210,
+     "y": 120,
+     "label": "y"
+    },
+    {
+     "id": "z",
+     "x": 300,
+     "y": 120,
+     "label": "z"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e1",
+     "source": "S",
+     "target": "A1",
+     "directed": false
+    },
+    {
+     "id": "e2",
+     "source": "A1",
+     "target": "A2",
+     "directed": false
+    },
+    {
+     "id": "e3",
+     "source": "S",
+     "target": "u",
+     "directed": false
+    },
+    {
+     "id": "e4",
+     "source": "A1",
+     "target": "v",
+     "directed": false
+    },
+    {
+     "id": "e5",
+     "source": "A2",
+     "target": "x",
+     "directed": false
+    },
+    {
+     "id": "e6",
+     "source": "A1",
+     "target": "y",
+     "directed": false
+    },
+    {
+     "id": "e7",
+     "source": "S",
+     "target": "z",
+     "directed": false
+    }
+   ],
+   "animations": [
+    {
+     "title": "Opakovanie",
+     "steps": [
+      {
+       "caption": "Slovo $w=uvxyz$ s opakujúcim sa neterminálom $A$.",
+       "highlight": [
+        "S",
+        "A1",
+        "A2"
+       ]
+      },
+      {
+       "caption": "Vynecháme $v$ a $y$ ($k=0$): $uxz$.",
+       "highlight": [
+        "u",
+        "x",
+        "z"
+       ]
+      },
+      {
+       "caption": "Zopakujeme odvodenie $A\\Rightarrow vAy$ ($k=2$): $uvvxyyz$.",
+       "highlight": [
+        "A1",
+        "A2",
+        "v",
+        "y"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.hranice-popisnej-sily",
+   "title": "Dôkaz, že jazyk nemožno popísať CFG",
+   "summary": "Pumping lema ako nástroj negatívnych výsledkov.",
+   "scenario": "Navrhujeme novú notáciu a chceme vedieť, či ju zvládne bezkontextová gramatika.",
+   "modelling": "Nájdeme slovo vhodné pre pumping a ukážeme, že pumpovaním vznikne nepovolené slovo.",
+   "solution": "Ak sa to podarí, jazyk nie je bezkontextový a potrebujeme silnejší formalizmus.",
+   "connects": [
+    "thm.pumping-lema-bezkontextove"
+   ],
+   "figures": [],
+   "tags": [
+    "teória"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.vnorene-zatvorky",
+   "title": "Analýza vnorených štruktúr v kóde",
+   "summary": "Opakovanie vnorenej štruktúry.",
+   "scenario": "Preprocesor môže pridať alebo odobrať vrstvu zátvoriek bez zmeny korektnosti.",
+   "modelling": "Zátvorky zodpovedajú opakovaniu neterminálu pri rekurzívnom pravidle.",
+   "solution": "Pumping lema formalizuje, že takýchto opakovaní možno robiť ľubovoľne veľa.",
+   "connects": [
+    "ex.pumping-java",
+    "thm.pumping-lema-bezkontextove"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.pump1-1",
+   "kind": "mcq",
+   "prompt": "Aká je konštanta $m$ v dôkaze pumping lemy?",
+   "options": [
+    "$|N|$",
+    "$2^{|N|+2}$",
+    "$|P|$",
+    "$2|N|$"
+   ],
+   "answer": 1,
+   "explanation": "Binárny strom s $\\ge2^{|N|+2}$ listami je dostatočne vysoký.",
+   "about": [
+    "thm.pumping-lema-bezkontextove"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.pump1-2",
+   "kind": "truefalse",
+   "prompt": "Pumping lema platí aj pre konečné jazyky.",
+   "answer": false,
+   "explanation": "Predpoklad nekonečnosti je podstatný (konečný jazyk nemá dostatočne dlhé slová).",
+   "about": [
+    "thm.pumping-lema-bezkontextove"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.pump1-3",
+   "kind": "mcq",
+   "prompt": "Ktorá podmienka nie je súčasťou pumping lemy?",
+   "options": [
+    "$|vxy|\\le m$",
+    "$vy\\ne\\varepsilon$",
+    "$uv^kxy^kz\\in L$ pre všetky $k\\ge0$",
+    "$|u|=|z|$"
+   ],
+   "answer": 3,
+   "explanation": "Nie je žiadne obmedzenie na $u,z$.",
+   "about": [
+    "thm.pumping-lema-bezkontextove"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.pump1-4",
+   "kind": "truefalse",
+   "prompt": "Ak jazyk spĺňa pumping lemu, je bezkontextový.",
+   "answer": false,
+   "explanation": "Pumping lema je nutná, nie postačujúca podmienka.",
+   "about": [
+    "thm.pumping-lema-bezkontextove"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.pump1-5",
+   "kind": "mcq",
+   "prompt": "Prečo je aspoň jedno z $v,y$ neprázdne?",
+   "options": [
+    "horné $A$ sa prepísalo pravidlom $A\\to BC$ a dolné $A$ je pod $B$ alebo $C$, ktoré generujú neprázdny reťazec",
+    "lebo $x\\ne\\varepsilon$",
+    "lebo $u\\ne\\varepsilon$",
+    "lebo $m>0$"
+   ],
+   "answer": 0,
+   "explanation": "CNF nemá $\\varepsilon$-pravidlá.",
+   "about": [
+    "thm.pumping-lema-bezkontextove"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.pump1-6",
+   "kind": "flashcard",
+   "prompt": "Sformulujte pumping lemu pre bezkontextové jazyky.",
+   "answer": "Pre nekonečný CFL existuje $m$ také, že každé $w\\in L$, $|w|\\ge m$, sa dá písať $w=uvxyz$ s $uv^kxy^kz\\in L$ pre všetky $k\\ge0$, $|vxy|\\le m$ a $vy\\ne\\varepsilon$.",
+   "explanation": "Pozrite si definíciu v teorému.",
+   "about": [
+    "thm.pumping-lema-bezkontextove"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.pump1-7",
+   "kind": "open",
+   "prompt": "Prečo sa v dlhom derivačnom strome musí zopakovať neterminál?",
+   "answer": "Strom s $\\ge2^{|N|+2}$ listami je vysoký (aspoň $|N|+2$) a na jeho najdlhšej ceste je viac ako $|N|+1$ neterminálov; podľa holubníkového princípu sa niektorý zopakuje.",
+   "explanation": "Holubníkový princíp.",
+   "about": [
+    "thm.pumping-lema-bezkontextove"
+   ],
+   "difficulty": 2
+  }
+ ]
+}

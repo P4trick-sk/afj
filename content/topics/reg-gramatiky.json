@@ -1,0 +1,1054 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "reg-gramatiky",
+  "title": "Regulárne gramatiky",
+  "course": "A",
+  "order": 10,
+  "sourceFiles": [
+   "Afja10_reg_gramatiky_P.pdf"
+  ],
+  "summary": "Regulárne gramatiky generujú presne regulárne jazyky: z konečnostavového akceptora sa dá zostrojiť regulárna gramatika (stavy sa stanú neterminálmi) a rozšírená regulárna gramatika sa dá nahradiť ε-akceptorom.",
+  "overview": "Prednáška spája dva pohľady na regulárne jazyky: generovanie gramatikou a rozpoznávanie akceptorom. Regulárna gramatika má pravidlá $A\\to aB$, $A\\to a$ (a prípadne $S\\to\\varepsilon$); rozšírená regulárna gramatika dovoľuje celé reťazce terminálov na pravých stranách. Veta 10.1 prevádza DFA na regulárnu gramatiku tak, že odvodenie slova simuluje výpočet akceptora, Veta 10.2 prevádza rozšírenú gramatiku na ε-akceptor pridaním pomocných stavov pre dlhšie reťazce. Spolu s predchádzajúcimi prednáškami sa tak uzatvára cyklus ekvivalencií medzi akceptormi a gramatikami.",
+  "keyQuestions": [
+   "Ako sa výpočet akceptora premieta do odvodenia v gramatike?",
+   "Čím sa líši rozšírená regulárna gramatika od regulárnej?",
+   "Ako sa gramatika prevedie na ε-akceptor?"
+  ],
+  "prerequisites": [
+   "gramatiky",
+   "akceptory",
+   "eps-akceptory"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "dfn.regularna-gramatika",
+   "type": "definition",
+   "topic": "reg-gramatiky",
+   "title": "Regulárna gramatika",
+   "terms": [
+    {
+     "term": "regulárna gramatika",
+     "alt": "regular grammar"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja10_reg_gramatiky_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "**Regulárna gramatika** je štandardná [gramatika](dfn.gramatika) $G=(N,T,P,S)$ z [Chomského hierarchie](def.chomskeho-hierarchia), v ktorej sú všetky pravidlá typu $A\\to aB$, pričom $A,B\\in N$ a $a\\in T$, alebo typu $A\\to a$, pričom $A\\in N$ a $a\\in T$. Povolenou výnimkou je pravidlo $S\\to\\varepsilon$ za predpokladu, že $S$ sa nenachádza na pravej strane žiadneho pravidla. Odvodenie [slova](dfn.slovo) $a_1\\dots a_n$ je vždy tvaru $S=B_0\\Rightarrow a_1B_1\\Rightarrow a_1a_2B_2\\Rightarrow\\dots\\Rightarrow a_1\\dots a_{n-1}B_{n-1}\\Rightarrow a_1\\dots a_n$.",
+   "explanation": {
+    "intuition": "V každom kroku pripíšeme jeden terminál a zapamätáme si jeden neterminál (stav); [odvodenie](dfn.odvodenie) tak „číta“ [slovo](dfn.slovo) zľava doprava.",
+    "detailed": "Pri odvodení sa v reťazci vyskytuje najviac jeden neterminál, a to na konci. Neterminál hrá úlohu stavu akceptora. Výnimka $S\\to\\varepsilon$ umožňuje generovať prázdne [slovo](dfn.slovo); podmienka, že $S$ nie je na pravých stranách, zabráni „obchádzaniu“ pravidla.",
+    "pitfalls": [
+     "Pravidlo $A\\to aB$ má terminál vľavo od neterminálu; pravidlo $A\\to Ba$ (pravá regulárna gramatika) dáva tú istú triedu jazykov, ale iný tvar."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.gramatika",
+    "def.chomskeho-hierarchia",
+    "dfn.slovo",
+    "dfn.odvodenie"
+   ],
+   "relations": [
+    {
+     "type": "specializes",
+     "target": "dfn.bezkontextova-gramatika",
+     "note": "pravidlá s jediným neterminálom vľavo a najviac jedným vpravo"
+    },
+    {
+     "type": "equivalent",
+     "target": "dfn.konecnostavovy-akceptor",
+     "note": "generujú rovnakú triedu jazykov"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.rozsirena-regularna-gramatika",
+   "type": "definition",
+   "topic": "reg-gramatiky",
+   "title": "Rozšírená regulárna gramatika",
+   "terms": [
+    {
+     "term": "rozšírená regulárna gramatika",
+     "alt": "extended regular grammar"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja10_reg_gramatiky_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "**Rozšírená [regulárna gramatika](dfn.regularna-gramatika)** je [gramatika](dfn.gramatika), ktorá má všetky pravidlá typu $A\\to wB$, pričom $A,B\\in N$ a $w\\in T^*$, alebo typu $A\\to w$, pričom $A\\in N$ a $w\\in T^*$. Povolené sú napr. $A\\to B$ (kde $w=\\varepsilon$), $A\\to aB$, $A\\to abaaB$, $A\\to\\varepsilon$ (aj pre $A\\ne S$), $A\\to a$, $A\\to abaa$. Pravidlá ako $A\\to aBa$ či $A\\to aBC$ nie sú povolené. Odvodenie je vždy tvaru $S=B_0\\Rightarrow w_1B_1\\Rightarrow w_1w_2B_2\\Rightarrow\\dots\\Rightarrow w_1\\dots w_n$.",
+   "explanation": {
+    "intuition": "V jednom kroku môžeme pripísať celý reťazec terminálov naraz, nie iba jeden symbol.",
+    "detailed": "Rozšírená [gramatika](dfn.gramatika) je pohodlnejšia na zápis (pravidlá ako $A\\to abaaB$), ale nezvyšuje silu: Veta 10.2 ju prevedie na [ε-akceptor](dfn.eps-akceptor), teda rozpoznáva presne [regulárne jazyky](dfn.regularny-jazyk). Nepotrebuje ani osobitnú výnimku pre $S\\to\\varepsilon$.",
+    "pitfalls": [
+     "Pravidlo s neterminálom uprostred pravej strany ($A\\to aBa$) dáva už bezkontextovú gramatiku, nie regulárnu."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.gramatika",
+    "dfn.regularny-jazyk",
+    "dfn.eps-akceptor"
+   ],
+   "relations": [
+    {
+     "type": "generalizes",
+     "target": "dfn.regularna-gramatika",
+     "note": "dovoľuje celé reťazce terminálov"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.gramatika-z-akceptora",
+   "type": "algorithm",
+   "topic": "reg-gramatiky",
+   "title": "Konštrukcia regulárnej gramatiky z akceptora",
+   "terms": [
+    {
+     "term": "gramatika z akceptora",
+     "alt": "grammar from an automaton"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja10_reg_gramatiky_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "Pre [DFA](dfn.konecnostavovy-akceptor) $M=(Q,\\Sigma,q_I,f,F)$ zostrojíme $G=(Q\\cup\\{S\\},\\Sigma,P,S)$ s pravidlami, pre každé $q,q'\\in Q$ a $a\\in\\Sigma$: (a) ak $f(q,a)=q'$, tak $q\\to aq'\\in P$; (b) ak $f(q',a)\\in F$, tak $q'\\to a\\in P$; (c) ak $f(q_I,a)=q'$, tak $S\\to aq'\\in P$; (d) ak $f(q_I,a)\\in F$, tak $S\\to a\\in P$; (e) ak $q_I\\in F$, tak $S\\to\\varepsilon\\in P$.",
+   "explanation": {
+    "intuition": "Stavy sa stanú neterminálmi a hrany pravidlami; koncový stav umožní [odvodenie](dfn.odvodenie) ukončiť.",
+    "detailed": "Pravidlá (c)–(e) pridávajú nový štartovací neterminál $S$, ktorý simuluje $q_I$ bez toho, aby $q_I$ vystupoval na pravých stranách ako štart; tým sa zaistí, že $S$ nie je na pravých stranách a pravidlo $S\\to\\varepsilon$ je povolené.",
+    "pitfalls": [
+     "Pravidlá typu (b) sa pridávajú k stavu $q'$ pre prechod, ktorý končí v koncovom stave: nezabudnite na ne."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Korektnosť dokazuje Veta 10.1: odvodenie $S\\Rightarrow\\dots\\Rightarrow\\omega'q'$ zodpovedá výpočtu $f^*(q_I,\\omega')=q'$ a záverečné pravidlo (b) alebo (d) zodpovedá prechodu do koncového stavu.",
+    "steps": []
+   },
+   "uses": [
+    "dfn.konecnostavovy-akceptor",
+    "dfn.regularna-gramatika",
+    "dfn.odvodenie"
+   ],
+   "relations": [
+    {
+     "type": "algorithm-for",
+     "target": "thm.veta-10-1-dfa-na-gramatiku",
+     "note": "Veta 10.1 dokazuje korektnosť"
+    }
+   ],
+   "figures": [
+    "fig.dfa-pre-gramatiku",
+    "fig.pravidla-z-akceptora"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.veta-10-1-dfa-na-gramatiku",
+   "type": "theorem",
+   "topic": "reg-gramatiky",
+   "title": "Veta 10.1: každý DFA sa dá nahradiť regulárnou gramatikou",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja10_reg_gramatiky_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "Každý [deterministický akceptor](dfn.konecnostavovy-akceptor) $M=(Q,\\Sigma,q_I,f,F)$ sa dá nahradiť [regulárnou gramatikou](dfn.regularna-gramatika) $G$ takou, že $L(G)=L(M)$.",
+   "explanation": {
+    "intuition": "Odvodenie v [gramatike](dfn.gramatika) je presný obraz výpočtu akceptora.",
+    "detailed": "Pomocné tvrdenie: pre neprázdne $\\omega'$ platí $S\\Rightarrow^*\\omega'q'$ práve vtedy, keď $f^*(q_I,\\omega')=q'$. Z toho sa dokáže $L(G)=L(M)$ po rozbore podľa dĺžky [slova](dfn.slovo) ($0$, $1$, aspoň $2$).",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Pomocné tvrdenie: pre každé $\\omega'\\in\\Sigma^*$, $\\omega'\\ne\\varepsilon$ a každé $q'\\in Q$: $S\\Rightarrow^*\\omega'q'$ práve vtedy, keď $f^*(q_I,\\omega')=q'$. Indukciou podľa $|\\omega'|$; báza $\\omega'=a$: $S\\Rightarrow aq'$ je pravidlo (c), čo je $f(q_I,a)=q'$.",
+      "why": "Prvý krok odvodenia sa dá urobiť iba pravidlom typu (c).",
+      "uses": [
+       "def.indukcia"
+      ]
+     },
+     {
+      "text": "Krok: $\\omega'=\\omega''a$. $S\\Rightarrow^*\\omega''a q'$ znamená, že existuje $q$ s $S\\Rightarrow^*\\omega''q$ a pravidlom $q\\to aq'$ (a). Podľa indukčného predpokladu je $f^*(q_I,\\omega'')=q$ a $f(q,a)=q'$, teda $f^*(q_I,\\omega''a)=q'$.",
+      "why": "Posledný krok odvodenia pridáva symbol $a$ a mení neterminál podľa $f$.",
+      "uses": []
+     },
+     {
+      "text": "Pre $\\omega=\\omega'a$ s $|\\omega|\\ge2$: $\\omega\\in L(G)\\iff S\\Rightarrow^*\\omega'q'\\Rightarrow\\omega'a$ pre nejaké $q'$ s pravidlom $q'\\to a$ (b) $\\iff f^*(q_I,\\omega')=q'$ a $f(q',a)\\in F\\iff f^*(q_I,\\omega)\\in F\\iff\\omega\\in L(M)$.",
+      "why": "Odvodenie sa končí pravidlom (b).",
+      "uses": []
+     },
+     {
+      "text": "Pre $|\\omega|=1$: $\\omega=a\\in L(G)\\iff S\\to a\\in P$ (d) $\\iff f(q_I,a)\\in F\\iff a\\in L(M)$.",
+      "why": "Slovo dĺžky $1$ sa generuje pravidlom (d).",
+      "uses": []
+     },
+     {
+      "text": "Pre $\\omega=\\varepsilon$: $\\varepsilon\\in L(G)\\iff S\\to\\varepsilon\\in P$ (e) $\\iff q_I\\in F\\iff\\varepsilon\\in L(M)$. Teda $L(G)=L(M)$.",
+      "why": "Prázdne slovo je ošetrené osobitným pravidlom.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "alg.gramatika-z-akceptora",
+    "dfn.jazyk-gramatiky",
+    "dfn.jazyk-akceptora",
+    "def.indukcia",
+    "dfn.regularna-gramatika",
+    "dfn.konecnostavovy-akceptor",
+    "dfn.gramatika",
+    "dfn.slovo"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.simulacia-odvodenim",
+   "type": "example",
+   "topic": "reg-gramatiky",
+   "title": "Simulácia výpočtu akceptora odvodením v gramatike",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja10_reg_gramatiky_P.pdf",
+     "page": 7
+    }
+   ],
+   "statement": "Pre akceptor $M$ s piatimi stavmi $A,\\dots,E$ (počiatočný $A$, koncové $A$ a $D$) dostaneme [gramatiku](dfn.gramatika) s pravidlami: $S\\to aC\\mid bA\\mid b\\mid\\varepsilon$, $A\\to aC\\mid bA\\mid b$, $B\\to aB\\mid bC$, $C\\to aB\\mid bD\\mid b$, $D\\to aE\\mid bD\\mid b$, $E\\to aE\\mid bE$. Výpočet na [slove](dfn.slovo) $bbaabbb$ prechádza stavmi $A,A,C,B,C,D,D$ a [odvodenie](dfn.odvodenie): $S\\Rightarrow bA\\Rightarrow bbA\\Rightarrow bbaC\\Rightarrow bbaaB\\Rightarrow bbaabC\\Rightarrow bbaabbD\\Rightarrow bbaabbb$.",
+   "explanation": {
+    "intuition": "Každý krok výpočtu automatu sa „odzrkadlí“ v jednom kroku [odvodenia](dfn.odvodenie).",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "thm.veta-10-1-dfa-na-gramatiku"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.slovo"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.gramatika"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.odvodenie"
+    }
+   ],
+   "figures": [
+    "fig.dfa-pre-gramatiku"
+   ],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Pravidlá gramatiky boli vygenerované konštrukciou (a)–(e) a overené: gramatika generuje presne $L(M)$ na slovách do dĺžky 9."
+    ]
+   }
+  },
+  {
+   "id": "alg.gramatika-na-eps-akceptor",
+   "type": "algorithm",
+   "topic": "reg-gramatiky",
+   "title": "Konštrukcia ε-akceptora z rozšírenej regulárnej gramatiky",
+   "terms": [
+    {
+     "term": "akceptor z gramatiky",
+     "alt": "automaton from a grammar"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja10_reg_gramatiky_P.pdf",
+     "page": 11
+    }
+   ],
+   "statement": "Pre rozšírenú [regulárnu gramatiku](dfn.regularna-gramatika) $G=(N,T,P,S)$ zostrojíme $\\varepsilon$-akceptor $M=(Q,\\Sigma,q_I,\\delta,F)$: $\\Sigma=T$, $Q=N\\cup\\{q_F\\}\\cup Q'$, $q_I=S$, $F=\\{q_F\\}$, kde $Q'$ sú pomocné stavy. (a) Ak $A\\to wB\\in P$, pridáme postupnosť prechodov $A\\xrightarrow{w}B$: pre $w=a_1\\dots a_n$, $n\\ge2$, nové stavy $p_1,\\dots,p_{n-1}$ s prechodmi $A\\xrightarrow{a_1}p_1\\xrightarrow{a_2}\\dots\\xrightarrow{a_n}B$; pre $n=1$ prechod $A\\xrightarrow{a_1}B$ a pre $n=0$ prechod $A\\xrightarrow{\\varepsilon}B$. (b) Ak $A\\to w\\in P$, pridáme $A\\xrightarrow{w}q_F$.",
+   "explanation": {
+    "intuition": "Neterminály sa stanú stavmi a pravidlá cestami označenými terminálmi pravej strany.",
+    "detailed": "Dlhší reťazec $w$ na pravej strane sa rozloží na cestu cez nové pomocné stavy. Pre $A\\to w$ vedie cesta do jediného koncového stavu $q_F$, z ktorého nevedú žiadne hrany.",
+    "pitfalls": [
+     "Pre $n=0$ treba použiť ε-prechod, preto je výsledkom ε-akceptor, nie priamo NFA."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Korektnosť dokazuje Veta 10.2: odvodenie $S\\Rightarrow w_1A_1\\Rightarrow\\dots\\Rightarrow w_1\\dots w_n$ zodpovedá ceste $S\\xrightarrow{w_1}A_1\\dots\\xrightarrow{w_n}q_F$.",
+    "steps": []
+   },
+   "uses": [
+    "dfn.rozsirena-regularna-gramatika",
+    "dfn.eps-akceptor",
+    "dfn.regularna-gramatika"
+   ],
+   "relations": [
+    {
+     "type": "algorithm-for",
+     "target": "thm.veta-10-2-gramatika-na-eps-akceptor",
+     "note": "Veta 10.2 dokazuje korektnosť"
+    }
+   ],
+   "figures": [
+    "fig.eps-z-gramatiky"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.veta-10-2-gramatika-na-eps-akceptor",
+   "type": "theorem",
+   "topic": "reg-gramatiky",
+   "title": "Veta 10.2: rozšírená regulárna gramatika sa dá nahradiť ε-akceptorom",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja10_reg_gramatiky_P.pdf",
+     "page": 11
+    }
+   ],
+   "statement": "Každá rozšírená [regulárna gramatika](dfn.regularna-gramatika) $G=(N,T,P,S)$ sa dá nahradiť $\\varepsilon$-akceptorom $M$ takým, že $L(M)=L(G)$.",
+   "explanation": {
+    "intuition": "Odvodenie v [gramatike](dfn.gramatika) je cesta v akceptore.",
+    "detailed": "Dôkaz má dve časti, „$\\subseteq$“ a „$\\supseteq$“. V druhej využívame, že z $q_F$ nevedú žiadne hrany, a že pomocné stavy $Q'$ majú iba jeden prechod, takže každý úsek ciest medzi neterminálmi zodpovedá práve jednému pravidlu.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "„$L(G)\\subseteq L(M)$“: ak $\\omega\\in L(G)$, existuje odvodenie $S=A_0\\Rightarrow w_1A_1\\Rightarrow w_1w_2A_2\\Rightarrow\\dots\\Rightarrow w_1\\dots w_{n-1}A_{n-1}\\Rightarrow w_1\\dots w_n=\\omega$ pravidlami $A_0\\to w_1A_1,\\dots,A_{n-1}\\to w_n$.",
+      "why": "Tvar odvodenia v rozšírenej regulárnej gramatike.",
+      "uses": []
+     },
+     {
+      "text": "Pre pravidlo $A_{i-1}\\to w_iA_i$ má $M$ postupnosť prechodov $A_{i-1}\\xrightarrow{w_i}A_i$ (a), pre posledné $A_{n-1}\\to w_n$ postupnosť $A_{n-1}\\xrightarrow{w_n}q_F$ (b).",
+      "why": "Definícia prechodov $M$.",
+      "uses": []
+     },
+     {
+      "text": "Preto $M$ má prijímajúci výpočet $q_I=S=A_0\\xrightarrow{w_1}A_1\\xrightarrow{w_2}\\dots\\xrightarrow{w_n}q_F$ s $w_1\\dots w_n=\\omega$, čiže $\\omega\\in L(M)$.",
+      "why": "Spojenie úsekov.",
+      "uses": []
+     },
+     {
+      "text": "„$L(M)\\subseteq L(G)$“: prijímajúci výpočet $q_I=S\\to\\dots\\to q_F$ sa rozdelí na úseky $A_{i-1}\\xrightarrow{w_i}A_i$ tak, že vnútri úseku sa nevyskytne stav z $N$. Z $q_F\\in N$ nevedú hrany, a pomocné stavy majú jediný prechod.",
+      "why": "Štruktúra $M$.",
+      "uses": []
+     },
+     {
+      "text": "Takýto úsek bol do $M$ pridaný iba ak $A_{i-1}\\to w_iA_i\\in P$, posledný iba ak $A_{n-1}\\to w_n\\in P$. Dostávame odvodenie $\\omega=w_1\\dots w_n$ v $G$, teda $\\omega\\in L(G)$.",
+      "why": "Každý úsek zodpovedá práve jednému pravidlu.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "alg.gramatika-na-eps-akceptor",
+    "dfn.jazyk-eps-akceptora",
+    "dfn.jazyk-gramatiky",
+    "dfn.regularna-gramatika",
+    "dfn.gramatika"
+   ],
+   "relations": [
+    {
+     "type": "analogue",
+     "target": "thm.veta-10-1-dfa-na-gramatiku",
+     "note": "opačný smer prevodu"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.gramatika-na-akceptor",
+   "type": "example",
+   "topic": "reg-gramatiky",
+   "title": "Prevod rozšírenej regulárnej gramatiky na akceptor",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja10_reg_gramatiky_P.pdf",
+     "page": 14
+    }
+   ],
+   "statement": "Gramatika $G$ s pravidlami $S\\to abS\\mid abbS\\mid aaA\\mid A$, $A\\to abA\\mid aabA\\mid\\varepsilon$ generuje [jazyk](dfn.jazyk) $\\{ab,abb\\}^*\\{aa,\\varepsilon\\}\\{ab,aab\\}^*$. Akceptor $M$ má stavy $S$, $A$, $q_F$ a pomocné stavy pre dlhšie reťazce. Odvodenie [slova](dfn.slovo) $ab\\,abb\\,aa\\,ab$: $S\\Rightarrow abS\\Rightarrow ab\\,abbS\\Rightarrow ab\\,abb\\,aaA\\Rightarrow ab\\,abb\\,aa\\,abA\\Rightarrow ab\\,abb\\,aa\\,ab$ zodpovedá výpočtu s rovnakým rozpisom.",
+   "explanation": {
+    "intuition": "Pravidlo $A\\to aabA$ sa stane cestou $A\\xrightarrow{a}p_1\\xrightarrow{a}p_2\\xrightarrow{b}A$.",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "thm.veta-10-2-gramatika-na-eps-akceptor"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.slovo"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.jazyk"
+    }
+   ],
+   "figures": [
+    "fig.eps-z-gramatiky"
+   ],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Gramatika na slajde 14 je nečitateľná; pravidlá sú zrekonštruované z popisu jazyka a overené: akceptor z konštrukcie prijíma presne jazyk $(ab|abb)^*(aa|\\varepsilon)(ab|aab)^*$ na všetkých slovách do dĺžky 12. Slovo uvedené v texte príkladu je vlastné."
+    ]
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.dfa-pre-gramatiku",
+   "title": "Akceptor M (A a D sú koncové)",
+   "caption": "Akceptor zo slajdu 7; zodpovedajúca gramatika je v príklade.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.simulacia-odvodenim",
+    "alg.gramatika-z-akceptora"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "A",
+     "x": 0,
+     "y": 80,
+     "label": "▸ A ◉"
+    },
+    {
+     "id": "B",
+     "x": 160,
+     "y": 0,
+     "label": "B"
+    },
+    {
+     "id": "C",
+     "x": 160,
+     "y": 160,
+     "label": "C"
+    },
+    {
+     "id": "D",
+     "x": 320,
+     "y": 160,
+     "label": "D ◉"
+    },
+    {
+     "id": "E",
+     "x": 480,
+     "y": 160,
+     "label": "E"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "A",
+     "target": "C",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "A",
+     "target": "A",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "B",
+     "target": "B",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "B",
+     "target": "C",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "C",
+     "target": "B",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e5",
+     "source": "C",
+     "target": "D",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e6",
+     "source": "D",
+     "target": "E",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e7",
+     "source": "D",
+     "target": "D",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e8",
+     "source": "E",
+     "target": "E",
+     "label": "a, b",
+     "directed": true
+    }
+   ],
+   "animations": [
+    {
+     "title": "Výpočet na bbaabbb ako odvodenie",
+     "steps": [
+      {
+       "caption": "S ⇒ bA: prvý b ostáva v A.",
+       "highlight": [
+        "A",
+        "e1"
+       ]
+      },
+      {
+       "caption": "bA ⇒ bbA: ďalší b v A.",
+       "highlight": [
+        "A",
+        "e1"
+       ]
+      },
+      {
+       "caption": "bbA ⇒ bbaC: a vedie A→C.",
+       "highlight": [
+        "A",
+        "C",
+        "e0"
+       ]
+      },
+      {
+       "caption": "bbaC ⇒ bbaaB: a vedie C→B.",
+       "highlight": [
+        "C",
+        "B",
+        "e4"
+       ]
+      },
+      {
+       "caption": "bbaaB ⇒ bbaabC: b vedie B→C.",
+       "highlight": [
+        "B",
+        "C",
+        "e3"
+       ]
+      },
+      {
+       "caption": "bbaabC ⇒ bbaabbD: b vedie C→D.",
+       "highlight": [
+        "C",
+        "D",
+        "e5"
+       ]
+      },
+      {
+       "caption": "bbaabbD ⇒ bbaabbb: b v D končí v koncovom stave.",
+       "highlight": [
+        "D",
+        "e7"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fig.eps-z-gramatiky",
+   "title": "ε-akceptor zostrojený z rozšírenej regulárnej gramatiky",
+   "caption": "Pomocné stavy $p_i$ vznikajú pre dlhšie reťazce na pravých stranách.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.gramatika-na-akceptor",
+    "alg.gramatika-na-eps-akceptor"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "A",
+     "x": 0,
+     "y": 0,
+     "label": "A"
+    },
+    {
+     "id": "S",
+     "x": 140,
+     "y": 0,
+     "label": "▸ S"
+    },
+    {
+     "id": "p1",
+     "x": 280,
+     "y": 0,
+     "label": "p1"
+    },
+    {
+     "id": "p2",
+     "x": 420,
+     "y": 0,
+     "label": "p2"
+    },
+    {
+     "id": "p3",
+     "x": 0,
+     "y": 90,
+     "label": "p3"
+    },
+    {
+     "id": "p4",
+     "x": 140,
+     "y": 90,
+     "label": "p4"
+    },
+    {
+     "id": "p5",
+     "x": 280,
+     "y": 90,
+     "label": "p5"
+    },
+    {
+     "id": "p6",
+     "x": 420,
+     "y": 90,
+     "label": "p6"
+    },
+    {
+     "id": "p7",
+     "x": 0,
+     "y": 180,
+     "label": "p7"
+    },
+    {
+     "id": "qF",
+     "x": 140,
+     "y": 180,
+     "label": "qF ◉"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "S",
+     "target": "p2",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "S",
+     "target": "p4",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "S",
+     "target": "p1",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "p1",
+     "target": "S",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "p2",
+     "target": "p3",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e5",
+     "source": "p3",
+     "target": "S",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e6",
+     "source": "p4",
+     "target": "A",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e7",
+     "source": "A",
+     "target": "p5",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e8",
+     "source": "A",
+     "target": "p6",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e9",
+     "source": "p5",
+     "target": "A",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e10",
+     "source": "p6",
+     "target": "p7",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e11",
+     "source": "p7",
+     "target": "A",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e12",
+     "source": "S",
+     "target": "A",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e13",
+     "source": "A",
+     "target": "qF",
+     "label": "ε",
+     "directed": true
+    }
+   ],
+   "animations": []
+  },
+  {
+   "id": "fig.pravidla-z-akceptora",
+   "title": "Pravidlá gramatiky zo stavov akceptora",
+   "caption": "Vygenerované konštrukciou (a)–(e), overené výpočtom.",
+   "origin": "generated",
+   "illustrates": [
+    "alg.gramatika-z-akceptora"
+   ],
+   "sources": [],
+   "kind": "table",
+   "columns": [
+    "stav",
+    "pravidlá"
+   ],
+   "rows": [
+    [
+     "S",
+     "$S\\to aC$, $S\\to bA$, $S\\to b$, $S\\to\\varepsilon$"
+    ],
+    [
+     "A",
+     "$A\\to aC$, $A\\to bA$, $A\\to b$"
+    ],
+    [
+     "B",
+     "$B\\to aB$, $B\\to bC$"
+    ],
+    [
+     "C",
+     "$C\\to aB$, $C\\to bD$, $C\\to b$"
+    ],
+    [
+     "D",
+     "$D\\to aE$, $D\\to bD$, $D\\to b$"
+    ],
+    [
+     "E",
+     "$E\\to aE$, $E\\to bE$"
+    ]
+   ]
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.lexikalna-analyza-gram",
+   "title": "Popis tokenov regulárnymi gramatikami",
+   "summary": "Gramatika ako alternatívny popis tokenu.",
+   "scenario": "Dokumentácia jazyka často popisuje identifikátory a čísla gramatikou.",
+   "modelling": "Stavy automatu zodpovedajú neterminálom a symboly terminálom.",
+   "solution": "Prevodom na akceptor získame implementáciu.",
+   "connects": [
+    "dfn.regularna-gramatika",
+    "thm.veta-10-2-gramatika-na-eps-akceptor"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.generovanie-regularnych",
+   "title": "Generovanie reťazcov regulárneho jazyka",
+   "summary": "Z akceptora vyrobíme generátor.",
+   "scenario": "Chceme generovať testovacie vstupy zodpovedajúce regulárnemu formátu.",
+   "modelling": "Akceptor sa prevedie na gramatiku; odvodenia sú slová jazyka.",
+   "solution": "Náhodný výber pravidiel poskytne platné slová.",
+   "connects": [
+    "thm.veta-10-1-dfa-na-gramatiku",
+    "dfn.jazyk-gramatiky"
+   ],
+   "figures": [],
+   "tags": [
+    "testovanie"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.prepis-reprezentacii",
+   "title": "Prepis medzi reprezentáciami regulárnych jazykov",
+   "summary": "Ekvivalencia gramatika–akceptor.",
+   "scenario": "Potrebujeme preniesť špecifikáciu z jedného nástroja do druhého.",
+   "modelling": "Špecifikácia je akceptor alebo gramatika.",
+   "solution": "Vety 10.1 a 10.2 dávajú konštruktívny prepis oboma smermi.",
+   "connects": [
+    "thm.veta-10-1-dfa-na-gramatiku",
+    "thm.veta-10-2-gramatika-na-eps-akceptor"
+   ],
+   "figures": [],
+   "tags": [
+    "konverzia"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.rg-1",
+   "kind": "mcq",
+   "prompt": "Ktoré pravidlo je povolené v regulárnej gramatike (okrem výnimky $S\\to\\varepsilon$)?",
+   "options": [
+    "$A\\to aBa$",
+    "$A\\to aB$",
+    "$A\\to BC$",
+    "$AB\\to a$"
+   ],
+   "answer": 1,
+   "explanation": "Povolené sú $A\\to aB$ a $A\\to a$.",
+   "about": [
+    "dfn.regularna-gramatika"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.rg-2",
+   "kind": "truefalse",
+   "prompt": "Pravidlo $A\\to abaaB$ je povolené v rozšírenej regulárnej gramatike.",
+   "answer": true,
+   "explanation": "Rozšírená gramatika dovoľuje $A\\to wB$ pre $w\\in T^*$.",
+   "about": [
+    "dfn.rozsirena-regularna-gramatika"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.rg-3",
+   "kind": "truefalse",
+   "prompt": "Pravidlo $A\\to aBa$ je povolené v rozšírenej regulárnej gramatike.",
+   "answer": false,
+   "explanation": "Neterminál stojí uprostred; to už je bezkontextová gramatika.",
+   "about": [
+    "dfn.rozsirena-regularna-gramatika"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.rg-4",
+   "kind": "mcq",
+   "prompt": "Ktoré pravidlo pridáme k stavu $q'$, ak $f(q',a)\\in F$?",
+   "options": [
+    "$q'\\to a$",
+    "$q'\\to\\varepsilon$",
+    "$S\\to a$",
+    "$q'\\to aq'$"
+   ],
+   "answer": 0,
+   "explanation": "Pravidlo (b) umožní odvodenie ukončiť.",
+   "about": [
+    "alg.gramatika-z-akceptora"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.rg-5",
+   "kind": "mcq",
+   "prompt": "Aké pravidlo pridáme, ak $q_I\\in F$?",
+   "options": [
+    "$S\\to\\varepsilon$",
+    "$q_I\\to\\varepsilon$",
+    "žiadne",
+    "$S\\to q_I$"
+   ],
+   "answer": 0,
+   "explanation": "Pravidlo (e): prázdne slovo patrí do jazyka.",
+   "about": [
+    "alg.gramatika-z-akceptora"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.rg-6",
+   "kind": "open",
+   "prompt": "Aký tvar má odvodenie slova $a_1\\dots a_n$ v regulárnej gramatike?",
+   "answer": "$S=B_0\\Rightarrow a_1B_1\\Rightarrow a_1a_2B_2\\Rightarrow\\dots\\Rightarrow a_1\\dots a_{n-1}B_{n-1}\\Rightarrow a_1\\dots a_n$.",
+   "explanation": "V každom kroku pribudne jeden terminál.",
+   "about": [
+    "dfn.regularna-gramatika"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.rg-7",
+   "kind": "mcq",
+   "prompt": "Koľko nových stavov pridá pravidlo $A\\to aabB$ pri konštrukcii ε-akceptora?",
+   "options": [
+    "0",
+    "1",
+    "2",
+    "3"
+   ],
+   "answer": 2,
+   "explanation": "Reťazec dĺžky $3$ vyžaduje $3-1=2$ pomocné stavy.",
+   "about": [
+    "alg.gramatika-na-eps-akceptor"
+   ],
+   "difficulty": 1,
+   "check": {
+    "verifier": "expr",
+    "expr": "3-1"
+   }
+  },
+  {
+   "id": "quiz.rg-8",
+   "kind": "truefalse",
+   "prompt": "Z koncového stavu $q_F$ ε-akceptora z gramatiky vedú nejaké hrany.",
+   "answer": false,
+   "explanation": "$q_F$ nemá výstupné hrany; používa sa len na ukončenie.",
+   "about": [
+    "thm.veta-10-2-gramatika-na-eps-akceptor"
+   ],
+   "difficulty": 1
+  }
+ ]
+}

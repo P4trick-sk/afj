@@ -1,0 +1,951 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "zas-automaty",
+  "title": "Zásobníkové automaty",
+  "course": "B",
+  "order": 14,
+  "sourceFiles": [
+   "Afjb01_ZasAutomat_P.pdf"
+  ],
+  "summary": "Zásobníkový automat rozširuje konečný automat o zásobník: pri čítaní vstupu môže vkladať a vyberať symboly z vrchu zásobníka. Prijíma buď koncovým stavom alebo prázdnym zásobníkom; oba spôsoby sú ekvivalentné a každý automat sa dá upraviť tak, aby sa výška zásobníka v kroku menila najviac o jedna.",
+  "overview": "Druhý kurz začína zásobníkovými automatmi, ktoré dokážu rozpoznávať jazyky ako $\\{a^nb^n\\}$ či $\\{ww^R\\}$ vďaka neohraničenej pamäti typu LIFO. Zavedieme definíciu, inštrukcie $(q,a,A)\\to(q',B_1\\dots B_k)$, konfiguráciu a krok výpočtu, dva spôsoby akceptovania ($L(M)$ a $N(M)$) a ilustrujeme ich na jazykoch $wcw^Rc$ a $ww^R$ (druhý vyžaduje nedeterminizmus). Tri lemy ukazujú, že prechod medzi akceptovaním koncovými stavmi a prázdnym zásobníkom je možný a že dlhé zápisy do zásobníka sa dajú rozložiť na kroky po najviac jednom symbole. Tieto úpravy sú základom dôkazov o ekvivalencii s bezkontextovými gramatikami.",
+  "keyQuestions": [
+   "Čo pridáva zásobník konečnému automatu a ako sa mení výpočet?",
+   "Ako sa líši akceptovanie koncovým stavom od akceptovania prázdnym zásobníkom?",
+   "Prečo $ww^R$ potrebuje nedeterminizmus?"
+  ],
+  "prerequisites": [
+   "konstrukcie",
+   "nedeterminizmus"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "dfn.zasobnikovy-automat",
+   "type": "definition",
+   "topic": "zas-automaty",
+   "title": "Zásobníkový automat",
+   "terms": [
+    {
+     "term": "zásobníkový automat",
+     "alt": "pushdown automaton, PDA",
+     "symbol": "M=(Q,\\Sigma,\\Gamma,\\delta,q_I,z_I,F)"
+    },
+    {
+     "term": "zásobník",
+     "alt": "stack"
+    },
+    {
+     "term": "zásobníková abeceda",
+     "alt": "stack alphabet",
+     "symbol": "\\Gamma"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb01_ZasAutomat_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "**Zásobníkový automat** je $M=(Q,\\Sigma,\\Gamma,\\delta,q_I,z_I,F)$, kde $Q$ je množina stavov, $\\Sigma$ vstupná [abeceda](dfn.abeceda), $\\Gamma$ zásobníková abeceda (zvyčajne $\\Gamma\\supseteq\\Sigma$), $\\delta:Q\\times(\\Sigma\\cup\\{\\varepsilon\\})\\times\\Gamma\\to2^{Q\\times\\Gamma^*}$ [prechodová funkcia](dfn.konecnostavovy-automat), $q_I\\in Q$ počiatočný stav, $z_I\\in\\Gamma$ počiatočný zásobníkový symbol a $F\\subseteq Q$ množina koncových stavov.",
+   "explanation": {
+    "intuition": "Konečný automat s „knihou položenou na seba“: vidí iba vrchný symbol a môže ho zameniť za viac symbolov alebo ho odstrániť.",
+    "detailed": "V každom kroku PDA vidí stav, voliteľne aktuálny vstupný symbol (alebo $\\varepsilon$ ak nič nečíta) a vrch zásobníka. Podľa $\\delta$ prejde do nového stavu a vrch zásobníka nahradí reťazcom $B_1\\dots B_k$ ($B_1$ je nový vrch, $k=0$ znamená odstránenie vrchu). Zásobník dáva neohraničenú pamäť, ale iba s prístupom LIFO, preto vie porovnať $n$ symbolov $a$ s $n$ symbolmi $b$, nie však tri skupiny rovnakej dĺžky.",
+    "pitfalls": [
+     "Hodnotou $\\delta$ je množina dvojíc, ktorá môže mať viac prvkov (nedeterminizmus) aj byť prázdna.",
+     "Pri $\\varepsilon$-prechode sa zo vstupu nič nečíta, ale zásobník sa mení."
+    ],
+    "examples": [
+     "$M=(\\{q,r,s\\},\\{a,b,c\\},\\{Z,A,B\\},\\delta,q,Z,\\{s\\})$ rozpoznáva $\\{wcw^Rc\\}$."
+    ]
+   },
+   "uses": [
+    "dfn.abeceda",
+    "dfn.slovo",
+    "dfn.konecnostavovy-akceptor",
+    "dfn.nfa",
+    "dfn.konecnostavovy-automat"
+   ],
+   "relations": [
+    {
+     "type": "generalizes",
+     "target": "dfn.nfa",
+     "note": "NFA je PDA, ktorý zásobník nepoužíva"
+    },
+    {
+     "type": "specializes",
+     "target": "dfn.turingov-stroj",
+     "note": "Turingov stroj má neobmedzenú pásku"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "def.instrukcie-pda",
+   "type": "concept",
+   "topic": "zas-automaty",
+   "title": "Inštrukcie PDA a ich účinok na zásobník",
+   "terms": [
+    {
+     "term": "inštrukcia",
+     "alt": "transition rule"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb01_ZasAutomat_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "Zápis $(q,a,A)\\to(q',B_1\\dots B_k)$ znamená: ak je automat v stave $q$, číta zo vstupu $a$ a na vrchu zásobníka je $A$, prejde do stavu $q'$ a zásobník $A\\alpha$ sa zmení na $B_1\\dots B_k\\alpha$. Pre $a=\\varepsilon$ sa zo vstupu nečíta. Napríklad $(q,a,A)\\to(q',BC)$ zmení vrch $A$ na $BC$, $(q,a,A)\\to(q',B)$ nahradí $A$ symbolom $B$, $(q,a,A)\\to(q',\\varepsilon)$ odstráni $A$ a $(q,\\varepsilon,A)\\to(q',CCB)$ zmení vrch na $CCB$ bez čítania vstupu. Ak $\\delta(q,a,A)=\\{(q',B_1\\dots B_k),(q'',C_1\\dots C_l)\\}$, automat sa nedeterministicky rozhodne pre jednu z možností.",
+   "explanation": {
+    "intuition": "Inštrukcia hovorí „pri tomto stave, vstupe a vrchu urob toto so stavom a so zásobníkom“.",
+    "detailed": "Typy inštrukcií: push (zväčšenie zásobníka, $k\\ge2$), nahradenie vrchu ($k=1$), pop ($k=0$). V Leme o zmene o jeden symbol sa ukáže, že stačí $k\\le2$.",
+    "pitfalls": [
+     "Ľavý symbol vpravo od šípky je nový vrch zásobníka."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.zasobnikovy-automat"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.konfiguracia-pda",
+   "type": "definition",
+   "topic": "zas-automaty",
+   "title": "Konfigurácia a krok výpočtu",
+   "terms": [
+    {
+     "term": "konfigurácia",
+     "alt": "configuration"
+    },
+    {
+     "term": "krok výpočtu",
+     "alt": "computation step",
+     "symbol": "\\vdash"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb01_ZasAutomat_P.pdf",
+     "page": 6
+    }
+   ],
+   "statement": "**Konfigurácia** [zásobníkového automatu](dfn.zasobnikovy-automat) je trojica $(q,a_i\\dots a_n,A_1\\dots A_m)\\in Q\\times\\Sigma^*\\times\\Gamma^*$: momentálny stav, doteraz neprečítaná časť vstupu a momentálny obsah zásobníka (vrch je $A_1$). **Krok výpočtu** $\\vdash$ je zmena konfigurácie podľa inštrukcie: $(q,a\\,\\omega,A\\,\\gamma)\\vdash(q',\\omega,\\beta\\gamma)$ ak $(q',\\beta)\\in\\delta(q,a,A)$, a $(q,\\omega,A\\,\\gamma)\\vdash(q',\\omega,\\beta\\gamma)$ ak $(q',\\beta)\\in\\delta(q,\\varepsilon,A)$.",
+   "explanation": {
+    "intuition": "Konfigurácia je „momentka“ celého automatu: stav, kde sme na vstupe a čo je v zásobníku.",
+    "detailed": "Zápis pomocou konfigurácií nahrádza obrázky. Výpočet je postupnosť konfigurácií, $\\vdash^*$ je jej reflexívny a tranzitívny uzáver. V ďalších dôkazoch (akceptovanie, [gramatiky](dfn.gramatika)) sa sleduje, ako sa konfigurácie transformujú.",
+    "pitfalls": [
+     "Pri $\\varepsilon$-kroku sa vstup nemení; automat sa môže „zacykliť“ nekonečnou postupnosťou $\\varepsilon$-krokov."
+    ],
+    "examples": [
+     "$(q,abbc\\,bbac,Z)\\vdash(q,bbc\\,bbac,AZ)$ je prvý krok kopírovania do zásobníka."
+    ]
+   },
+   "uses": [
+    "dfn.zasobnikovy-automat",
+    "dfn.gramatika"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.pda-vypocet-wcwrc"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.akceptovanie-pda",
+   "type": "definition",
+   "topic": "zas-automaty",
+   "title": "Akceptovanie koncovým stavom a prázdnym zásobníkom",
+   "terms": [
+    {
+     "term": "akceptovanie koncovým stavom",
+     "alt": "acceptance by final state",
+     "symbol": "L(M)"
+    },
+    {
+     "term": "akceptovanie prázdnym zásobníkom",
+     "alt": "acceptance by empty stack",
+     "symbol": "N(M)"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb01_ZasAutomat_P.pdf",
+     "page": 5
+    }
+   ],
+   "statement": "**Akceptovanie koncovými stavmi:** $L(M)=\\{w\\in\\Sigma^*:(q_I,w,z_I)\\vdash^*(q,\\varepsilon,\\gamma),q\\in F\\}$ (na konci je $M$ v koncovom stave). **Akceptovanie prázdnym zásobníkom:** $N(M)=\\{w\\in\\Sigma^*:(q_I,w,z_I)\\vdash^*(q,\\varepsilon,\\varepsilon)\\}$ (na konci je zásobník prázdny).",
+   "explanation": {
+    "intuition": "Slovo je prijaté, ak existuje výpočet, ktorý prečíta celé [slovo](dfn.slovo) a skončí v koncovom stave (alebo s prázdnym zásobníkom).",
+    "detailed": "Pri $N(M)$ koncové stavy nehrajú rolu a $F$ sa dá ignorovať. Obe definície dávajú rovnakú triedu [jazykov](dfn.jazyk) (Lemy nižšie), no pre deterministické automaty to neplatí pri každej transformácii.",
+    "pitfalls": [
+     "Pri prijatí prázdnym zásobníkom sa slovo „zasekne“, keď sa zásobník vyprázdni a ešte zostáva vstup: automat nemôže pokračovať.",
+     "Prijíma sa celé slovo, nie jeho prefix."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.konfiguracia-pda",
+    "dfn.slovo",
+    "dfn.jazyk"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.pda-akceptovanie"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.pda-wcwrc",
+   "type": "example",
+   "topic": "zas-automaty",
+   "title": "Zásobníkový automat pre jazyk wcw^Rc",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb01_ZasAutomat_P.pdf",
+     "page": 9
+    }
+   ],
+   "statement": "$L=\\{wcw^Rc:w\\in\\{a,b\\}^*\\}$ (napr. $abbc\\,bba\\,c$). $M$: $Q=\\{q,r,s\\}$, $\\Sigma=\\{a,b,c\\}$, $\\Gamma=\\{Z,A,B\\}$, $q_I=q$, $z_I=Z$, $F=\\{s\\}$. Kopírovanie do zásobníka: $(q,a,Z)\\to(q,AZ)$, $(q,b,Z)\\to(q,BZ)$, $(q,a,A)\\to(q,AA)$, $(q,b,A)\\to(q,BA)$, $(q,a,B)\\to(q,AB)$, $(q,b,B)\\to(q,BB)$. Prechod cez prvé $c$: $(q,c,Z)\\to(r,Z)$, $(q,c,A)\\to(r,A)$, $(q,c,B)\\to(r,B)$. Porovnávanie: $(r,a,A)\\to(r,\\varepsilon)$, $(r,b,B)\\to(r,\\varepsilon)$. Prechod cez druhé $c$: $(r,c,Z)\\to(s,\\varepsilon)$.",
+   "explanation": {
+    "intuition": "Slovo $w$ sa najprv odloží do zásobníka (obrátene), po prvom $c$ sa čítané symboly porovnávajú s vrchom zásobníka a druhé $c$ prečíta posledné dno $Z$.",
+    "detailed": "Automat je deterministický: v každej situácii je najviac jedna inštrukcia. Výpočet na prijatom [slove](dfn.slovo) má tvar $(q,abbc\\,bbac,Z)\\vdash^*(q,c\\,bbac,BBAZ)\\vdash(r,bbac,BBAZ)\\vdash^*(r,c,Z)\\vdash(s,\\varepsilon,\\varepsilon)$ (vypísané v tabuľke).",
+    "pitfalls": [
+     "Po prečítaní druhého $c$ musí byť zásobník prázdny (zostáva iba $Z$, ktoré sa odstráni); inak slovo nie je tvaru $wcw^Rc$."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.akceptovanie-pda",
+    "def.instrukcie-pda"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.slovo"
+    }
+   ],
+   "figures": [
+    "fig.pda-wcwrc",
+    "fig.pda-vypocet-wcwrc"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Overené simuláciou: automat prijíma presne $\\{wcw^Rc\\}$ na všetkých slovách nad $\\{a,b,c\\}$ do dĺžky 9. Slajd 9 ukazuje výpočet na prijatom slove $abbc\\,bba\\,c$ (tabuľka nižšie); slajd 10 slovo $abbc\\,bbbac$, ktoré v jazyku nie je (výpočet sa zasekne)."
+    ]
+   }
+  },
+  {
+   "id": "ex.pda-wwr",
+   "type": "example",
+   "topic": "zas-automaty",
+   "title": "Jazyk ww^R a nedeterminizmus",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb01_ZasAutomat_P.pdf",
+     "page": 11
+    }
+   ],
+   "statement": "$L=\\{ww^R:w\\in\\{a,b\\}^*\\}$ (napr. $abb\\,bba$). Rovnaký automat ako v prvom príklade, ale $c$ sa všade prepíše na $\\varepsilon$: prechody cez „stred“ sú $(q,\\varepsilon,Z)\\to(r,Z)$, $(q,\\varepsilon,A)\\to(r,A)$, $(q,\\varepsilon,B)\\to(r,B)$ a koncový $(r,\\varepsilon,Z)\\to(s,\\varepsilon)$. Automat je nedeterministický: v stave $q$ si môže zvoliť, kedy ukončí kopírovanie. Nesprávny odhad stredu (príliš skoro alebo príliš neskoro) vedie k zaseknutiu, správny k akceptovaniu.",
+   "explanation": {
+    "intuition": "Automat „háda“ stred [slova](dfn.slovo), lebo ho nevie spoznať — slovo $ww^R$ nemá značku v strede.",
+    "detailed": "Jazyk $\\{ww^R\\}$ sa nedá rozpoznať [deterministickým zásobníkovým automatom](dfn.dpda) (pozri prednášku o deterministických [bezkontextových jazykoch](dfn.bezkontextovy-jazyk)). Preto je nedeterminizmus pre [zásobníkové automaty](dfn.zasobnikovy-automat) podstatný, na rozdiel od konečných automatov.",
+    "pitfalls": [
+     "Nedeterminizmus tu nemožno odstrániť; je to podstatný rozdiel oproti konečným akceptorom."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.akceptovanie-pda",
+    "def.instrukcie-pda"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.slovo"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.dpda"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.zasobnikovy-automat"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.bezkontextovy-jazyk"
+    }
+   ],
+   "figures": [
+    "fig.pda-wwr"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Overené simuláciou: automat prijíma presne párne palindrómy nad $\\{a,b\\}$ do dĺžky 10."
+    ]
+   }
+  },
+  {
+   "id": "thm.pda-prazdny-na-koncove",
+   "type": "theorem",
+   "topic": "zas-automaty",
+   "title": "Lema: prázdny zásobník možno nahradiť koncovým stavom",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb01_ZasAutomat_P.pdf",
+     "page": 14
+    }
+   ],
+   "statement": "Ak pre [jazyk](dfn.jazyk) $L$ existuje [zásobníkový automat](dfn.zasobnikovy-automat) $M$, ktorý rozpoznáva $L$ prázdnym zásobníkom, tak existuje ekvivalentný $M'$ rozpoznávajúci $L$ koncovými stavmi, t.j. $L(M')=N(M)$. Navyše, táto transformácia zachováva determinizmus. Konštrukcia: $Q'=Q\\cup\\{q_I',q_F'\\}$, $\\Gamma'=\\Gamma\\cup\\{z_I'\\}$, $F'=\\{q_F'\\}$, $\\delta'(q_I',\\varepsilon,z_I')=\\{(q_I,z_Iz_I')\\}$, $\\delta\\subseteq\\delta'$ a $\\delta'(q,\\varepsilon,z_I')=\\{(q_F',z_I')\\}$ pre $q\\in Q$.",
+   "explanation": {
+    "intuition": "Pridáme nové „dno“ zásobníka; ak sa pôvodný zásobník vyprázdni, vidíme nové dno a prejdeme do koncového stavu.",
+    "detailed": "Nové dno $z_I'$ zaručuje, že $M'$ nezakopne o prázdny zásobník. Keď $M$ vyprázdni svoj zásobník, na vrchu zostane $z_I'$ a $M'$ môže prejsť do $q_F'$.",
+    "pitfalls": [
+     "Nový počiatočný symbol $z_I'$ je nutný: prázdny zásobník $M$ nie je prázdny zásobník $M'$."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "sketch",
+    "steps": [
+     {
+      "text": "Výpočet $M$ prijímajúci prázdnym zásobníkom $(q_I,w,z_I)\\vdash^*(q,\\varepsilon,\\varepsilon)$ sa v $M'$ realizuje ako $(q_I',w,z_I')\\vdash(q_I,w,z_Iz_I')\\vdash^*(q,\\varepsilon,z_I')\\vdash(q_F',\\varepsilon,z_I')$.",
+      "why": "Slajd 15 kreslí túto postupnosť: pridané dno $z_I'$ sa objaví, keď $M$ vyprázdni zásobník.",
+      "uses": []
+     },
+     {
+      "text": "Naopak, $M'$ môže vstúpiť do $q_F'$ iba z konfigurácie so zásobníkom $z_I'$ (jediná inštrukcia 3), t.j. po tom, čo $M$ vyprázdnil svoj zásobník; $M'$ preto prijíma práve slová z $N(M)$.",
+      "why": "Ostatné inštrukcie $M'$ sú inštrukcie $M$.",
+      "uses": []
+     },
+     {
+      "text": "Overené výpočtom: pre $M=$ automat pre $ww^R$ s prázdnym zásobníkom je $L(M')=N(M)$ na slovách do dĺžky 10. Determinizmus sa zachová, lebo nové inštrukcie sú v nových stavoch alebo s novým symbolom.",
+      "why": "Kontrola konštrukcie.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.akceptovanie-pda",
+    "dfn.zasobnikovy-automat",
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "converse-of",
+     "target": "thm.pda-koncove-na-prazdny"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajdy 14–15 ukazujú konštrukciu a postupnosť konfigurácií bez formálneho dôkazu; kroky sú doplnené a overené simuláciou."
+    ]
+   }
+  },
+  {
+   "id": "thm.pda-koncove-na-prazdny",
+   "type": "theorem",
+   "topic": "zas-automaty",
+   "title": "Lema: koncový stav možno nahradiť prázdnym zásobníkom",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb01_ZasAutomat_P.pdf",
+     "page": 16
+    }
+   ],
+   "statement": "Ak pre [jazyk](dfn.jazyk) $L$ existuje [zásobníkový automat](dfn.zasobnikovy-automat) $M$, ktorý rozpoznáva $L$ koncovými stavmi, tak existuje ekvivalentný $M'$ rozpoznávajúci $L$ prázdnym zásobníkom, t.j. $N(M')=L(M)$. (Transformácia nemusí zachovať determinizmus.) Konštrukcia: $q_I',z_I'$ nové, $\\delta'(q_I',\\varepsilon,z_I')=\\{(q_I,z_Iz_I')\\}$, $\\delta\\subseteq\\delta'$, $\\delta'(q,\\varepsilon,A)\\ni(q_F',A)$ pre $q\\in F$, $A\\in\\Gamma\\cup\\{z_I'\\}$ a $\\delta'(q_F',\\varepsilon,A)=\\{(q_F',\\varepsilon)\\}$ pre $A\\in\\Gamma\\cup\\{z_I'\\}$.",
+   "explanation": {
+    "intuition": "Po dosiahnutí koncového stavu automat vyprázdni celý zásobník.",
+    "detailed": "Nový počiatočný symbol $z_I'$ chráni pred nechceným vyprázdnením zásobníka v pôvodnom výpočte. Stav $q_F'$ slúži iba na vyprázdnenie. Determinizmus sa nezachová, lebo z koncového stavu sa môže pôvodný automat chcieť pohnúť ďalej aj odísť do $q_F'$.",
+    "pitfalls": [
+     "Bez $z_I'$ by mohol $M'$ vyprázdniť zásobník aj v nekoncovom stave, čím by prijal slovo, ktoré $M$ neprijme."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "sketch",
+    "steps": [
+     {
+      "text": "Výpočet $M$ s prijatím koncovým stavom $(q_I,w,z_I)\\vdash^*(q',\\varepsilon,\\gamma)$, $q'\\in F$, sa v $M'$ rozšíri: $(q_I',w,z_I')\\vdash(q_I,w,z_Iz_I')\\vdash^*(q',\\varepsilon,\\gamma z_I')\\vdash(q_F',\\varepsilon,\\gamma z_I')\\vdash^*(q_F',\\varepsilon,\\varepsilon)$.",
+      "why": "Slajd 17 ilustruje túto postupnosť.",
+      "uses": []
+     },
+     {
+      "text": "Naopak, $M'$ môže vyprázdniť zásobník iba v $q_F'$ (jediný stav s pop-inštrukciami na $z_I'$) a do $q_F'$ sa dostane iba z koncového stavu $M$; teda $N(M')\\subseteq L(M)$.",
+      "why": "Iba $q_F'$ vie odstrániť $z_I'$.",
+      "uses": []
+     },
+     {
+      "text": "Overené simuláciou na automate pre $ww^R$ (koncový stav $s$): $N(M')=L(M)$ na slovách do dĺžky 10.",
+      "why": "Kontrola konštrukcie.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.akceptovanie-pda",
+    "dfn.zasobnikovy-automat",
+    "dfn.jazyk"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajdy 16–17 ukazujú konštrukciu; formálny dôkaz je doplnený ako náčrt."
+    ]
+   }
+  },
+  {
+   "id": "thm.pda-zmena-o-jeden-symbol",
+   "type": "theorem",
+   "topic": "zas-automaty",
+   "title": "Lema: zásobník sa mení najviac o jeden symbol",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb01_ZasAutomat_P.pdf",
+     "page": 18
+    }
+   ],
+   "statement": "Každý [zásobníkový automat](dfn.zasobnikovy-automat) $M$ sa dá nahradiť ekvivalentným zásobníkovým automatom $M'$, ktorý počas výpočtu nikdy nemení počet symbolov v zásobníku o viac ako o jedna. (Platí pre rozpoznávanie koncovými stavmi aj prázdnym zásobníkom a zachováva determinizmus.) Teda $M'$ má iba inštrukcie typu $(q,a,A)\\to(q',\\varepsilon)$, $(q,a,A)\\to(q',B)$, $(q,a,A)\\to(q',BC)$.",
+   "explanation": {
+    "intuition": "Dlhé „vložiť do zásobníka“ rozložíme na postupnosť krokov, ktoré vložia po jednom symbole.",
+    "detailed": "Inštrukcia $(q,a,A)\\to(q',BBCD)$ sa nahradí $(q,a,A)\\to(q_1,CD)$, $(q_1,\\varepsilon,C)\\to(q_2,BC)$, $(q_2,\\varepsilon,B)\\to(q',BB)$ s novými stavmi $q_1,q_2$. Každý nový stav slúži iba jednej inštrukcii, preto determinizmus ostáva. Táto normalizácia zjednodušuje konštrukciu [gramatiky](dfn.gramatika) z PDA.",
+    "pitfalls": [
+     "Nové stavy musia byť pre každú rozkladanú inštrukciu rôzne, inak by sa jednotlivé rozklady „premiešali“."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "sketch",
+    "steps": [
+     {
+      "text": "Inštrukciu $(q,a,A)\\to(q',B_1\\dots B_k)$ s $k\\ge3$ nahradíme postupnosťou $(q,a,A)\\to(q_1,B_{k-1}B_k)$, $(q_1,\\varepsilon,B_{k-1})\\to(q_2,B_{k-2}B_{k-1})$, \\dots, $(q_{k-2},\\varepsilon,B_2)\\to(q',B_1B_2)$ s novými stavmi $q_1,\\dots,q_{k-2}$.",
+      "why": "Slajd 19 ilustruje na príklade $BBCD$.",
+      "uses": []
+     },
+     {
+      "text": "Po vykonaní všetkých $k-1$ krokov je zásobník rovnaký ako po pôvodnej inštrukcii a automat je v $q'$. Medzistavy $q_i$ sa používajú iba v tejto postupnosti, preto neovplyvnia iné výpočty.",
+      "why": "Každý nový stav má práve jednu inštrukciu.",
+      "uses": []
+     },
+     {
+      "text": "Overené simuláciou: automat s inštrukciami $(q,a,Z)\\to(q,AAZ)$, $(q,a,A)\\to(q,AAA)$ (jazyk $a^nb^{2n}$) a jeho rozložená verzia prijímajú rovnaké slová do dĺžky 12.",
+      "why": "Kontrola konštrukcie.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.zasobnikovy-automat",
+    "def.instrukcie-pda",
+    "dfn.gramatika"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajdy 18–19 ukazujú len konštrukciu na príklade; všeobecný náčrt je doplnený."
+    ]
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.pda-wcwrc",
+   "title": "Stavový diagram PDA pre wcw^Rc",
+   "caption": "Hrany sú označené $a,A/\\beta$: čítaný symbol, vrch zásobníka, nový obsah vrchu. $q$ kopíruje, $r$ porovnáva, $s$ je koncový.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.pda-wcwrc"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "q",
+     "x": 0,
+     "y": 60,
+     "label": "▸ q"
+    },
+    {
+     "id": "r",
+     "x": 260,
+     "y": 60,
+     "label": "r"
+    },
+    {
+     "id": "s",
+     "x": 500,
+     "y": 60,
+     "label": "s ◉"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "q",
+     "target": "q",
+     "label": "a,Z/AZ, a,A/AA, a,B/AB, b,Z/BZ, b,A/BA, b,B/BB",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "q",
+     "target": "r",
+     "label": "c,Z/Z, c,A/A, c,B/B",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "r",
+     "target": "r",
+     "label": "a,A/ε, b,B/ε",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "r",
+     "target": "s",
+     "label": "c,Z/ε",
+     "directed": true
+    }
+   ],
+   "animations": []
+  },
+  {
+   "id": "fig.pda-wwr",
+   "title": "Stavový diagram PDA pre ww^R",
+   "caption": "Nedeterministické ε-prechody $q\\to r$ zvolia stred slova.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.pda-wwr"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "q",
+     "x": 0,
+     "y": 60,
+     "label": "▸ q"
+    },
+    {
+     "id": "r",
+     "x": 260,
+     "y": 60,
+     "label": "r"
+    },
+    {
+     "id": "s",
+     "x": 500,
+     "y": 60,
+     "label": "s ◉"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "q",
+     "target": "q",
+     "label": "a,Z/AZ, a,A/AA, a,B/AB, b,Z/BZ, b,A/BA, b,B/BB",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "q",
+     "target": "r",
+     "label": "ε,Z/Z, ε,A/A, ε,B/B",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "r",
+     "target": "r",
+     "label": "a,A/ε, b,B/ε",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "r",
+     "target": "s",
+     "label": "ε,Z/ε",
+     "directed": true
+    }
+   ],
+   "animations": []
+  },
+  {
+   "id": "fig.pda-vypocet-wcwrc",
+   "title": "Výpočet PDA na slove abbcbbac",
+   "caption": "Prijímajúci výpočet; vypočítaný simuláciou.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.pda-wcwrc",
+    "dfn.konfiguracia-pda"
+   ],
+   "sources": [],
+   "kind": "table",
+   "columns": [
+    "krok",
+    "stav",
+    "zvyšok vstupu",
+    "zásobník (vrch vľavo)"
+   ],
+   "rows": [
+    [
+     "0",
+     "q",
+     "$abbcbbac$",
+     "$Z$"
+    ],
+    [
+     "1",
+     "q",
+     "$bbcbbac$",
+     "$AZ$"
+    ],
+    [
+     "2",
+     "q",
+     "$bcbbac$",
+     "$BAZ$"
+    ],
+    [
+     "3",
+     "q",
+     "$cbbac$",
+     "$BBAZ$"
+    ],
+    [
+     "4",
+     "r",
+     "$bbac$",
+     "$BBAZ$"
+    ],
+    [
+     "5",
+     "r",
+     "$bac$",
+     "$BAZ$"
+    ],
+    [
+     "6",
+     "r",
+     "$ac$",
+     "$AZ$"
+    ],
+    [
+     "7",
+     "r",
+     "$c$",
+     "$Z$"
+    ],
+    [
+     "8",
+     "s",
+     "$\\varepsilon$",
+     "$\\varepsilon$"
+    ]
+   ]
+  },
+  {
+   "id": "fig.pda-akceptovanie",
+   "title": "Dva spôsoby akceptovania",
+   "caption": "Slajd 5.",
+   "origin": "slides",
+   "illustrates": [
+    "dfn.akceptovanie-pda"
+   ],
+   "sources": [
+    {
+     "file": "Afjb01_ZasAutomat_P.pdf",
+     "page": 5
+    }
+   ],
+   "kind": "table",
+   "columns": [
+    "spôsob",
+    "podmienka",
+    "poznámka"
+   ],
+   "rows": [
+    [
+     "koncovým stavom $L(M)$",
+     "$(q_I,w,z_I)\\vdash^*(q,\\varepsilon,\\gamma)$, $q\\in F$",
+     "zásobník môže byť neprázdny"
+    ],
+    [
+     "prázdnym zásobníkom $N(M)$",
+     "$(q_I,w,z_I)\\vdash^*(q,\\varepsilon,\\varepsilon)$",
+     "stav je ľubovoľný"
+    ]
+   ]
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.parsery",
+   "title": "Syntaktická analýza (parsery)",
+   "summary": "Zásobník ako pamäť vnorenia.",
+   "scenario": "Kompilátor musí spracovať vnorené konštrukcie (zátvorky, bloky).",
+   "modelling": "Vstupné tokeny sú symboly; zásobník sleduje očakávané uzatváracie symboly.",
+   "solution": "Zásobníkový automat rozhodne o správnej štruktúre, deterministická verzia je základom parserov.",
+   "connects": [
+    "dfn.zasobnikovy-automat",
+    "ex.pda-wcwrc"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.vyvazene-zatvorky",
+   "title": "Kontrola vyvážených zátvoriek",
+   "summary": "Zátvorky v kóde a výrazoch.",
+   "scenario": "Editor kódu kontroluje, či sú všetky zátvorky správne uzavreté.",
+   "modelling": "Zátvorka $($ vloží symbol, $)$ ho odstráni; správny reťazec končí s prázdnym zásobníkom.",
+   "solution": "Akceptovanie prázdnym zásobníkom $N(M)$ je tu prirodzené.",
+   "connects": [
+    "dfn.akceptovanie-pda",
+    "def.instrukcie-pda"
+   ],
+   "figures": [],
+   "tags": [
+    "editor"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.xml-json",
+   "title": "Spracovanie štruktúrovaných dokumentov (XML, JSON)",
+   "summary": "Vnorené značky potrebujú pamäť.",
+   "scenario": "Parser musí overiť, že každá otváracia značka má zodpovedajúcu uzatváraciu.",
+   "modelling": "Zásobník zapamätáva otvorené značky.",
+   "solution": "Zásobníkový automat overí štruktúru v jednom prechode.",
+   "connects": [
+    "dfn.zasobnikovy-automat",
+    "dfn.konfiguracia-pda"
+   ],
+   "figures": [],
+   "tags": [
+    "dokumenty"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.vyhodnocovanie-vyrazov",
+   "title": "Vyhodnocovanie výrazov so zásobníkom",
+   "summary": "Zásobník pre priority operátorov.",
+   "scenario": "Kalkulačka vyhodnocuje výraz $a*(a+a)$.",
+   "modelling": "Operandy a operátory sa ukladajú do zásobníka podľa priorít.",
+   "solution": "Zásobníkový prevodník (prednáška 10) generuje výstup v postfixovom zápise.",
+   "connects": [
+    "dfn.zasobnikovy-automat"
+   ],
+   "figures": [],
+   "tags": [
+    "výpočty"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.pda-1",
+   "kind": "mcq",
+   "prompt": "Čo je hodnota $\\delta(q,a,A)$ pre zásobníkový automat?",
+   "options": [
+    "stav $q'$",
+    "množina dvojíc $(q',\\gamma)$",
+    "reťazec $\\gamma$",
+    "slovo $\\omega$"
+   ],
+   "answer": 1,
+   "explanation": "$\\delta:Q\\times(\\Sigma\\cup\\{\\varepsilon\\})\\times\\Gamma\\to2^{Q\\times\\Gamma^*}$.",
+   "about": [
+    "dfn.zasobnikovy-automat"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.pda-2",
+   "kind": "truefalse",
+   "prompt": "Pri akceptovaní prázdnym zásobníkom $N(M)$ musí byť $M$ na konci v koncovom stave.",
+   "answer": false,
+   "explanation": "Pri $N(M)$ na stave nezáleží.",
+   "about": [
+    "dfn.akceptovanie-pda"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.pda-3",
+   "kind": "mcq",
+   "prompt": "Čo robí inštrukcia $(q,a,A)\\to(q',\\varepsilon)$?",
+   "options": [
+    "vloží $A$",
+    "odstráni vrch zásobníka",
+    "zmení stav bez zásobníka",
+    "zastaví automat"
+   ],
+   "answer": 1,
+   "explanation": "Prázdny reťazec nahradí $A$ — vrch sa odstráni.",
+   "about": [
+    "def.instrukcie-pda"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.pda-4",
+   "kind": "truefalse",
+   "prompt": "Jazyk $\\{ww^R\\}$ má deterministický zásobníkový automat.",
+   "answer": false,
+   "explanation": "Automat nevie, kde je stred slova; potrebuje nedeterminizmus.",
+   "about": [
+    "ex.pda-wwr"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.pda-5",
+   "kind": "mcq",
+   "prompt": "Prečo pri prevode $N(M)\\to L(M')$ pridávame nový symbol $z_I'$?",
+   "options": [
+    "aby $M'$ pri vyprázdnení zásobníka $M$ niečo videl",
+    "aby sa zmenšil počet stavov",
+    "aby bol $M'$ deterministický",
+    "nie je potrebný"
+   ],
+   "answer": 0,
+   "explanation": "Na novom dne $M'$ prejde do $q_F'$.",
+   "about": [
+    "thm.pda-prazdny-na-koncove"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.pda-6",
+   "kind": "mcq",
+   "prompt": "Na ktoré inštrukcie sa nahradí $(q,a,A)\\to(q',BBCD)$?",
+   "options": [
+    "$(q,a,A)\\to(q_1,CD)$, $(q_1,\\varepsilon,C)\\to(q_2,BC)$, $(q_2,\\varepsilon,B)\\to(q',BB)$",
+    "$(q,a,A)\\to(q_1,BB)$, $(q_1,\\varepsilon,B)\\to(q',CD)$",
+    "jedna inštrukcia s $\\varepsilon$",
+    "nedá sa"
+   ],
+   "answer": 0,
+   "explanation": "Vkladáme sprava, po jednom symbole vľavo od vloženého.",
+   "about": [
+    "thm.pda-zmena-o-jeden-symbol"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.pda-7",
+   "kind": "flashcard",
+   "prompt": "Definujte konfiguráciu zásobníkového automatu.",
+   "answer": "Trojica $(q,\\omega,\\gamma)$: stav, neprečítaný zvyšok vstupu a obsah zásobníka.",
+   "explanation": "Krok výpočtu mení konfiguráciu podľa inštrukcie.",
+   "about": [
+    "dfn.konfiguracia-pda"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.pda-8",
+   "kind": "open",
+   "prompt": "Prečo konštrukcia $L(M)\\to N(M')$ nemusí zachovať determinizmus?",
+   "answer": "Z koncového stavu $q\\in F$ pridáva $\\varepsilon$-prechod do $q_F'$, ktorý sa môže prekrývať s pôvodnými inštrukciami $M$ z $q$ (ďalšie výpočty), čím vznikne voľba.",
+   "explanation": "Pozrite sa na $\\delta'(q,\\varepsilon,A)$.",
+   "about": [
+    "thm.pda-koncove-na-prazdny"
+   ],
+   "difficulty": 2
+  }
+ ]
+}

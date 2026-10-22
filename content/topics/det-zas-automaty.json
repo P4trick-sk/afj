@@ -1,0 +1,478 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "det-zas-automaty",
+  "title": "Deterministické zásobníkové automaty",
+  "course": "B",
+  "order": 15,
+  "sourceFiles": [
+   "Afjb02_DetZasAutomat_P.pdf"
+  ],
+  "summary": "Deterministický zásobníkový automat má v každej situácii najviac jednu možnosť pokračovania. Pri ε-prechodoch sa používa konvencia „else“: ε-prechod sa použije iba ak nie je definovaný prechod na aktuálny vstupný symbol. Takéto „else“ prechody sa dajú odstrániť pridaním koncovej značky $ k jazyku.",
+  "overview": "Deterministické zásobníkové automaty (DPDA) sú dôležité, lebo zodpovedajú parserom reálnych programovacích jazykov. Prednáška zavádza definíciu determinizmu so zákazom viacerých možností a s dvoma variantmi pre ε-prechody, a ukazuje DPDA, ktorý rozpoznáva aritmetické výrazy (stack drží očakávané neterminály). V závere dokazuje, že „else“ ε-prechody možno odstrániť za cenu rozšírenia jazyka o koncovú značku $: konštrukcia si pamätá posledne prečítaný symbol v stave a overuje, či bol prečítaný celý vstup. Táto technická lema sa využíva pri dôkaze uzavretosti DCFL na doplnok.",
+  "keyQuestions": [
+   "Kedy je zásobníkový automat deterministický?",
+   "Čo je „else“ ε-prechod?",
+   "Ako možno „else“ ε-prechody odstrániť?"
+  ],
+  "prerequisites": [
+   "zas-automaty"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "dfn.dpda",
+   "type": "definition",
+   "topic": "det-zas-automaty",
+   "title": "Deterministický zásobníkový automat",
+   "terms": [
+    {
+     "term": "deterministický zásobníkový automat",
+     "alt": "deterministic pushdown automaton, DPDA"
+    },
+    {
+     "term": "deterministický bezkontextový jazyk",
+     "alt": "deterministic context-free language, DCFL"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb02_DetZasAutomat_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "Zásobníkový automat $M$ je **deterministický**, ak $|\\delta(q,a,A)|\\le1$ pre každé $q\\in Q$, $a\\in\\Sigma\\cup\\{\\varepsilon\\}$ a $A\\in\\Gamma$. Píšeme $\\delta(q,a,A)=(q',\\gamma)$ namiesto $\\{(q',\\gamma)\\}$ a $\\delta(q,a,A)=\\text{undef}$ namiesto $\\emptyset$. Ak sú pre $(q,A)$ definované aj $\\delta(q,a,A)=(q_1,\\gamma_1)$ aj $\\delta(q,\\varepsilon,A)=(q_2,\\gamma_2)$, sú dva varianty: **Variant 1**: nepovolené, t.j. $\\delta(q,\\varepsilon,A)\\ne\\text{undef}$ iba ak $\\delta(q,a,A)=\\text{undef}$ pre každé $a\\in\\Sigma$. **Variant 2**: „else“ $\\varepsilon$-prechod: $\\delta(q,\\varepsilon,A)$ sa uplatní iba ak na vstupe nie je žiaden symbol $a$ s definovaným $\\delta(q,a,A)$.",
+   "explanation": {
+    "intuition": "V každej situácii je najviac jedno ďalšie pokračovanie; výpočet je jednoznačný.",
+    "detailed": "Rozdiel oproti [NFA](dfn.nfa): pre [DFA](dfn.konecnostavovy-akceptor) stačí totálna [prechodová funkcia](dfn.konecnostavovy-automat), pri PDA sa pripúšťa aj „undef“ (automat sa zasekne). Pre $\\varepsilon$-prechody treba rozhodnúť, či sa môže konkurovať s čítacím prechodom; variant 1 to zakazuje, variant 2 dáva ε-prechodu najnižšiu prioritu. Determinizmus nie je len zjednodušenie: nie je ekvivalentný nedeterminizmu ([jazyk](dfn.jazyk) $ww^R$ sa deterministicky rozpoznať nedá).",
+    "pitfalls": [
+     "Deterministický automat môže byť „zaseknutý“ (undef) a slovo odmietnuť, nemusí vždy prečítať vstup.",
+     "Variant 2 nie je iba pohodlie: slová bez „else“ musia mať presne vymedzené kombinácie."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.zasobnikovy-automat",
+    "dfn.konfiguracia-pda",
+    "dfn.akceptovanie-pda",
+    "dfn.nfa",
+    "dfn.konecnostavovy-akceptor",
+    "dfn.konecnostavovy-automat",
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "specializes",
+     "target": "dfn.zasobnikovy-automat",
+     "note": "najviac jedna možnosť v každej situácii"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "def.else-eps-prechod",
+   "type": "concept",
+   "topic": "det-zas-automaty",
+   "title": "„Else“ ε-prechod",
+   "terms": [
+    {
+     "term": "else ε-prechod",
+     "alt": "else epsilon transition"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb02_DetZasAutomat_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "V **variante 2** determinizmu je ε-prechod $\\delta(q,\\varepsilon,A)=(q_3,\\gamma_3)$ „záložný“: uplatní sa iba vtedy, ak neexistuje prechod na aktuálny vstupný symbol. Napríklad pre $\\Sigma=\\{a,b,c,d\\}$ a $\\delta(q,a,A)=(q_1,A)$, $\\delta(q,c,A)=(q_2,B)$, $\\delta(q,\\varepsilon,A)=(q_3,BBA)$ sa posledný uplatní iba ak na vstupe nie je ani $a$ ani $c$ (teda $b$, $d$ alebo koniec vstupu).",
+   "explanation": {
+    "intuition": "Ak nič iné nesedí, použije sa záložná možnosť.",
+    "detailed": "Konvencia je užitočná pri parseroch: pre koniec konštrukcie (napr. $P\\to\\varepsilon$) sa použije ε-prechod, keď vstup nezodpovedá žiadnemu operátoru. Lema nižšie ukazuje, že „else“ nie je podstatný rozdiel: s koncovou značkou sa dá nahradiť štandardným determinizmom.",
+    "pitfalls": [
+     "„Else“ neznamená, že sa ε-prechod uplatní vždy; iba ak žiadny čítací prechod nesedí."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.dpda"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.dpda-aritmeticke-vyrazy",
+   "type": "example",
+   "topic": "det-zas-automaty",
+   "title": "DPDA pre aritmetické výrazy",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb02_DetZasAutomat_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "Aritmetické výrazy ako $a*(a+a*a-a)$ rozpoznáva [DPDA](dfn.dpda) s jediným stavom $q$, $\\Sigma=\\{+,-,*,/,(,),a\\}$, $\\Gamma=\\{S,M,P,E,T,)\\}$ (kde $P$ je „$+-M$“ a $T$ je „$*/E$“), $q_I=q$, $z_I=S$, $F=\\emptyset$ (akceptuje prázdnym zásobníkom). Inštrukcie: $(q,\\varepsilon,S)\\to(q,MP)$; $(q,+,P)\\to(q,MP)$, $(q,-,P)\\to(q,MP)$, $(q,\\varepsilon,P)\\to(q,\\varepsilon)$ (else); $(q,\\varepsilon,M)\\to(q,ET)$; $(q,*,T)\\to(q,ET)$, $(q,/,T)\\to(q,ET)$, $(q,\\varepsilon,T)\\to(q,\\varepsilon)$ (else); $(q,a,E)\\to(q,\\varepsilon)$, $(q,(,E)\\to(q,S))$ a $(q,),)\\to(q,\\varepsilon)$. Pri chybnom vstupe, napr. $a*(a+*a-a)$, sa výpočet zasekne: po $+$ sa očakáva $a$ alebo $($.",
+   "explanation": {
+    "intuition": "Zásobník drží, čo ešte očakávame: $S$ (výraz), potom $M$ (člen) a $P$ (zvyšok sčítania) atď.",
+    "detailed": "[DPDA](dfn.dpda) je v podstate deterministický rozklad zhora nadol (LL(1)). Neterminály sa rozbalia podľa vrchu zásobníka a vstupu: $P$ s operátorom $+$ sa rozloží na $MP$, bez operátora sa vymaže. Pri chybnom vstupe sa automat zasekne, čo je správa o syntaktickej chybe.",
+    "pitfalls": [
+     "Gramatika je navrhnutá bez ľavej rekurzie, aby sa dala sprostredkovať DPDA.",
+     "„Else“ prechody sú podstatné: $P\\to\\varepsilon$ sa uplatní iba ak nasleduje iný symbol než $+$ alebo $-$."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.dpda",
+    "def.else-eps-prechod"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.dpda-instrukcie"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Tabuľka prechodov na slajdoch 4–7 je pri extrakcii poškodená (stĺpce a symboly); je rekonštruovaná z gramatiky z časti 3 ($S\\to MP$, $P\\to+MP\\mid-MP\\mid\\varepsilon$, $M\\to ET$, $T\\to*ET\\mid/ET\\mid\\varepsilon$, $E\\to a\\mid(S)$) a overená simuláciou: DPDA prijíma presne tie isté reťazce ako rekurzívny analyzátor na všetkých slovách nad $\\{a,+,*,(,)\\}$ do dĺžky 7."
+    ]
+   }
+  },
+  {
+   "id": "thm.dpda-bez-else-eps",
+   "type": "theorem",
+   "topic": "det-zas-automaty",
+   "title": "Lema: DPDA bez else-ε-prechodov pre jazyk L$",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb02_DetZasAutomat_P.pdf",
+     "page": 8
+    }
+   ],
+   "statement": "Ak pre [jazyk](dfn.jazyk) $L$ existuje [deterministický zásobníkový automat](dfn.dpda) $M$, tak existuje [zásobníkový automat](dfn.zasobnikovy-automat) $M'$, ktorý nepoužíva „else“ ε-prechody (štandardné ε-prechody sú povolené) a rozpoznáva jazyk $L'=L\\{\\$\\}$, kde $\\$$ je nový symbol. Lema platí pre akceptovanie koncovými stavmi aj prázdnym zásobníkom.",
+   "explanation": {
+    "intuition": "Za vstup pripojíme značku konca $\\$$ a automat si pamätá posledný čítaný symbol, ktorý sa ešte nespracoval.",
+    "detailed": "Konštrukcia: $M'$ pridá nové dno zásobníka $z_I'$ ($\\delta'(q_I',\\varepsilon,z_I')=(q_I,z_Iz_I')$). Stavmi sú $\\{q_I'\\}\\cup Q\\cup Q\\times(\\Sigma\\cup\\{\\$\\})$. V stave $q\\in Q$ sa $\\varepsilon$-prechody nevykonávajú; ak treba, zapamätá sa aktuálny symbol $a\\in\\Sigma\\cup\\{\\$\\}$ v stave $\\langle q,a\\rangle$ a tam sa vykonávajú iba $\\varepsilon$-prechody pôvodného $M$ (vrátane „else“). Na konci výpočtu overí $M'$ pomocou $\\$$, či $M$ prečítal celý vstup.",
+    "pitfalls": [
+     "Jazyk sa zmení z $L$ na $L\\$$: pôvodnú vlastnosť „else“ nemožno odstrániť bez koncovej značky."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "sketch",
+    "steps": [
+     {
+      "text": "Pridáme falošné dno $z_I'$ a nový štart $q_I'$: $\\delta'(q_I',\\varepsilon,z_I')=(q_I,z_Iz_I')$. Stavy $M'$ sú $q_I'$, $q\\in Q$ a $\\langle q,a\\rangle$, $a\\in\\Sigma\\cup\\{\\$\\}$ (zapamätaný nespracovaný symbol).",
+      "why": "Dno ochráni pred vyprázdnením zásobníka; zapamätaný symbol umožní spracovať $\\varepsilon$-prechody.",
+      "uses": []
+     },
+     {
+      "text": "V stave $q$ čítame symbol $a\\in\\Sigma\\cup\\{\\$\\}$: ak $\\delta(q,a,A)=(q',\\gamma)$ je definované (a $a\\in\\Sigma$), $\\delta'(q,a,A)=(q',\\gamma)$; ak $\\delta(q,a,A)$ nie je definované, ale $\\delta(q,\\varepsilon,A)=(q',\\gamma)$, je $\\delta'(q,a,A)=(\\langle q',a\\rangle,\\gamma)$ (symbol prečítaný a zapamätaný); inak undef.",
+      "why": "Prechody 2a, 2b, 2c.",
+      "uses": []
+     },
+     {
+      "text": "V stave $\\langle q,a\\rangle$ sa vykonávajú iba ε-prechody: ak $\\delta(q,a,A)=(q',\\gamma)$, tak $\\delta'(\\langle q,a\\rangle,\\varepsilon,A)=(q',\\gamma)$; ak $\\delta(q,a,A)$ nie je definované a $\\delta(q,\\varepsilon,A)=(q',\\gamma)$, tak $\\delta'(\\langle q,a\\rangle,\\varepsilon,A)=(\\langle q',a\\rangle,\\gamma)$.",
+      "why": "Prechody 3a, 3b, 3c — „else“ rozhodnutie sa urobí pri známom $a$.",
+      "uses": []
+     },
+     {
+      "text": "Koniec: $\\delta'(q,\\$,z_I')=(q,\\varepsilon)$ a $\\delta'(\\langle q,\\$\\rangle,\\varepsilon,z_I')=(q,\\varepsilon)$ (pre prázdny zásobník), resp. $\\delta'(q,\\$,A)=(q,z_F'A)$ pre $q\\in F$ pre koncové stavy.",
+      "why": "$\\$$ signalizuje koniec vstupu, takže $M'$ môže overiť, že $M$ spracoval všetko.",
+      "uses": []
+     },
+     {
+      "text": "Overené simuláciou: $M'$ je deterministický bez „else“ prechodov a pre DPDA z príkladu platí $N(M')=L\\{\\$\\}$ na všetkých slovách nad $\\{a,+,*,(,)\\}$ do dĺžky 6.",
+      "why": "Kontrola konštrukcie.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.dpda",
+    "def.else-eps-prechod",
+    "dfn.akceptovanie-pda",
+    "dfn.zasobnikovy-automat",
+    "dfn.jazyk"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.else-eps"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajdy 8–12 popisujú konštrukciu; formálny dôkaz správnosti (indukcia nad dĺžkou výpočtu) je len naznačený obrázkom na slajde 12. Konštrukcia je implementovaná a overená simuláciou."
+    ]
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.dpda-instrukcie",
+   "title": "Inštrukcie DPDA pre aritmetické výrazy",
+   "caption": "Rekonštruované a overené simuláciou.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.dpda-aritmeticke-vyrazy"
+   ],
+   "sources": [],
+   "kind": "table",
+   "columns": [
+    "vrch",
+    "vstup",
+    "nový vrch",
+    "poznámka"
+   ],
+   "rows": [
+    [
+     "$S$",
+     "$\\varepsilon$",
+     "$MP$",
+     "výraz = člen a zvyšok"
+    ],
+    [
+     "$P$",
+     "$+$ alebo $-$",
+     "$MP$",
+     "ďalší sčítanec"
+    ],
+    [
+     "$P$",
+     "$\\varepsilon$ (else)",
+     "$\\varepsilon$",
+     "koniec sčítania"
+    ],
+    [
+     "$M$",
+     "$\\varepsilon$",
+     "$ET$",
+     "člen = činiteľ a zvyšok"
+    ],
+    [
+     "$T$",
+     "$*$ alebo $/$",
+     "$ET$",
+     "ďalší činiteľ"
+    ],
+    [
+     "$T$",
+     "$\\varepsilon$ (else)",
+     "$\\varepsilon$",
+     "koniec násobenia"
+    ],
+    [
+     "$E$",
+     "$a$",
+     "$\\varepsilon$",
+     "operand"
+    ],
+    [
+     "$E$",
+     "$($",
+     "$S)$",
+     "podvýraz v zátvorkách"
+    ],
+    [
+     "$)$",
+     "$)$",
+     "$\\varepsilon$",
+     "uzatváracia zátvorka"
+    ]
+   ]
+  },
+  {
+   "id": "fig.else-eps",
+   "title": "Idea odstránenia else-ε-prechodov",
+   "caption": "Zapamätaný symbol umožní vykonať „else“ rozhodnutie v ε-prechodoch.",
+   "origin": "generated",
+   "illustrates": [
+    "thm.dpda-bez-else-eps"
+   ],
+   "sources": [],
+   "kind": "mermaid",
+   "code": "flowchart LR\n  Q[\"q (nič si nepamätá)\"] -- \"čítaj a, ak treba ε\" --> QA[\"⟨q',a⟩ (pamätá a)\"]\n  QA -- \"ε-prechody M so známym a\" --> QA\n  QA -- \"M ide čítať ďalší symbol\" --> Q2[\"q'' (nič si nepamätá)\"]"
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.ll-parsery",
+   "title": "Prediktívne (LL) parsery",
+   "summary": "Zhora-nadol rozklad s jedným symbolom predvídania.",
+   "scenario": "Kompilátor pre jednoduchý jazyk chce rozpoznať výrazy v lineárnom čase bez backtrackingu.",
+   "modelling": "Gramatika bez ľavej rekurzie je jednoznačne prevoditeľná na DPDA; „else“ prechody zodpovedajú $\\varepsilon$-pravidlám.",
+   "solution": "Parser číta vstup raz a v každom kroku sa rozhoduje podľa vstupu a vrcholu zásobníka.",
+   "connects": [
+    "ex.dpda-aritmeticke-vyrazy",
+    "dfn.dpda"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.syntakticke-chyby",
+   "title": "Hlásenie syntaktických chýb",
+   "summary": "Zaseknutie automatu je diagnostika.",
+   "scenario": "Používateľ napíše $a*(a+*a)$; prekladač má povedať, kde je chyba.",
+   "modelling": "Zaseknutie DPDA (undef) označuje miesto prvého neočakávaného symbolu.",
+   "solution": "Vrch zásobníka určuje, čo sa očakávalo (napr. $E$: „očakávané $a$ alebo $($“).",
+   "connects": [
+    "ex.dpda-aritmeticke-vyrazy",
+    "dfn.dpda"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.struktura-dokumentov",
+   "title": "Deterministická kontrola štruktúry dokumentov",
+   "summary": "Rýchle overenie bez návratov.",
+   "scenario": "Server musí rýchlo odmietnuť zle štruktúrované správy.",
+   "modelling": "Formát je deterministický bezkontextový jazyk.",
+   "solution": "DPDA overí štruktúru v lineárnom čase a konštantnej režii na symbol.",
+   "connects": [
+    "dfn.dpda"
+   ],
+   "figures": [],
+   "tags": [
+    "siete"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.dpda-1",
+   "kind": "mcq",
+   "prompt": "Kedy je zásobníkový automat deterministický?",
+   "options": [
+    "$|\\delta(q,a,A)|\\le1$ pre všetky $q,a,A$ (a ε-prechody sa nekonkurujú)",
+    "nemá $\\varepsilon$-prechody",
+    "má jediný stav",
+    "nepoužíva zásobník"
+   ],
+   "answer": 0,
+   "explanation": "Najviac jedna možnosť v každej situácii.",
+   "about": [
+    "dfn.dpda"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.dpda-2",
+   "kind": "truefalse",
+   "prompt": "Každý nedeterministický zásobníkový automat sa dá nahradiť deterministickým.",
+   "answer": false,
+   "explanation": "Napríklad pre $\\{ww^R\\}$ taký neexistuje.",
+   "about": [
+    "dfn.dpda"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.dpda-3",
+   "kind": "mcq",
+   "prompt": "Čo znamená „else“ ε-prechod?",
+   "options": [
+    "vykoná sa vždy",
+    "vykoná sa iba ak nie je definovaný prechod na aktuálny vstupný symbol",
+    "nikdy sa nevykoná",
+    "mení stav a vstup"
+   ],
+   "answer": 1,
+   "explanation": "Najnižšia priorita.",
+   "about": [
+    "def.else-eps-prechod"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.dpda-4",
+   "kind": "truefalse",
+   "prompt": "V DPDA z príkladu sa slovo $a+a$ prijme, lebo po $a$ sa vyberie $T$ else-prechodom a po $+$ pokračuje $P\\to MP$.",
+   "answer": true,
+   "explanation": "Výpočet: $S\\to MP\\to ETP\\to TP\\to P$ po $a$, potom $+$ rozšíri $P\\to MP$ atď. a na konci sa zásobník vyprázdni.",
+   "about": [
+    "ex.dpda-aritmeticke-vyrazy"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.dpda-5",
+   "kind": "mcq",
+   "prompt": "Čo spraví DPDA z príkladu pri vstupe $a*+a$?",
+   "options": [
+    "prijme",
+    "zasekne sa po $*$ (očakáva $a$ alebo $($)",
+    "zacyklí sa",
+    "vyprázdni zásobník"
+   ],
+   "answer": 1,
+   "explanation": "Po $*$ je na vrchu $E$ a $+$ nemá prechod.",
+   "about": [
+    "ex.dpda-aritmeticke-vyrazy"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.dpda-6",
+   "kind": "flashcard",
+   "prompt": "Prečo lema o odstránení „else“ pracuje s jazykom $L\\$$?",
+   "answer": "Koncová značka umožní automatu overiť, že pôvodný automat prečítal celý vstup, a rozhodnúť „else“ ε-prechody podľa zapamätaného symbolu.",
+   "explanation": "Stavy $\\langle q,a\\rangle$.",
+   "about": [
+    "thm.dpda-bez-else-eps"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.dpda-7",
+   "kind": "open",
+   "prompt": "Aké stavy má $M'$ v konštrukcii bez else-ε-prechodov?",
+   "answer": "$q_I'$, stavy $q\\in Q$ a dvojice $\\langle q,a\\rangle$ pre $a\\in\\Sigma\\cup\\{\\$\\}$.",
+   "explanation": "Dvojica pamätá nespracovaný symbol.",
+   "about": [
+    "thm.dpda-bez-else-eps"
+   ],
+   "difficulty": 2
+  }
+ ]
+}

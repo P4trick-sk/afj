@@ -1,0 +1,909 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "reg-rovnice",
+  "title": "Regulárne výrazy II: rovnice",
+  "course": "A",
+  "order": 12,
+  "sourceFiles": [
+   "Afja12_reg_vyrazy_rovn_P.pdf"
+  ],
+  "summary": "Rovnosť regulárnych výrazov a algebraické zákony. Rovnica $x=\\alpha x+\\beta$ má minimálne riešenie $x=\\alpha^*\\beta$ a sústava takýchto rovníc sa rieši vylučovaním premenných; takto sa z deterministického akceptora získa regulárny výraz.",
+  "overview": "Druhá prednáška o regulárnych výrazoch zavádza rovnosť a usporiadanie výrazov a dokazuje základné algebraické vlastnosti (Lema 12.1). Ústredným výsledkom je Veta 12.2 (Ardenovo lemma): jediné minimálne riešenie rovnice $x=\\alpha x+\\beta$ je $x=\\alpha^*\\beta$. Na nej stojí algoritmus riešenia sústavy rovníc a Veta 12.3, ktorá z DFA zostrojí regulárny výraz: pre každý stav $q_i$ napíšeme rovnicu, aké reťazce vedú z $q_i$ do koncového stavu, a vyriešime sústavu. Tým sa uzatvára ekvivalencia akceptorov a regulárnych výrazov.",
+  "keyQuestions": [
+   "Ktoré algebraické zákony platia pre regulárne výrazy?",
+   "Prečo je $\\alpha^*\\beta$ minimálnym riešením rovnice $x=\\alpha x+\\beta$?",
+   "Ako sa z akceptora zostrojí regulárny výraz?"
+  ],
+  "prerequisites": [
+   "reg-vyrazy",
+   "akceptory"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "dfn.rovnost-vyrazov",
+   "type": "definition",
+   "topic": "reg-rovnice",
+   "title": "Rovnosť a usporiadanie regulárnych výrazov",
+   "terms": [
+    {
+     "term": "rovnosť výrazov",
+     "alt": "equality of regular expressions"
+    },
+    {
+     "term": "mocnina výrazu",
+     "alt": "power of an expression",
+     "symbol": "\\alpha^i"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja12_reg_vyrazy_rovn_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "Nech $\\alpha,\\beta$ sú [regulárne výrazy](dfn.regularny-vyraz). Platí $\\alpha=\\beta$ (výrazy sa rovnajú, sú ekvivalentné), ak $L(\\alpha)=L(\\beta)$. Výraz $\\alpha$ je menší alebo rovný ako $\\beta$ ($\\alpha\\le\\beta$), ak $L(\\alpha)\\subseteq L(\\beta)$; $\\alpha\\ge\\beta$ analogicky. Symbol $\\alpha^i$ označuje $i$-krát [zreťazené](dfn.zretazenie-slov) $\\alpha$: $\\alpha^0=\\varepsilon$, $\\alpha^1=\\alpha$, $\\alpha^2=\\alpha\\alpha$, $\\alpha^3=\\alpha\\alpha\\alpha$, \\dots",
+   "explanation": {
+    "intuition": "Výrazy sa rovnajú, ak popisujú ten istý [jazyk](dfn.jazyk), aj keď vyzerajú rôzne.",
+    "detailed": "Rovnosť výrazov je sémantická: $a+a=a$, $(a^*)^*=a^*$. Preto sa dá s výrazmi počítať ako s algebrou, ktorej zákony stoja v Leme 12.1. Relácia $\\le$ je usporiadanie (reflexívne, antisymetrické, tranzitívne).",
+    "pitfalls": [
+     "Rovnosť je o jazykoch, nie o textovom zápise výrazov."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.regularny-vyraz",
+    "dfn.jazyk-vyrazu",
+    "dfn.zretazenie-slov",
+    "dfn.jazyk"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.lema-12-1-algebra-vyrazov",
+   "type": "theorem",
+   "topic": "reg-rovnice",
+   "title": "Lema 12.1: algebraické vlastnosti regulárnych výrazov",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja12_reg_vyrazy_rovn_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "Pre [regulárne výrazy](dfn.regularny-vyraz) $\\alpha,\\beta,\\gamma$ platí: (1) asociatívnosť $(\\alpha+\\beta)+\\gamma=\\alpha+(\\beta+\\gamma)$, $(\\alpha\\beta)\\gamma=\\alpha(\\beta\\gamma)$, komutatívnosť $\\alpha+\\beta=\\beta+\\alpha$, distributívnosť $(\\alpha+\\beta)\\gamma=\\alpha\\gamma+\\beta\\gamma$, $\\gamma(\\alpha+\\beta)=\\gamma\\alpha+\\gamma\\beta$, idempotencia $\\alpha+\\alpha=\\alpha$; (2) $\\alpha+\\emptyset=\\alpha$, $\\emptyset\\alpha=\\alpha\\emptyset=\\emptyset$, $\\varepsilon\\alpha=\\alpha\\varepsilon=\\alpha$, $\\emptyset^*=\\varepsilon$; (3) $\\alpha^*=\\alpha\\alpha^*+\\varepsilon=\\alpha^*\\alpha+\\varepsilon$, $(\\alpha^*)^*=\\alpha^*$, $\\alpha^*\\alpha^*=\\alpha^*$; (4) $\\alpha=\\alpha$; z $\\alpha=\\beta$ plynie $\\beta=\\alpha$; z $\\alpha=\\beta$ a $\\beta=\\gamma$ plynie $\\alpha=\\gamma$; $\\alpha\\le\\alpha$; $\\alpha\\le\\beta\\wedge\\beta\\le\\gamma\\Rightarrow\\alpha\\le\\gamma$; $\\alpha\\le\\beta\\wedge\\beta\\le\\alpha\\Rightarrow\\alpha=\\beta$.",
+   "explanation": {
+    "intuition": "Regulárne výrazy sa správajú ako algebra: môžeme ich upravovať podľa pravidiel, bez zmeny [jazyka](dfn.jazyk).",
+    "detailed": "Zákony sa dokazujú rozpísaním $L(\\cdot)$ a množinovou úvahou. Slajdy dokazujú len vybrané vlastnosti ($(\\alpha+\\beta)\\gamma=\\alpha\\gamma+\\beta\\gamma$, $\\emptyset\\alpha=\\emptyset$, $\\varepsilon\\alpha=\\alpha$, $\\alpha^*=\\alpha\\alpha^*+\\varepsilon$), ostatné analogicky.",
+    "pitfalls": [
+     "Zreťazenie nie je komutatívne: $\\alpha\\beta\\ne\\beta\\alpha$ vo všeobecnosti.",
+     "Distributívnosť $\\gamma(\\alpha+\\beta)=\\gamma\\alpha+\\gamma\\beta$ platí; no $(\\alpha\\beta)^*\\ne\\alpha^*\\beta^*$."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "sketch",
+    "steps": [
+     {
+      "text": "$(\\alpha+\\beta)\\gamma=\\alpha\\gamma+\\beta\\gamma$: $u\\in L((\\alpha+\\beta)\\gamma)\\iff u=vw$, $(v\\in L(\\alpha)\\vee v\\in L(\\beta))\\wedge w\\in L(\\gamma)\\iff(u=vw,v\\in L(\\alpha),w\\in L(\\gamma))\\vee(u=vw,v\\in L(\\beta),w\\in L(\\gamma))\\iff u\\in L(\\alpha\\gamma)\\cup L(\\beta\\gamma)$.",
+      "why": "Rozpis definície a rozdelenie disjunkcie.",
+      "uses": []
+     },
+     {
+      "text": "$\\emptyset\\alpha=\\emptyset$: ak $u=vw$ s $v\\in L(\\emptyset)=\\emptyset$, taký $v$ neexistuje, a preto $L(\\emptyset\\alpha)$ je prázdny.",
+      "why": "Prázdna množina nemá prvky.",
+      "uses": []
+     },
+     {
+      "text": "$\\varepsilon\\alpha=\\alpha$: $u=vw$ s $v\\in L(\\varepsilon)=\\{\\varepsilon\\}$ znamená $v=\\varepsilon$, $u=w\\in L(\\alpha)$.",
+      "why": "$\\varepsilon$ je neutrálny prvok zreťazenia.",
+      "uses": []
+     },
+     {
+      "text": "$\\alpha^*=\\alpha\\alpha^*+\\varepsilon$: $u\\in L(\\alpha^*)\\iff u=x_1\\dots x_n$, $n\\ge0$, $x_i\\in L(\\alpha)$; ak $n>0$, tak $u=x_1v$, kde $x_1\\in L(\\alpha)$, $v=x_2\\dots x_n\\in L(\\alpha^*)$, ak $n=0$, tak $u=\\varepsilon$.",
+      "why": "Rozlíšenie $n=0$ a $n>0$.",
+      "uses": []
+     },
+     {
+      "text": "Ostatné vlastnosti sa dokazujú analogicky z definícií.",
+      "why": "Slajdy ich nedokazujú.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.rovnost-vyrazov",
+    "dfn.jazyk-vyrazu",
+    "dfn.regularny-vyraz",
+    "dfn.jazyk"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.zakony-vyrazov"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajd 3 je pri extrakcii poškodený (chýbajú niektoré operátory a symboly); znenie je rekonštruované. Všetky zákony (1)–(3) sú overené výpočtom na krátkych jazykoch (do dĺžky 5)."
+    ]
+   }
+  },
+  {
+   "id": "thm.veta-12-2-ardenovo-lemma",
+   "type": "theorem",
+   "topic": "reg-rovnice",
+   "title": "Veta 12.2 (Ardenovo lemma): minimálne riešenie rovnice x = αx + β",
+   "terms": [
+    {
+     "term": "Ardenovo lemma",
+     "alt": "Arden's lemma"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja12_reg_vyrazy_rovn_P.pdf",
+     "page": 6
+    }
+   ],
+   "statement": "Nech $x=\\alpha x+\\beta$ $(*)$ je regulárna rovnica, kde $\\alpha,\\beta$ sú známe [regulárne výrazy](dfn.regularny-vyraz) a $x$ je neznámy regulárny výraz. Potom jediným minimálnym riešením $(*)$ je $x=\\alpha^*\\beta$. T.j. $x=\\alpha^*\\beta$ je riešením $(*)$ a pre každé $y$, ktoré je riešením $(*)$, platí $\\alpha^*\\beta\\le y$.",
+   "explanation": {
+    "intuition": "Rovnicu „$x$ je buď $\\beta$, alebo $\\alpha$ a potom $x$“ rieši opakovanie $\\alpha$ ľubovoľne veľakrát a potom $\\beta$.",
+    "detailed": "Rovnica $x=\\alpha x+\\beta$ nemusí mať jediné riešenie: ak $\\varepsilon\\in L(\\alpha)$, má viac riešení. Preto sa hľadá minimálne riešenie, ktoré je vždy $\\alpha^*\\beta$. Pre algoritmus riešenia sústav je to jediný nástroj, ktorý potrebujeme.",
+    "pitfalls": [
+     "Ak $\\varepsilon\\in L(\\alpha)$, je riešením aj $x=\\alpha^*(\\beta+\\gamma)$ pre ľubovoľné $\\gamma$, preto sa hovorí o minimálnom riešení.",
+     "Rovnicu $x=x\\alpha+\\beta$ (s $x$ vpravo) rieši $x=\\beta\\alpha^*$."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "$\\alpha^*\\beta$ je riešenie: dosadením $\\alpha(\\alpha^*\\beta)+\\beta=(\\alpha\\alpha^*+\\varepsilon)\\beta=\\alpha^*\\beta$ podľa Lemy 12.1(3).",
+      "why": "Distributívnosť a rozklad $\\alpha^*=\\alpha\\alpha^*+\\varepsilon$.",
+      "uses": [
+       "thm.lema-12-1-algebra-vyrazov"
+      ]
+     },
+     {
+      "text": "Nech $x$ je ľubovoľné riešenie $(*)$. Opakovaným dosadzovaním: $x=\\alpha x+\\beta=\\alpha(\\alpha x+\\beta)+\\beta=\\alpha^2x+\\alpha\\beta+\\beta=\\dots=\\alpha^ix+\\alpha^{i-1}\\beta+\\dots+\\alpha\\beta+\\beta$, a teda $x\\ge\\alpha^i\\beta$ pre každé $i\\ge0$.",
+      "why": "Každé riešenie obsahuje všetky členy $\\alpha^i\\beta$.",
+      "uses": []
+     },
+     {
+      "text": "Nech $u\\in L(\\alpha^*\\beta)$, t.j. $u=v_1\\dots v_iw$ s $v_1,\\dots,v_i\\in L(\\alpha)$ a $w\\in L(\\beta)$ pre nejaké $i\\ge0$. Potom $u\\in L(\\alpha^i\\beta)\\subseteq L(x)$.",
+      "why": "Slovo z $\\alpha^*\\beta$ patrí do niektorého $\\alpha^i\\beta$.",
+      "uses": []
+     },
+     {
+      "text": "Teda $L(\\alpha^*\\beta)\\subseteq L(x)$, čiže $\\alpha^*\\beta\\le x$ pre každé riešenie $x$; $\\alpha^*\\beta$ je minimálne riešenie.",
+      "why": "Minimalita.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "thm.lema-12-1-algebra-vyrazov",
+    "dfn.rovnost-vyrazov",
+    "dfn.regularny-vyraz"
+   ],
+   "relations": [],
+   "figures": [],
+   "attribution": "Dean N. Arden",
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.sustava-dvoch-rovnic",
+   "type": "example",
+   "topic": "reg-rovnice",
+   "title": "Sústava dvoch regulárnych rovníc",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja12_reg_vyrazy_rovn_P.pdf",
+     "page": 8
+    }
+   ],
+   "statement": "Akceptor s dvoma stavmi $P$ (počiatočný a koncový, párny počet $a$) a $Q$ (nepárny) vedie k sústave $P=aQ+bP+\\varepsilon$, $Q=aP+bQ+\\emptyset$. Z druhej rovnice Ardenovým lemmom $Q=b^*aP$. Dosadením do prvej: $P=ab^*aP+bP+\\varepsilon=(ab^*a+b)P+\\varepsilon$, teda $P=(ab^*a+b)^*$. Výraz $(ab^*a+b)^*$ označuje [jazyk](dfn.jazyk) slov s párnym počtom $a$.",
+   "explanation": {
+    "intuition": "Najprv sa vylúči $Q$, potom sa Ardenovo lemma použije druhý raz.",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "thm.veta-12-2-ardenovo-lemma"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.jazyk"
+    }
+   ],
+   "figures": [
+    "fig.akceptor-2-stavy"
+   ],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Sústava $x,y$ zo slajdu 8 je pri extrakcii poškodená (chýbajú symboly výrazov); nahradená vlastným príkladom na rovnakú myšlienku (vylúčenie premennej dosadením a použitie Ardenovho lemmy). Výsledok overený na všetkých slovách do dĺžky 11."
+    ]
+   }
+  },
+  {
+   "id": "alg.riesenie-sustavy-rovnic",
+   "type": "algorithm",
+   "topic": "reg-rovnice",
+   "title": "Riešenie sústavy regulárnych rovníc",
+   "terms": [
+    {
+     "term": "riešenie sústavy rovníc",
+     "alt": "solving a system of regular equations"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja12_reg_vyrazy_rovn_P.pdf",
+     "page": 9
+    }
+   ],
+   "statement": "Úlohou je vyriešiť sústavu $x_i=\\alpha_{i1}x_1+\\alpha_{i2}x_2+\\dots+\\alpha_{in}x_n+\\beta_i$, $i=1,\\dots,n$, kde $\\alpha_{ij},\\beta_i$ sú známe [regulárne výrazy](dfn.regularny-vyraz) a $x_i$ neznáme; zaujíma nás iba hodnota $x_1$. (1) Z poslednej rovnice vyjadríme použitím Vety 12.2 premennú $x_n$ ako funkciu premenných $x_1,\\dots,x_{n-1}$; ak $n=1$, tak sme získali priamo $x_1$ a končíme. (2) Ak $n>1$, dosadíme za $x_n$ do prvých $n-1$ rovníc a po úprave na tvar $(*)$ dostaneme sústavu o $n-1$ premenných. (3) Túto sústavu rekurzívne vyriešime.",
+   "explanation": {
+    "intuition": "Ako pri Gaussovej eliminácii: vylúčime poslednú premennú, ostane menšia sústava.",
+    "detailed": "Každé vylúčenie používa Ardenovo lemma na jednu rovnicu a dosadenie do zvyšných. Výsledný výraz môže byť veľký, algebraické zákony ho často zjednodušia.",
+    "pitfalls": [
+     "Pred použitím Ardenovho lemmy treba rovnicu upraviť na tvar $x=\\alpha x+\\beta$ (zoskupiť všetky členy s $x$)."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Indukciou podľa počtu premenných: Ardenovo lemma dáva minimálne riešenie jednej rovnice, dosadenie ho zachová a zredukovaná sústava má minimálne riešenie rovné projekcii minimálneho riešenia pôvodnej.",
+    "steps": []
+   },
+   "uses": [
+    "thm.veta-12-2-ardenovo-lemma",
+    "thm.lema-12-1-algebra-vyrazov",
+    "dfn.regularny-vyraz"
+   ],
+   "relations": [
+    {
+     "type": "analogue",
+     "target": "alg.sucinova-konstrukcia",
+     "note": "iný konštruktívny algoritmus nad akceptormi"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.sustava-z-akceptora",
+   "type": "algorithm",
+   "topic": "reg-rovnice",
+   "title": "Zostavenie sústavy rovníc z akceptora",
+   "terms": [
+    {
+     "term": "sústava rovníc akceptora",
+     "alt": "system of equations of an automaton"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja12_reg_vyrazy_rovn_P.pdf",
+     "page": 10
+    }
+   ],
+   "statement": "Pre [DFA](dfn.konecnostavovy-akceptor) $M=(Q,\\Sigma,f,q_I,F)$ s $Q=\\{q_1,\\dots,q_n\\}$, $q_I=q_1$, $\\Sigma=\\{a_1,\\dots,a_k\\}$ zavedieme neznáme $q_i$ so $L(q_i)=\\{w\\in\\Sigma^*:f^*(q_i,w)\\in F\\}$ a sústavu $q_i=a_1f(q_i,a_1)+a_2f(q_i,a_2)+\\dots+a_kf(q_i,a_k)+\\beta_i$, $i=1,\\dots,n$, kde $\\beta_i=\\varepsilon$, ak $q_i\\in F$, a $\\beta_i=\\emptyset$, ak $q_i\\notin F$.",
+   "explanation": {
+    "intuition": "Do $q_i$ sa dostane každé [slovo](dfn.slovo), ktoré začne symbolom $a_j$ a zvyšok vedie z $f(q_i,a_j)$ do koncového stavu (alebo je prázdne v koncovom stave).",
+    "detailed": "Rovnica pre $q_i$ rozdelí slová podľa prvého symbolu. Tvar rovnice zodpovedá tvaru $x=\\sum_j\\alpha_{ij}x_j+\\beta_i$, na ktorú sa dá aplikovať algoritmus riešenia.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Dokazuje sa v rámci Vety 12.3: každé $w\\in L(q_i)$ buď je $\\varepsilon$ (a $q_i\\in F$), alebo $w=a_ju$ s $u\\in L(f(q_i,a_j))$.",
+    "steps": []
+   },
+   "uses": [
+    "dfn.konecnostavovy-akceptor",
+    "dfn.regularny-vyraz",
+    "dfn.slovo"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.veta-12-3-dfa-na-vyraz",
+   "type": "theorem",
+   "topic": "reg-rovnice",
+   "title": "Veta 12.3: každý DFA sa dá nahradiť regulárnym výrazom",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja12_reg_vyrazy_rovn_P.pdf",
+     "page": 10
+    }
+   ],
+   "statement": "Každý deterministický [konečnostavový akceptor](dfn.konecnostavovy-akceptor) $M=(Q,\\Sigma,f,q_I,F)$ sa dá nahradiť [regulárnym výrazom](dfn.regularny-vyraz) $\\alpha$ takým, že $L(\\alpha)=L(M)$.",
+   "explanation": {
+    "intuition": "Pre každý stav napíšeme, aké reťazce z neho vedú k prijatiu, a sústavu vyriešime.",
+    "detailed": "Dôkaz zdôvodňuje tvar rovníc a využíva, že minimálne riešenie sústavy je práve hľadaný [jazyk](dfn.jazyk). Hľadaný výraz je hodnota premennej $q_1$ zodpovedajúcej počiatočnému stavu.",
+    "pitfalls": [
+     "Počiatočný stav musí byť očíslovaný ako $q_1$, aby sme riešili pre správnu premennú."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Očíslujeme stavy a symboly: $Q=\\{q_1,\\dots,q_n\\}$, $q_I=q_1$, $\\Sigma=\\{a_1,\\dots,a_k\\}$. Nech $q_i$ označuje (zatiaľ neznámy) výraz so $L(q_i)=\\{w\\in\\Sigma^*:f^*(q_i,w)\\in F\\}$.",
+      "why": "Premenné sústavy sú jazyky ,,z $q_i$ do koncového stavu“.",
+      "uses": []
+     },
+     {
+      "text": "Pre $w\\in L(q_i)$ platí buď $w\\ne\\varepsilon$, a teda $w=a_ju$, pričom $u\\in L(f(q_i,a_j))$, alebo $w=\\varepsilon$, čo je možné iba ak $q_i\\in F$.",
+      "why": "Rozdelenie podľa prvého symbolu.",
+      "uses": []
+     },
+     {
+      "text": "To vedie k sústave $q_i=a_1f(q_i,a_1)+\\dots+a_kf(q_i,a_k)+\\beta_i$ s $\\beta_i=\\varepsilon$ pre $q_i\\in F$, inak $\\beta_i=\\emptyset$.",
+      "why": "Zjednotenie cez všetky $j$ a prípad $\\varepsilon$.",
+      "uses": []
+     },
+     {
+      "text": "Vyriešením sústavy dostaneme výraz pre $q_1$ a $L(q_1)=\\{w:f^*(q_1,w)\\in F\\}=\\{w:f^*(q_I,w)\\in F\\}=L(M)$. Hľadaný výraz je $\\alpha=q_1$.",
+      "why": "$q_1$ je počiatočný stav.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "alg.sustava-z-akceptora",
+    "alg.riesenie-sustavy-rovnic",
+    "dfn.jazyk-akceptora",
+    "dfn.jazyk-vyrazu",
+    "dfn.regularny-vyraz",
+    "dfn.konecnostavovy-akceptor",
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "converse-of",
+     "target": "thm.veta-11-1-vyraz-na-eps-akceptor"
+    }
+   ],
+   "figures": [
+    "fig.akceptor-5-stavov"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.vyraz-pre-akceptor",
+   "type": "example",
+   "topic": "reg-rovnice",
+   "title": "Regulárny výraz pre akceptor s piatimi stavmi",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja12_reg_vyrazy_rovn_P.pdf",
+     "page": 12
+    }
+   ],
+   "statement": "Pre [DFA](dfn.konecnostavovy-akceptor) s piatimi stavmi $A$ (počiatočný a koncový), $B$, $C$, $D$ (koncový) a $E$ (pasca) je sústava $A=aC+bA+\\varepsilon$, $B=aB+bC+\\emptyset$, $C=aB+bD+\\emptyset$, $D=aE+bD+\\varepsilon$, $E=aE+bE+\\emptyset$. Postupne: $E=(a+b)^*\\emptyset=\\emptyset$, $D=b^*$, $C=aB+bb^*$, $B=(a+ba)^*bbb^*$, a nakoniec $A=b^*(\\varepsilon+a(\\varepsilon+a(a+ba)^*b)bb^*)$. Výsledok je overený: výraz označuje [jazyk](dfn.jazyk) akceptora.",
+   "explanation": {
+    "intuition": "Vylučujeme od stavu $E$ (pasce) smerom k počiatočnému $A$.",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "thm.veta-12-3-dfa-na-vyraz"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.konecnostavovy-akceptor"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.jazyk"
+    }
+   ],
+   "figures": [
+    "fig.akceptor-5-stavov"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajdy 13–18 sú čiastočne nečitateľné; riešenie zodpovedá výsledku $A=b^*(\\varepsilon+a(\\varepsilon+a(a+ba)^*b)bb^*)$ uvedenému na slajde 18 a je overené na všetkých slovách nad $\\{a,b\\}$ do dĺžky 11."
+    ]
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.akceptor-5-stavov",
+   "title": "Akceptor s piatimi stavmi (A a D koncové)",
+   "caption": "Akceptor zo slajdu 12.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.vyraz-pre-akceptor",
+    "thm.veta-12-3-dfa-na-vyraz"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "A",
+     "x": 0,
+     "y": 80,
+     "label": "▸ A ◉"
+    },
+    {
+     "id": "B",
+     "x": 160,
+     "y": 0,
+     "label": "B"
+    },
+    {
+     "id": "C",
+     "x": 160,
+     "y": 160,
+     "label": "C"
+    },
+    {
+     "id": "D",
+     "x": 320,
+     "y": 160,
+     "label": "D ◉"
+    },
+    {
+     "id": "E",
+     "x": 480,
+     "y": 160,
+     "label": "E"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "A",
+     "target": "C",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "A",
+     "target": "A",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "B",
+     "target": "B",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "B",
+     "target": "C",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "C",
+     "target": "B",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e5",
+     "source": "C",
+     "target": "D",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e6",
+     "source": "D",
+     "target": "E",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e7",
+     "source": "D",
+     "target": "D",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e8",
+     "source": "E",
+     "target": "E",
+     "label": "a, b",
+     "directed": true
+    }
+   ],
+   "animations": [
+    {
+     "title": "Vylučovanie premenných",
+     "steps": [
+      {
+       "caption": "E je pasca: E = (a+b)E, teda E = ∅.",
+       "highlight": [
+        "E",
+        "e8"
+       ]
+      },
+      {
+       "caption": "D = aE + bD + ε = bD + ε, teda D = b*.",
+       "highlight": [
+        "D",
+        "e7"
+       ]
+      },
+      {
+       "caption": "C = aB + bD = aB + bb*.",
+       "highlight": [
+        "C",
+        "B",
+        "D",
+        "e4",
+        "e5"
+       ]
+      },
+      {
+       "caption": "B = aB + bC, po dosadení B = (a+ba)*bbb*.",
+       "highlight": [
+        "B",
+        "C",
+        "e2",
+        "e3"
+       ]
+      },
+      {
+       "caption": "A = bA + aC + ε, teda A = b*(ε + a(ε + a(a+ba)*b)bb*).",
+       "highlight": [
+        "A",
+        "C",
+        "e1",
+        "e0"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fig.akceptor-2-stavy",
+   "title": "Akceptor pre párny počet a",
+   "caption": "Sústava $P=aQ+bP+\\varepsilon$, $Q=aP+bQ$ dáva $P=(ab^*a+b)^*$.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.sustava-dvoch-rovnic"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "P",
+     "x": 0,
+     "y": 60,
+     "label": "▸ P ◉"
+    },
+    {
+     "id": "Q",
+     "x": 200,
+     "y": 60,
+     "label": "Q"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "P",
+     "target": "Q",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "P",
+     "target": "P",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "Q",
+     "target": "P",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "Q",
+     "target": "Q",
+     "label": "b",
+     "directed": true
+    }
+   ],
+   "animations": []
+  },
+  {
+   "id": "fig.zakony-vyrazov",
+   "title": "Zákony regulárnych výrazov",
+   "caption": "Lema 12.1; overené výpočtom na krátkych jazykoch.",
+   "origin": "generated",
+   "illustrates": [
+    "thm.lema-12-1-algebra-vyrazov"
+   ],
+   "sources": [],
+   "kind": "table",
+   "columns": [
+    "skupina",
+    "zákony"
+   ],
+   "rows": [
+    [
+     "asociatívnosť, komutatívnosť",
+     "$(\\alpha+\\beta)+\\gamma=\\alpha+(\\beta+\\gamma)$, $\\alpha+\\beta=\\beta+\\alpha$"
+    ],
+    [
+     "distributívnosť",
+     "$(\\alpha+\\beta)\\gamma=\\alpha\\gamma+\\beta\\gamma$"
+    ],
+    [
+     "idempotencia, konštanty",
+     "$\\alpha+\\alpha=\\alpha$, $\\alpha+\\emptyset=\\alpha$, $\\emptyset\\alpha=\\emptyset$, $\\varepsilon\\alpha=\\alpha$"
+    ],
+    [
+     "iterácia",
+     "$\\alpha^*=\\alpha\\alpha^*+\\varepsilon$, $(\\alpha^*)^*=\\alpha^*$, $\\alpha^*\\alpha^*=\\alpha^*$, $\\emptyset^*=\\varepsilon$"
+    ]
+   ]
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.zjednodusovanie-vyrazov",
+   "title": "Automatické zjednodušovanie regulárnych výrazov",
+   "summary": "Algebraické zákony skracujú výrazy.",
+   "scenario": "Výraz získaný z automatu býva veľmi dlhý.",
+   "modelling": "Zákony Lemy 12.1 sú prepisovacie pravidlá.",
+   "solution": "Aplikácia zákonov (napr. $\\emptyset\\alpha=\\emptyset$, $\\alpha+\\alpha=\\alpha$) zmenší výraz bez zmeny jazyka.",
+   "connects": [
+    "thm.lema-12-1-algebra-vyrazov",
+    "dfn.rovnost-vyrazov"
+   ],
+   "figures": [],
+   "tags": [
+    "optimalizácia"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.extrakcia-vyrazu",
+   "title": "Extrakcia výrazu z automatu pri analýze protokolov",
+   "summary": "Čitateľný popis správania automatu.",
+   "scenario": "Automat stojaci za protokolom chceme popísať ľudsky čitateľným vzorom.",
+   "modelling": "Akceptor sa prevedie na sústavu rovníc a vyrieši.",
+   "solution": "Výsledný regulárny výraz vyjadruje povolené konverzácie.",
+   "connects": [
+    "thm.veta-12-3-dfa-na-vyraz",
+    "alg.riesenie-sustavy-rovnic"
+   ],
+   "figures": [],
+   "tags": [
+    "protokoly"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.ekvivalencia-pravidiel",
+   "title": "Ekvivalencia pravidiel vo firewalloch",
+   "summary": "Zistenie, či dve sady pravidiel popisujú to isté.",
+   "scenario": "Dve konfigurácie pravidiel môžu vyzerať rôzne, ale povoľovať rovnaké reťazce.",
+   "modelling": "Pravidlá sú regulárne výrazy; rovnosť výrazov je rovnosť jazykov.",
+   "solution": "Algebraické zákony alebo prevod na akceptor rozhodnú rovnosť.",
+   "connects": [
+    "dfn.rovnost-vyrazov",
+    "thm.veta-12-3-dfa-na-vyraz"
+   ],
+   "figures": [],
+   "tags": [
+    "bezpečnosť"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.rr-1",
+   "kind": "mcq",
+   "prompt": "Čo je minimálne riešenie rovnice $x=\\alpha x+\\beta$?",
+   "options": [
+    "$\\beta\\alpha^*$",
+    "$\\alpha^*\\beta$",
+    "$\\alpha\\beta$",
+    "$(\\alpha+\\beta)^*$"
+   ],
+   "answer": 1,
+   "explanation": "Ardenovo lemma.",
+   "about": [
+    "thm.veta-12-2-ardenovo-lemma"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.rr-2",
+   "kind": "truefalse",
+   "prompt": "$(\\alpha\\beta)^*=\\alpha^*\\beta^*$ pre všetky regulárne výrazy.",
+   "answer": false,
+   "explanation": "Napríklad $(ab)^*\\ni abab$, ale $a^*b^*\\not\\ni abab$.",
+   "about": [
+    "thm.lema-12-1-algebra-vyrazov"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.rr-3",
+   "kind": "mcq",
+   "prompt": "Čomu sa rovná $\\emptyset^*$?",
+   "options": [
+    "$\\emptyset$",
+    "$\\varepsilon$",
+    "$\\Sigma^*$",
+    "nedefinované"
+   ],
+   "answer": 1,
+   "explanation": "$\\emptyset^*=\\{\\varepsilon\\}$.",
+   "about": [
+    "thm.lema-12-1-algebra-vyrazov"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.rr-4",
+   "kind": "mcq",
+   "prompt": "Čomu sa rovná $\\alpha\\emptyset$?",
+   "options": [
+    "$\\alpha$",
+    "$\\emptyset$",
+    "$\\varepsilon$",
+    "$\\alpha^*$"
+   ],
+   "answer": 1,
+   "explanation": "Zreťazenie s prázdnym jazykom je prázdne.",
+   "about": [
+    "thm.lema-12-1-algebra-vyrazov"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.rr-5",
+   "kind": "mcq",
+   "prompt": "Čo je $\\beta_i$ v rovnici pre koncový stav $q_i$?",
+   "options": [
+    "$\\emptyset$",
+    "$\\varepsilon$",
+    "$a_1$",
+    "$q_i$"
+   ],
+   "answer": 1,
+   "explanation": "Koncový stav prijme prázdne slovo.",
+   "about": [
+    "alg.sustava-z-akceptora"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.rr-6",
+   "kind": "open",
+   "prompt": "Vyriešte rovnicu $D=aE+bD+\\varepsilon$ s $E=\\emptyset$.",
+   "answer": "$D=bD+\\varepsilon$, teda $D=b^*$.",
+   "explanation": "Ardenovo lemma s $\\alpha=b$, $\\beta=\\varepsilon$.",
+   "about": [
+    "thm.veta-12-2-ardenovo-lemma"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.rr-7",
+   "kind": "open",
+   "prompt": "Aký výraz dostaneme pre akceptor „párny počet $a$“?",
+   "answer": "$(ab^*a+b)^*$.",
+   "explanation": "Vylúčte $Q=b^*aP$.",
+   "about": [
+    "ex.sustava-dvoch-rovnic"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.rr-8",
+   "kind": "flashcard",
+   "prompt": "Zapíšte rovnicu pre stav $q_i$ pri prevode DFA na regulárny výraz.",
+   "answer": "$q_i=a_1f(q_i,a_1)+\\dots+a_kf(q_i,a_k)+\\beta_i$ s $\\beta_i=\\varepsilon$ pre $q_i\\in F$, inak $\\emptyset$.",
+   "explanation": "Veta 12.3.",
+   "about": [
+    "alg.sustava-z-akceptora"
+   ],
+   "difficulty": 1
+  }
+ ]
+}

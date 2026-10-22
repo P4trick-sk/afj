@@ -1,0 +1,1032 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "operacie",
+  "title": "Operácie s regulárnymi jazykmi",
+  "course": "A",
+  "order": 7,
+  "sourceFiles": [
+   "Afja07_operacie_P.pdf"
+  ],
+  "summary": "Regulárne jazyky (rozpoznávané konečnostavovými akceptormi) sú uzavreté na doplnok, prienik, zjednotenie, rozdiel a symetrický rozdiel; konštrukcie sú konkrétne a dajú sa vykonať algoritmicky. Z toho vyplýva rozhodnuteľnosť prázdnosti, úplnosti, inklúzie a rovnosti pre regulárne jazyky.",
+  "overview": "Prednáška ukazuje, že regulárne jazyky možno kombinovať množinovými operáciami bez opustenia triedy. Doplnok vznikne zámenou koncových a nekoncových stavov, prienik a ostatné binárne operácie súčinovou konštrukciou, ktorá paralelne simuluje dva akceptory. Dôsledkom sú algoritmy na rozhodovanie prázdnosti, úplnosti, inklúzie a rovnosti dvoch regulárnych jazykov. Tieto výsledky sú základným argumentom, prečo je regulárna trieda taká „dobre vychovaná“ a prečo sa pre ňu dá veľa rozhodnúť (na rozdiel od bezkontextových jazykov).",
+  "keyQuestions": [
+   "Ako zostrojíme akceptor pre doplnok a prienik?",
+   "Prečo je súčinová konštrukcia korektná?",
+   "Ako algoritmicky rozhodneme, či sú dva regulárne jazyky rovnaké?"
+  ],
+  "prerequisites": [
+   "akceptory",
+   "nedosiahnutelne"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "def.uzavretost",
+   "type": "concept",
+   "topic": "operacie",
+   "title": "Uzavretosť triedy jazykov na operáciu",
+   "terms": [
+    {
+     "term": "uzavretosť",
+     "alt": "closure"
+    }
+   ],
+   "aliases": [],
+   "tags": [
+    "uzavretosť"
+   ],
+   "origin": "supplement",
+   "statement": "Trieda [jazykov](dfn.jazyk) $\\mathcal{C}$ je **uzavretá** na operáciu $\\circ$ (napr. doplnok, prienik, zjednotenie), ak pre každé jazyky z $\\mathcal{C}$ patrí do $\\mathcal{C}$ aj výsledok operácie. Uzavretosť dokazujeme konštrukciou: z popisov vstupných jazykov (akceptorov, gramatík) zostrojíme popis výsledku.",
+   "explanation": {
+    "intuition": "Ak môžeme operáciu aplikovať a výsledok je stále z tej istej triedy, trieda je pri tej operácii „stabilná“.",
+    "detailed": "Uzavretosť je dôležitá preto, že dovoľuje skladať zložité [jazyky](dfn.jazyk) z jednoduchších bez straty vlastností, napr. rozpoznateľnosti konečným akceptorom. Neuzavretosť sa dokazuje protipríkladom: nájdeme jazyky z triedy, pre ktoré výsledok z triedy nie je (prednášky 7 a 9 o [bezkontextových jazykoch](dfn.bezkontextovy-jazyk)).",
+    "pitfalls": [
+     "Uzavretosť na operáciu je tvrdenie o celej triede; konkrétny výsledok môže byť v triede aj keď trieda nie je uzavretá."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.bezkontextovy-jazyk"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.regularny-jazyk",
+   "type": "definition",
+   "topic": "operacie",
+   "title": "Regulárny jazyk",
+   "terms": [
+    {
+     "term": "regulárny jazyk",
+     "alt": "regular language"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja07_operacie_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "**Regulárny jazyk** je [jazyk](dfn.jazyk), ktorý je možné rozpoznávať nejakým [konečnostavovým akceptorom](dfn.konecnostavovy-akceptor).",
+   "explanation": {
+    "intuition": "Jazyk je regulárny, ak sa dá posúdiť [slovo](dfn.slovo) iba s konečnou pamäťou.",
+    "detailed": "Ďalšie prednášky ukážu, že regulárne [jazyky](dfn.jazyk) sú presne jazyky generované [regulárnymi gramatikami](dfn.regularna-gramatika) a jazyky označené [regulárnymi výrazmi](dfn.regularny-vyraz); akceptor, [nedeterministický akceptor](dfn.nfa) aj $\\varepsilon$-akceptor popisujú tú istú triedu.",
+    "pitfalls": [
+     "Konečný jazyk je vždy regulárny, ale regulárne jazyky môžu byť aj nekonečné."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.jazyk-akceptora",
+    "dfn.jazyk",
+    "dfn.konecnostavovy-akceptor",
+    "dfn.slovo"
+   ],
+   "relations": [
+    {
+     "type": "equivalent",
+     "target": "dfn.regularna-gramatika",
+     "note": "rovnaká trieda jazykov (Veta 10.1, 10.2)"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.regularny-vyraz"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.nfa"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.uzavretost-doplnok",
+   "type": "theorem",
+   "topic": "operacie",
+   "title": "Veta 7.1: regulárne jazyky sú uzavreté na doplnok",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja07_operacie_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "Ak pre $L$ existuje [konečnostavový akceptor](dfn.konecnostavovy-akceptor) $M=(Q,\\Sigma,q_I,f,F)$, t.j. $L=L(M)$, tak akceptor existuje aj pre [jazyk](dfn.jazyk) $L^c=\\{w\\in\\Sigma^*:w\\notin L\\}$. Konštrukcia: $M^c=(Q,\\Sigma,q_I,f,F^c)$ s $F^c=Q-F$.",
+   "explanation": {
+    "intuition": "Stačí prehodiť úlohu koncových a nekoncových stavov.",
+    "detailed": "Konštrukcia funguje iba preto, že akceptor je deterministický a úplný: každé [slovo](dfn.slovo) má práve jeden výpočet, ktorý skončí v presne jednom stave. U [nedeterministických akceptorov](dfn.nfa) by zámena koncových stavov doplnok nedala (najprv ich treba determinizovať, Veta 8.1).",
+    "pitfalls": [
+     "Pre nedeterministický akceptor zámena $F\\leftrightarrow Q-F$ nedá doplnok."
+    ],
+    "examples": [
+     "Pre jazyk „končí na $abb$ alebo obsahuje $abba$“ je doplnok „nekončí na $abb$ ani neobsahuje $abba$“; stavy $\\{3,4\\}\\leftrightarrow\\{0,1,2\\}$."
+    ]
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Zostrojíme $M^c=(Q,\\Sigma,q_I,f,F^c)$ s $F^c=Q-F$: rovnaký počiatočný stav a prechodová funkcia, iba koncové stavy sa vymenia.",
+      "why": "Výpočet na každom slove ostáva rovnaký, mení sa iba rozhodnutie.",
+      "uses": []
+     },
+     {
+      "text": "Pre každé $w$: $w\\in L(M^c)\\iff f^*(q_I,w)\\in F^c\\iff f^*(q_I,w)\\notin F\\iff w\\notin L(M)$.",
+      "why": "Výpočet je jednoznačný, preto stav po prečítaní $w$ je koncový práve v jednom z akceptorov.",
+      "uses": []
+     },
+     {
+      "text": "Teda $L^c=L(M^c)$.",
+      "why": "Jazyk $M^c$ je presne doplnok.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.regularny-jazyk",
+    "dfn.jazyk-akceptora",
+    "def.uzavretost",
+    "dfn.konecnostavovy-akceptor",
+    "dfn.jazyk",
+    "dfn.slovo"
+   ],
+   "relations": [
+    {
+     "type": "contrasts-with",
+     "target": "thm.cfl-nie-uzavrete-doplnok",
+     "note": "regulárne áno, bezkontextové nie"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.nfa"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.akceptor-doplnok",
+   "type": "example",
+   "topic": "operacie",
+   "title": "Akceptor pre doplnok jazyka",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja07_operacie_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "Pre akceptor $M$ [jazyka](dfn.jazyk) $L=\\{w\\in\\{a,b\\}^*:w$ končí na $abb$ alebo obsahuje $abba\\}$ zostrojíme akceptor $M^c$ s $F^c=\\{0,1,2\\}$. Jazyk $L^c=\\{w\\in\\{a,b\\}^*:w$ nekončí na $abb$ ani neobsahuje $abba\\}$.",
+   "explanation": {
+    "intuition": "Koncové stavy sa vymenia, hrany ostanú.",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "thm.uzavretost-doplnok",
+    "ex.akceptor-abb"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.jazyk"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.sucinova-konstrukcia",
+   "type": "algorithm",
+   "topic": "operacie",
+   "title": "Súčinová konštrukcia akceptorov",
+   "terms": [
+    {
+     "term": "súčinová konštrukcia",
+     "alt": "product construction"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja07_operacie_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "Pre akceptory $M_1=(Q_1,\\Sigma,q_{I,1},f_1,F_1)$ a $M_2=(Q_2,\\Sigma,q_{I,2},f_2,F_2)$ zostrojíme akceptor $M=(Q_1\\times Q_2,\\Sigma,[q_{I,1},q_{I,2}],f,F)$, ktorý paralelne simuluje výpočet $M_1$ aj $M_2$: $f([q_1,q_2],a)=[f_1(q_1,a),f_2(q_2,a)]$. Množina koncových stavov $F$ určuje operáciu: $F_1\\times F_2$ pre prienik, $(F_1\\times Q_2)\\cup(Q_1\\times F_2)$ pre zjednotenie, $F_1\\times(Q_2-F_2)$ pre rozdiel.",
+   "explanation": {
+    "intuition": "Dva akceptory pustíme súčasne a stav dvojice je dvojica stavov.",
+    "detailed": "Stavový priestor je karteziánsky súčin, preto môže mať až $|Q_1|\\cdot|Q_2|$ stavov. Výber $F$ rozhoduje o type operácie. Konštrukcia sa používa aj pri [bezkontextových jazykoch](dfn.bezkontextovy-jazyk) (prienik s [regulárnym jazykom](dfn.regularny-jazyk)).",
+    "pitfalls": [
+     "Obe vstupné abecedy musia byť rovnaké (inak sa najprv rozšíria)."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Pomocné tvrdenie $f^*([q_{I,1},q_{I,2}],w)=[f_1^*(q_{I,1},w),f_2^*(q_{I,2},w)]$ (indukcia podľa $|w|$, pozri Vetu 7.2) ukazuje, že výpočet $M$ je dvojica výpočtov $M_1,M_2$; $F$ potom vyberie potrebnú kombináciu.",
+    "steps": []
+   },
+   "uses": [
+    "dfn.konecnostavovy-akceptor",
+    "dfn.jazyk-akceptora",
+    "dfn.regularny-jazyk"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "alg.sucin-pda-dfa",
+     "note": "analogická konštrukcia pre zásobníkový automat"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.bezkontextovy-jazyk"
+    }
+   ],
+   "figures": [
+    "fig.sucin-m1-m2"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.uzavretost-prienik",
+   "type": "theorem",
+   "topic": "operacie",
+   "title": "Veta 7.2: regulárne jazyky sú uzavreté na prienik",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja07_operacie_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "Ak pre [jazyky](dfn.jazyk) $L_1,L_2$ existujú [konečnostavové akceptory](dfn.konecnostavovy-akceptor) $M_1,M_2$, tak existuje akceptor aj pre jazyk $L=L_1\\cap L_2$.",
+   "explanation": {
+    "intuition": "Slovo je v prieniku, ak ho prijmú oba akceptory; súčinový automat sleduje oba naraz.",
+    "detailed": "Kľúčom je pomocné tvrdenie, že výpočet súčinu je dvojica výpočtov. Potom je koncový stav súčinu presne dvojica koncových stavov.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Zostrojíme $M$ súčinovou konštrukciou s $F=F_1\\times F_2$.",
+      "why": "Slovo musí byť prijaté oboma akceptormi.",
+      "uses": [
+       "alg.sucinova-konstrukcia"
+      ]
+     },
+     {
+      "text": "Pomocné tvrdenie: $f^*(q_I,w)=[f_1^*(q_{I,1},w),f_2^*(q_{I,2},w)]$ pre každé $w\\in\\Sigma^*$. Indukciou podľa $|w|$: pre $w=\\varepsilon$ ide o definíciu $q_I=[q_{I,1},q_{I,2}]$.",
+      "why": "Báza z definície počiatočného stavu.",
+      "uses": [
+       "def.indukcia"
+      ]
+     },
+     {
+      "text": "Pre $w=\\omega a$: $f^*(q_I,\\omega a)=f(f^*(q_I,\\omega),a)=f([f_1^*(q_{I,1},\\omega),f_2^*(q_{I,2},\\omega)],a)=[f_1^*(q_{I,1},\\omega a),f_2^*(q_{I,2},\\omega a)]$.",
+      "why": "Indukčný predpoklad a definícia $f$.",
+      "uses": []
+     },
+     {
+      "text": "Teda $w\\in L(M)\\iff f^*(q_I,w)\\in F_1\\times F_2\\iff f_1^*(q_{I,1},w)\\in F_1\\wedge f_2^*(q_{I,2},w)\\in F_2\\iff w\\in L(M_1)\\wedge w\\in L(M_2)$.",
+      "why": "Dvojica je v $F_1\\times F_2$ práve keď obe zložky sú koncové.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "alg.sucinova-konstrukcia",
+    "def.indukcia",
+    "def.uzavretost",
+    "dfn.regularny-jazyk",
+    "dfn.konecnostavovy-akceptor",
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "contrasts-with",
+     "target": "thm.cfl-nie-uzavrete-prienik",
+     "note": "regulárne áno, bezkontextové nie"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.prienik-zjednotenie",
+   "type": "example",
+   "topic": "operacie",
+   "title": "Prienik a zjednotenie dvoch jazykov",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja07_operacie_P.pdf",
+     "page": 6
+    }
+   ],
+   "statement": "$L_1=\\{w\\in\\{0,1\\}^*: w$ končí na $01$ alebo obsahuje $0110\\}$ (akceptor $M_1$ so stavmi $A,\\dots,E$), $L_2=\\{w\\in\\{0,1\\}^*: w$ obsahuje nepárny počet jednotiek$\\}$ (akceptor $M_2$ so stavmi $X,Y$). Súčinový akceptor má $10$ stavov $[A,X],\\dots,[E,Y]$. Pre prienik sú koncové stavy $[C,Y]$ a $[E,Y]$, pre zjednotenie všetky $[C,\\cdot]$, $[E,\\cdot]$ a $[\\cdot,Y]$.",
+   "explanation": {
+    "intuition": "Z $10$ stavov súčinu sa v praxi dosiahne a udrží iba časť.",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "alg.sucinova-konstrukcia"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.sucin-m1-m2"
+   ],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Obrázky $M_1,M_2$ na slajdoch 6 a 8 sú nečitateľné; stavy $M_1$ sú zrekonštruované tak, aby jazyk bol „končí na $01$ alebo obsahuje $0110$“; prienik, zjednotenie aj doplnok sú overené výpočtom na všetkých slovách do dĺžky 9."
+    ]
+   }
+  },
+  {
+   "id": "thm.uzavretost-zjednotenie-rozdiel",
+   "type": "theorem",
+   "topic": "operacie",
+   "title": "Veta 7.3: uzavretosť na zjednotenie, rozdiel a symetrický rozdiel",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja07_operacie_P.pdf",
+     "page": 7
+    }
+   ],
+   "statement": "Ak $L_1=L(M_1)$ a $L_2=L(M_2)$ sú regulárne, tak existujú akceptory aj pre $L_1\\cup L_2$, $L_1-L_2=L_1\\cap L_2^c$ a $L_1\\triangle L_2=(L_1-L_2)\\cup(L_2-L_1)$.",
+   "explanation": {
+    "intuition": "Rovnaký súčinový akceptor, iba iná voľba koncových stavov.",
+    "detailed": "Prechodová funkcia $f([q_1,q_2],a)=[f_1(q_1,a),f_2(q_2,a)]$ je pre všetky tri operácie rovnaká; mení sa iba $F$. Symetrický rozdiel vznikne ako „práve jedno z $q_1\\in F_1$, $q_2\\in F_2$“.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Zjednotenie: $[q_1,q_2]\\in F\\iff q_1\\in F_1\\vee q_2\\in F_2$.",
+      "why": "Slovo je v $L_1\\cup L_2$, ak ho prijme aspoň jeden z akceptorov.",
+      "uses": []
+     },
+     {
+      "text": "Rozdiel $L_1-L_2$: $[q_1,q_2]\\in F\\iff q_1\\in F_1\\wedge q_2\\notin F_2$.",
+      "why": "Slovo je v $L_1$ a nie je v $L_2$.",
+      "uses": []
+     },
+     {
+      "text": "Symetrický rozdiel: $[q_1,q_2]\\in F\\iff(q_1\\in F_1\\wedge q_2\\notin F_2)\\vee(q_1\\notin F_1\\wedge q_2\\in F_2)$.",
+      "why": "Práve jedna zložka je koncová.",
+      "uses": []
+     },
+     {
+      "text": "Korektnosť pre každé $F$ vyplýva z pomocného tvrdenia z dôkazu Vety 7.2.",
+      "why": "Výpočet súčinu je dvojica výpočtov.",
+      "uses": [
+       "thm.uzavretost-prienik"
+      ]
+     }
+    ]
+   },
+   "uses": [
+    "alg.sucinova-konstrukcia",
+    "thm.uzavretost-doplnok",
+    "thm.uzavretost-prienik"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.uzavretost-regularnych"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.rozhodnutelnost-prazdnosti",
+   "type": "theorem",
+   "topic": "operacie",
+   "title": "Lema 7.4: rozhodnuteľnosť L=∅ a L=Σ*",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja07_operacie_P.pdf",
+     "page": 9
+    }
+   ],
+   "statement": "Ak pre [jazyk](dfn.jazyk) $L\\subseteq\\Sigma^*$ existuje akceptor $M=(Q,\\Sigma,q_I,f,F)$, tak pre $L$ vieme algoritmicky rozhodnúť, či $L=\\emptyset$, a či $L=\\Sigma^*$.",
+   "explanation": {
+    "intuition": "Stačí zistiť, či sa dá dostať do koncového, resp. nekoncového stavu.",
+    "detailed": "Jazyk je neprázdny práve vtedy, keď je v $M$ dosiahnuteľný koncový stav. Je rovný $\\Sigma^*$ práve vtedy, keď sú všetky [dosiahnuteľné stavy](dfn.dosiahnutelny-stav) koncové. Dosiahnuteľnosť sa počíta algoritmom z prednášky 3.",
+    "pitfalls": [
+     "Nedosiahnuteľný koncový stav jazyk neovplyvní, preto sa musí overiť dosiahnuteľnosť."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Najprv nájdeme množinu dosiahnuteľných stavov $Q'$ (algoritmus z prednášky 3).",
+      "why": "Iba dosiahnuteľné stavy môžu ovplyvniť prijímané slová.",
+      "uses": [
+       "alg.dosiahnutelne-stavy"
+      ]
+     },
+     {
+      "text": "Ak $Q'\\cap F\\neq\\emptyset$, tak $L\\ne\\emptyset$ (slovo, ktoré vedie do koncového stavu), inak $L=\\emptyset$.",
+      "why": "Existencia prijatého slova.",
+      "uses": []
+     },
+     {
+      "text": "Ak $Q'\\cap(Q-F)\\ne\\emptyset$, tak $L\\ne\\Sigma^*$ (slovo vedúce do nekoncového stavu), inak $L=\\Sigma^*$.",
+      "why": "Symetrické tvrdenie pre doplnok.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "alg.dosiahnutelne-stavy",
+    "dfn.jazyk-akceptora",
+    "dfn.jazyk",
+    "dfn.dosiahnutelny-stav"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.rozhodnutelnost-inkluzie-rovnosti",
+   "type": "theorem",
+   "topic": "operacie",
+   "title": "Veta 7.5: rozhodnuteľnosť inklúzie, rovnosti, disjunktnosti a pokrytia",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja07_operacie_P.pdf",
+     "page": 10
+    }
+   ],
+   "statement": "Ak sú [jazyky](dfn.jazyk) $L_1,L_2$ regulárne, tak nasledujúce problémy sú algoritmicky rozhodnuteľné: $L_1\\subseteq L_2$?, $L_1=L_2$?, $L_1\\cap L_2=\\emptyset$?, $L_1\\cup L_2=\\Sigma^*$?",
+   "explanation": {
+    "intuition": "Každý z problémov sa zredukuje na otázku, či je istý [regulárny jazyk](dfn.regularny-jazyk) prázdny alebo úplný.",
+    "detailed": "Napríklad $L_1\\subseteq L_2$ platí práve vtedy, keď $L_1-L_2=\\emptyset$. Rovnosť [jazykov](dfn.jazyk) sa dá testovať aj iným spôsobom: minimálne akceptory musia byť izomorfné (Veta 5.5).",
+    "pitfalls": [
+     "Pre bezkontextové jazyky je rovnosť nerozhodnuteľná, čo ukazuje silu regulárnej triedy."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "$L(M_1)\\subseteq L(M_2)\\iff L(M_1)-L(M_2)=\\emptyset$: zostrojíme akceptor $M$ pre rozdiel a otestujeme prázdnosť (Lema 7.4).",
+      "why": "Rozdiel je prázdny, práve ak je prvý jazyk podmnožinou druhého.",
+      "uses": []
+     },
+     {
+      "text": "$L(M_1)=L(M_2)\\iff L(M_1)\\triangle L(M_2)=\\emptyset$: zostrojíme akceptor pre symetrický rozdiel a otestujeme prázdnosť.",
+      "why": "Rovnosť zodpovedá prázdnemu symetrickému rozdielu.",
+      "uses": []
+     },
+     {
+      "text": "$L(M_1)\\cap L(M_2)=\\emptyset$: akceptor pre prienik a test prázdnosti.",
+      "why": "Definícia disjunktnosti.",
+      "uses": []
+     },
+     {
+      "text": "$L(M_1)\\cup L(M_2)=\\Sigma^*$: akceptor pre zjednotenie a test úplnosti $L=\\Sigma^*$ z Lemy 7.4.",
+      "why": "Definícia pokrytia.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "thm.rozhodnutelnost-prazdnosti",
+    "thm.uzavretost-zjednotenie-rozdiel",
+    "thm.uzavretost-prienik",
+    "dfn.jazyk",
+    "dfn.regularny-jazyk"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.sucin-m1-m2",
+   "title": "Súčinový akceptor M1×M2 (prienik)",
+   "caption": "Prienik: koncové stavy $[C,Y]$ a $[E,Y]$; pre zjednotenie by boli koncové aj ďalšie.",
+   "origin": "generated",
+   "illustrates": [
+    "alg.sucinova-konstrukcia",
+    "ex.prienik-zjednotenie"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "AX",
+     "x": 0,
+     "y": 0,
+     "label": "▸ AX"
+    },
+    {
+     "id": "AY",
+     "x": 0,
+     "y": 120,
+     "label": "AY"
+    },
+    {
+     "id": "BX",
+     "x": 130,
+     "y": 0,
+     "label": "BX"
+    },
+    {
+     "id": "BY",
+     "x": 130,
+     "y": 120,
+     "label": "BY"
+    },
+    {
+     "id": "CX",
+     "x": 260,
+     "y": 0,
+     "label": "CX"
+    },
+    {
+     "id": "CY",
+     "x": 260,
+     "y": 120,
+     "label": "CY ◉"
+    },
+    {
+     "id": "DX",
+     "x": 390,
+     "y": 0,
+     "label": "DX"
+    },
+    {
+     "id": "DY",
+     "x": 390,
+     "y": 120,
+     "label": "DY"
+    },
+    {
+     "id": "EX",
+     "x": 520,
+     "y": 0,
+     "label": "EX"
+    },
+    {
+     "id": "EY",
+     "x": 520,
+     "y": 120,
+     "label": "EY ◉"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "AX",
+     "target": "BX",
+     "label": "0",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "AX",
+     "target": "AY",
+     "label": "1",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "AY",
+     "target": "BY",
+     "label": "0",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "AY",
+     "target": "AX",
+     "label": "1",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "BX",
+     "target": "BX",
+     "label": "0",
+     "directed": true
+    },
+    {
+     "id": "e5",
+     "source": "BX",
+     "target": "CY",
+     "label": "1",
+     "directed": true
+    },
+    {
+     "id": "e6",
+     "source": "BY",
+     "target": "BY",
+     "label": "0",
+     "directed": true
+    },
+    {
+     "id": "e7",
+     "source": "BY",
+     "target": "CX",
+     "label": "1",
+     "directed": true
+    },
+    {
+     "id": "e8",
+     "source": "CX",
+     "target": "BX",
+     "label": "0",
+     "directed": true
+    },
+    {
+     "id": "e9",
+     "source": "CX",
+     "target": "DY",
+     "label": "1",
+     "directed": true
+    },
+    {
+     "id": "e10",
+     "source": "CY",
+     "target": "BY",
+     "label": "0",
+     "directed": true
+    },
+    {
+     "id": "e11",
+     "source": "CY",
+     "target": "DX",
+     "label": "1",
+     "directed": true
+    },
+    {
+     "id": "e12",
+     "source": "DX",
+     "target": "EX",
+     "label": "0",
+     "directed": true
+    },
+    {
+     "id": "e13",
+     "source": "DX",
+     "target": "AY",
+     "label": "1",
+     "directed": true
+    },
+    {
+     "id": "e14",
+     "source": "DY",
+     "target": "EY",
+     "label": "0",
+     "directed": true
+    },
+    {
+     "id": "e15",
+     "source": "DY",
+     "target": "AX",
+     "label": "1",
+     "directed": true
+    },
+    {
+     "id": "e16",
+     "source": "EX",
+     "target": "EX",
+     "label": "0",
+     "directed": true
+    },
+    {
+     "id": "e17",
+     "source": "EX",
+     "target": "EY",
+     "label": "1",
+     "directed": true
+    },
+    {
+     "id": "e18",
+     "source": "EY",
+     "target": "EY",
+     "label": "0",
+     "directed": true
+    },
+    {
+     "id": "e19",
+     "source": "EY",
+     "target": "EX",
+     "label": "1",
+     "directed": true
+    }
+   ],
+   "animations": []
+  },
+  {
+   "id": "fig.uzavretost-regularnych",
+   "title": "Operácie a voľba koncových stavov v súčine",
+   "caption": "Zhrnutie konštrukcií z Viet 7.1–7.3.",
+   "origin": "generated",
+   "illustrates": [
+    "thm.uzavretost-zjednotenie-rozdiel"
+   ],
+   "sources": [],
+   "kind": "table",
+   "columns": [
+    "operácia",
+    "koncové stavy súčinu"
+   ],
+   "rows": [
+    [
+     "prienik",
+     "$F_1\\times F_2$"
+    ],
+    [
+     "zjednotenie",
+     "$(F_1\\times Q_2)\\cup(Q_1\\times F_2)$"
+    ],
+    [
+     "rozdiel $L_1-L_2$",
+     "$F_1\\times(Q_2-F_2)$"
+    ],
+    [
+     "symetrický rozdiel",
+     "$(F_1\\times(Q_2-F_2))\\cup((Q_1-F_1)\\times F_2)$"
+    ],
+    [
+     "doplnok",
+     "$Q-F$ (jediný akceptor)"
+    ]
+   ]
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.firewall-politiky",
+   "title": "Kombinovanie pravidiel (firewall, e-mailové filtre)",
+   "summary": "Množinové operácie nad množinami povolených reťazcov.",
+   "scenario": "Dve sady pravidiel (povolené URL, povolené adresy) sa majú skombinovať prienikom alebo zjednotením.",
+   "modelling": "Každá sada je regulárny jazyk; politiky sú akceptory.",
+   "solution": "Súčinová konštrukcia vytvorí kombinovanú politiku; doplnok vyjadrí zakázané.",
+   "connects": [
+    "alg.sucinova-konstrukcia",
+    "thm.uzavretost-prienik",
+    "thm.uzavretost-doplnok"
+   ],
+   "figures": [],
+   "tags": [
+    "bezpečnosť"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.rovnost-specifikacii",
+   "title": "Overovanie rovnosti dvoch špecifikácií",
+   "summary": "Rozhodnutie, či dve špecifikácie popisujú ten istý jazyk.",
+   "scenario": "Dve verzie špecifikácie formátu (regulárny výraz alebo akceptor) majú byť rovnocenné.",
+   "modelling": "Špecifikácie sú akceptory; porovnávame jazyky.",
+   "solution": "Symetrický rozdiel a test prázdnosti rozhodnú rovnosť (Veta 7.5).",
+   "connects": [
+    "thm.rozhodnutelnost-inkluzie-rovnosti",
+    "thm.uzavretost-zjednotenie-rozdiel"
+   ],
+   "figures": [],
+   "tags": [
+    "verifikácia"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.podmnozina-politik",
+   "title": "Kontrola, že jedna politika je podmnožinou druhej",
+   "summary": "Bezpečnostná analýza.",
+   "scenario": "Potrebujeme vedieť, že nová politika nedovolí nič, čo stará zakazovala.",
+   "modelling": "Politiky sú regulárne jazyky.",
+   "solution": "$L_1\\subseteq L_2$ rozhodneme cez $L_1-L_2=\\emptyset$.",
+   "connects": [
+    "thm.rozhodnutelnost-inkluzie-rovnosti",
+    "thm.rozhodnutelnost-prazdnosti"
+   ],
+   "figures": [],
+   "tags": [
+    "bezpečnosť"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.ope-1",
+   "kind": "truefalse",
+   "prompt": "Pre nedeterministický akceptor stačí na výrobu doplnku jazyka zameniť koncové a nekoncové stavy.",
+   "answer": false,
+   "explanation": "Zámena funguje iba pre deterministické (úplné) akceptory; pre nedeterministické by slovo mohlo mať aj prijímajúci aj odmietajúci výpočet.",
+   "about": [
+    "thm.uzavretost-doplnok"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.ope-2",
+   "kind": "mcq",
+   "prompt": "Koľko stavov má súčinový akceptor pre akceptory s $5$ a $2$ stavmi?",
+   "options": [
+    "7",
+    "10",
+    "25",
+    "3"
+   ],
+   "answer": 1,
+   "explanation": "$|Q_1|\\cdot|Q_2|=5\\cdot2=10$.",
+   "about": [
+    "alg.sucinova-konstrukcia"
+   ],
+   "difficulty": 1,
+   "check": {
+    "verifier": "expr",
+    "expr": "5*2"
+   }
+  },
+  {
+   "id": "quiz.ope-3",
+   "kind": "mcq",
+   "prompt": "Aká je množina koncových stavov súčinu pre zjednotenie?",
+   "options": [
+    "$F_1\\times F_2$",
+    "$(F_1\\times Q_2)\\cup(Q_1\\times F_2)$",
+    "$F_1\\cup F_2$",
+    "$Q_1\\times Q_2$"
+   ],
+   "answer": 1,
+   "explanation": "Stačí, aby bola koncová aspoň jedna zložka.",
+   "about": [
+    "thm.uzavretost-zjednotenie-rozdiel"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ope-4",
+   "kind": "mcq",
+   "prompt": "Ako zistíme, či $L(M)=\\Sigma^*$?",
+   "options": [
+    "zistíme, či $q_I\\in F$",
+    "zistíme, či sú všetky dosiahnuteľné stavy koncové",
+    "zistíme, či je aspoň jeden stav koncový",
+    "zistíme, či $F=Q$"
+   ],
+   "answer": 1,
+   "explanation": "Ak by bol dosiahnuteľný nekoncový stav, existovalo by slovo, ktoré akceptor neprijme.",
+   "about": [
+    "thm.rozhodnutelnost-prazdnosti"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ope-5",
+   "kind": "truefalse",
+   "prompt": "$L_1\\subseteq L_2$ platí práve vtedy, keď $L_1-L_2=\\emptyset$.",
+   "answer": true,
+   "explanation": "Ak by rozdiel obsahoval slovo, bolo by v $L_1$ a nie v $L_2$.",
+   "about": [
+    "thm.rozhodnutelnost-inkluzie-rovnosti"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ope-6",
+   "kind": "flashcard",
+   "prompt": "Ako sa zostrojí akceptor pre symetrický rozdiel $L_1\\triangle L_2$?",
+   "answer": "Súčinový akceptor s koncovými stavmi $[q_1,q_2]$, kde práve jedna zložka je koncová.",
+   "explanation": "Alebo $(L_1-L_2)\\cup(L_2-L_1)$.",
+   "about": [
+    "thm.uzavretost-zjednotenie-rozdiel"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ope-7",
+   "kind": "open",
+   "prompt": "Vysvetlite, ako rozhodnete rovnosť dvoch regulárnych jazykov daných akceptormi.",
+   "answer": "Zostrojíme akceptor pre symetrický rozdiel súčinovou konštrukciou a overíme, že v ňom nie je dosiahnuteľný koncový stav (jazyk je prázdny).",
+   "explanation": "Vetu 7.5.",
+   "about": [
+    "thm.rozhodnutelnost-inkluzie-rovnosti"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.ope-8",
+   "kind": "open",
+   "prompt": "Preukážte $f^*([q_{I,1},q_{I,2}],w)=[f_1^*(q_{I,1},w),f_2^*(q_{I,2},w)]$ indukciou.",
+   "answer": "Báza $w=\\varepsilon$: z definície. Krok $w=\\omega a$: $f([f_1^*(\\cdot,\\omega),f_2^*(\\cdot,\\omega)],a)=[f_1^*(\\cdot,\\omega a),f_2^*(\\cdot,\\omega a)]$.",
+   "explanation": "Indukčný predpoklad a definícia $f$.",
+   "about": [
+    "thm.uzavretost-prienik"
+   ],
+   "difficulty": 2
+  }
+ ]
+}

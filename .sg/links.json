@@ -1,0 +1,982 @@
+[
+ {
+  "node": "thm.lba-na-kontextovu",
+  "field": "statement",
+  "text": "nedeterministický lineárne ohraničený Turingov stroj",
+  "target": "dfn.lba",
+  "score": 8
+ },
+ {
+  "node": "def.strom",
+  "field": "explanation.detailed",
+  "text": "výškou binárneho stromu",
+  "target": "def.vyska-binarneho-stromu",
+  "score": 7
+ },
+ {
+  "node": "thm.dcfl-nie-uzavrete-prienik",
+  "field": "statement",
+  "text": "deterministické bezkontextové jazyky",
+  "target": "dfn.bezkontextovy-jazyk",
+  "score": 7
+ },
+ {
+  "node": "thm.dcfl-nie-uzavrete-zjednotenie",
+  "field": "statement",
+  "text": "deterministické bezkontextové jazyky",
+  "target": "dfn.dpda",
+  "score": 7
+ },
+ {
+  "node": "thm.dcfl-nie-uzavrete-zjednotenie",
+  "field": "statement",
+  "text": "deterministické bezkontextové jazyky",
+  "target": "dfn.bezkontextovy-jazyk",
+  "score": 7
+ },
+ {
+  "node": "ex.preklad-do-postfix",
+  "field": "statement",
+  "text": "DPDA pre aritmetické výrazy",
+  "target": "ex.dpda-aritmeticke-vyrazy",
+  "score": 7
+ },
+ {
+  "node": "def.mnozina-relacia-funkcia",
+  "field": "explanation.detailed",
+  "text": "Prechodová funkcia",
+  "target": "dfn.konecnostavovy-automat",
+  "score": 6
+ },
+ {
+  "node": "dfn.gramatika",
+  "field": "explanation.detailed",
+  "text": "Chomského hierarchii",
+  "target": "def.chomskeho-hierarchia",
+  "score": 6
+ },
+ {
+  "node": "dfn.dosiahnutelny-stav",
+  "field": "explanation.detailed",
+  "text": "stavovom diagrame",
+  "target": "dfn.stavovy-diagram",
+  "score": 6
+ },
+ {
+  "node": "thm.lema-3-1-nasledovnik",
+  "field": "explanation.detailed",
+  "text": "prechodová funkcia",
+  "target": "dfn.konecnostavovy-automat",
+  "score": 6
+ },
+ {
+  "node": "dfn.regularny-jazyk",
+  "field": "explanation.detailed",
+  "text": "nedeterministický akceptor",
+  "target": "dfn.nfa",
+  "score": 6
+ },
+ {
+  "node": "thm.uzavretost-doplnok",
+  "field": "explanation.pitfalls",
+  "text": "nedeterministický akceptor",
+  "target": "dfn.nfa",
+  "score": 6
+ },
+ {
+  "node": "thm.uzavretost-doplnok",
+  "field": "proof.steps[0].text",
+  "text": "prechodová funkcia",
+  "target": "dfn.konecnostavovy-automat",
+  "score": 6
+ },
+ {
+  "node": "thm.uzavretost-zjednotenie-rozdiel",
+  "field": "explanation.detailed",
+  "text": "Prechodová funkcia",
+  "target": "dfn.konecnostavovy-automat",
+  "score": 6
+ },
+ {
+  "node": "thm.rozhodnutelnost-inkluzie-rovnosti",
+  "field": "explanation.pitfalls",
+  "text": "bezkontextové jazyky",
+  "target": "dfn.bezkontextovy-jazyk",
+  "score": 6
+ },
+ {
+  "node": "dfn.nfa",
+  "field": "statement",
+  "text": "prechodová funkcia",
+  "target": "dfn.konecnostavovy-automat",
+  "score": 6
+ },
+ {
+  "node": "thm.veta-8-1-nfa-na-dfa",
+  "field": "statement",
+  "text": "nedeterministický akceptor",
+  "target": "dfn.nfa",
+  "score": 6
+ },
+ {
+  "node": "dfn.eps-akceptor",
+  "field": "statement",
+  "text": "prechodová funkcia",
+  "target": "dfn.konecnostavovy-automat",
+  "score": 6
+ },
+ {
+  "node": "ex.simulacia-odvodenim",
+  "field": "explanation.intuition",
+  "text": "krok výpočtu",
+  "target": "dfn.konfiguracia-pda",
+  "score": 6
+ },
+ {
+  "node": "thm.veta-10-2-gramatika-na-eps-akceptor",
+  "field": "statement",
+  "text": "rozšírená regulárna gramatika",
+  "target": "dfn.rozsirena-regularna-gramatika",
+  "score": 6
+ },
+ {
+  "node": "dfn.jazyk-vyrazu",
+  "field": "explanation.detailed",
+  "text": "rovnosti výrazov",
+  "target": "dfn.rovnost-vyrazov",
+  "score": 6
+ },
+ {
+  "node": "ex.vyraz-pre-akceptor",
+  "field": "statement",
+  "text": "jazyk akceptora",
+  "target": "dfn.jazyk-eps-akceptora",
+  "score": 6
+ },
+ {
+  "node": "def.konverzie-reprezentacii",
+  "field": "statement",
+  "text": "rozšírená regulárna gramatika",
+  "target": "dfn.rozsirena-regularna-gramatika",
+  "score": 6
+ },
+ {
+  "node": "def.uzavretost-regularnych",
+  "field": "statement",
+  "text": "zrkadlový obraz",
+  "target": "dfn.zrkadlovy-obraz",
+  "score": 6
+ },
+ {
+  "node": "def.uzavretost-regularnych",
+  "field": "explanation.detailed",
+  "text": "bezkontextové jazyky",
+  "target": "dfn.bezkontextovy-jazyk",
+  "score": 6
+ },
+ {
+  "node": "def.uzavretost-regularnych",
+  "field": "explanation.pitfalls",
+  "text": "súčinová konštrukcia",
+  "target": "alg.sucinova-konstrukcia",
+  "score": 6
+ },
+ {
+  "node": "thm.uzavretost-zretazenie-iteracia",
+  "field": "proof.steps[1].why",
+  "text": "jazyka výrazu",
+  "target": "dfn.jazyk-vyrazu",
+  "score": 6
+ },
+ {
+  "node": "thm.uzavretost-homomorfizmus",
+  "field": "explanation.detailed",
+  "text": "nedeterministický akceptor",
+  "target": "dfn.nfa",
+  "score": 6
+ },
+ {
+  "node": "thm.uzavretost-homomorfizmus",
+  "field": "explanation.detailed",
+  "text": "prechodová funkcia",
+  "target": "dfn.konecnostavovy-automat",
+  "score": 6
+ },
+ {
+  "node": "thm.veta-13-4-anbn-nie-je-regularny",
+  "field": "statement",
+  "text": "bezkontextové jazyky",
+  "target": "dfn.bezkontextovy-jazyk",
+  "score": 6
+ },
+ {
+  "node": "dfn.zasobnikovy-automat",
+  "field": "statement",
+  "text": "prechodová funkcia",
+  "target": "dfn.konecnostavovy-automat",
+  "score": 6
+ },
+ {
+  "node": "dfn.dpda",
+  "field": "explanation.detailed",
+  "text": "prechodová funkcia",
+  "target": "dfn.konecnostavovy-automat",
+  "score": 6
+ },
+ {
+  "node": "thm.pda-na-bezgram",
+  "field": "proof.steps[1].text",
+  "text": "krokov výpočtu",
+  "target": "dfn.konfiguracia-pda",
+  "score": 6
+ },
+ {
+  "node": "thm.pumping-lema-bezkontextove",
+  "field": "statement",
+  "text": "bezkontextový jazyk",
+  "target": "dfn.bezkontextovy-jazyk",
+  "score": 6
+ },
+ {
+  "node": "thm.cfl-nie-uzavrete-doplnok",
+  "field": "statement",
+  "text": "bezkontextový jazyk",
+  "target": "dfn.bezkontextovy-jazyk",
+  "score": 6
+ },
+ {
+  "node": "thm.cfl-uzavrete-zjednotenie-zretazenie-iteracia-zrkadlo",
+  "field": "statement",
+  "text": "bezkontextové jazyky",
+  "target": "dfn.bezkontextovy-jazyk",
+  "score": 6
+ },
+ {
+  "node": "thm.cfl-uzavrete-zjednotenie-zretazenie-iteracia-zrkadlo",
+  "field": "proof.steps[3].text",
+  "text": "zrkadlový obraz",
+  "target": "dfn.zrkadlovy-obraz",
+  "score": 6
+ },
+ {
+  "node": "def.prehlad-uzavretosti-cfl",
+  "field": "explanation.intuition",
+  "text": "Bezkontextové jazyky",
+  "target": "dfn.bezkontextovy-jazyk",
+  "score": 6
+ },
+ {
+  "node": "alg.vypocet-tabulky-h",
+  "field": "explanation.intuition",
+  "text": "nekonečný výpočet",
+  "target": "def.nekonecne-eps-vypocty",
+  "score": 6
+ },
+ {
+  "node": "thm.dpda-vzdy-zastavi",
+  "field": "statement",
+  "text": "deterministický zásobníkový automat",
+  "target": "dfn.dpda",
+  "score": 6
+ },
+ {
+  "node": "thm.cfl-nie-je-dcfl",
+  "field": "statement",
+  "text": "bezkontextový jazyk",
+  "target": "dfn.bezkontextovy-jazyk",
+  "score": 6
+ },
+ {
+  "node": "thm.dcfl-regularny-prienik-zjednotenie",
+  "field": "proof.steps[0].why",
+  "text": "Súčinová konštrukcia",
+  "target": "alg.sucinova-konstrukcia",
+  "score": 6
+ },
+ {
+  "node": "dfn.zasobnikovy-prevodnik",
+  "field": "statement",
+  "text": "prechodová funkcia",
+  "target": "dfn.konecnostavovy-automat",
+  "score": 6
+ },
+ {
+  "node": "dfn.akceptovanie-lba",
+  "field": "explanation.detailed",
+  "text": "nekonečné výpočty",
+  "target": "def.nekonecne-eps-vypocty",
+  "score": 6
+ },
+ {
+  "node": "prob.lba-problem",
+  "field": "explanation.detailed",
+  "text": "bezkontextové jazyky",
+  "target": "dfn.bezkontextovy-jazyk",
+  "score": 6
+ },
+ {
+  "node": "dfn.rekurzivne-vycisliteny-jazyk",
+  "field": "explanation.pitfalls",
+  "text": "jazyka akceptuje",
+  "target": "dfn.jazyk-eps-akceptora",
+  "score": 6
+ },
+ {
+  "node": "def.ekvivalencia-rozklad",
+  "field": "explanation.detailed",
+  "text": "ekvivalenciu stavov",
+  "target": "dfn.ekvivalentne-stavy",
+  "score": 5
+ },
+ {
+  "node": "def.ekvivalencia-rozklad",
+  "field": "explanation.detailed",
+  "text": "ekvivalenciu stavov",
+  "target": "dfn.k-ekvivalentne-stavy",
+  "score": 5
+ },
+ {
+  "node": "def.dokaz-sporom",
+  "field": "explanation.examples",
+  "text": "akceptor pre",
+  "target": "ex.thompson-priklad",
+  "score": 5
+ },
+ {
+  "node": "def.strom",
+  "field": "explanation.detailed",
+  "text": "Derivačný strom",
+  "target": "dfn.derivacny-strom",
+  "score": 5
+ },
+ {
+  "node": "ex.gramatika-parny-pocet-nul",
+  "field": "explanation.detailed",
+  "text": "regulárna gramatika",
+  "target": "dfn.regularna-gramatika",
+  "score": 5
+ },
+ {
+  "node": "thm.lema-2-2-zretazenie",
+  "field": "explanation.detailed",
+  "text": "ekvivalencii stavov",
+  "target": "dfn.ekvivalentne-stavy",
+  "score": 5
+ },
+ {
+  "node": "thm.lema-2-2-zretazenie",
+  "field": "explanation.detailed",
+  "text": "ekvivalencii stavov",
+  "target": "dfn.k-ekvivalentne-stavy",
+  "score": 5
+ },
+ {
+  "node": "ex.neoptimalny-automat",
+  "field": "statement",
+  "text": "ekvivalentný automat",
+  "target": "dfn.ekvivalentne-automaty",
+  "score": 5
+ },
+ {
+  "node": "alg.odstranenie-nedosiahnutelnych",
+  "field": "proof.idea",
+  "text": "dosiahnuteľné stavy",
+  "target": "dfn.dosiahnutelny-stav",
+  "score": 5
+ },
+ {
+  "node": "dfn.ekvivalentne-stavy",
+  "field": "explanation.detailed",
+  "text": "Ekvivalencia stavov",
+  "target": "dfn.k-ekvivalentne-stavy",
+  "score": 5
+ },
+ {
+  "node": "dfn.rozklad-stavov",
+  "field": "explanation.intuition",
+  "text": "ekvivalentné stavy",
+  "target": "dfn.ekvivalentne-stavy",
+  "score": 5
+ },
+ {
+  "node": "alg.rozklad-ekvivalentnych-stavov",
+  "field": "explanation.detailed",
+  "text": "ekvivalentné stavy",
+  "target": "dfn.ekvivalentne-stavy",
+  "score": 5
+ },
+ {
+  "node": "alg.rozklad-ekvivalentnych-stavov",
+  "field": "explanation.detailed",
+  "text": "ekvivalentné stavy",
+  "target": "dfn.k-ekvivalentne-stavy",
+  "score": 5
+ },
+ {
+  "node": "thm.lema-5-2-zastavenie-rozkladu",
+  "field": "statement",
+  "text": "ekvivalentné stavy",
+  "target": "dfn.ekvivalentne-stavy",
+  "score": 5
+ },
+ {
+  "node": "thm.lema-5-3-korektnost-rozkladu",
+  "field": "explanation.detailed",
+  "text": "pomocným tvrdením",
+  "target": "thm.eps-cesta-kratka",
+  "score": 5
+ },
+ {
+  "node": "thm.veta-5-5-izomorfizmus",
+  "field": "statement",
+  "text": "ekvivalentné stavy",
+  "target": "dfn.ekvivalentne-stavy",
+  "score": 5
+ },
+ {
+  "node": "thm.veta-5-5-izomorfizmus",
+  "field": "statement",
+  "text": "ekvivalentné stavy",
+  "target": "dfn.k-ekvivalentne-stavy",
+  "score": 5
+ },
+ {
+  "node": "thm.dosledok-5-6-optimalnost",
+  "field": "statement",
+  "text": "ekvivalentné stavy",
+  "target": "dfn.ekvivalentne-stavy",
+  "score": 5
+ },
+ {
+  "node": "thm.dosledok-5-6-optimalnost",
+  "field": "statement",
+  "text": "ekvivalentné stavy",
+  "target": "dfn.k-ekvivalentne-stavy",
+  "score": 5
+ },
+ {
+  "node": "dfn.konecnostavovy-akceptor",
+  "field": "explanation.examples",
+  "text": "Akceptor pre",
+  "target": "ex.thompson-priklad",
+  "score": 5
+ },
+ {
+  "node": "alg.minimalizacia-akceptora",
+  "field": "explanation.examples",
+  "text": "Akceptor pre",
+  "target": "ex.thompson-priklad",
+  "score": 5
+ },
+ {
+  "node": "alg.minimalizacia-akceptora",
+  "field": "proof.idea",
+  "text": "ekvivalencia stavov",
+  "target": "dfn.ekvivalentne-stavy",
+  "score": 5
+ },
+ {
+  "node": "alg.minimalizacia-akceptora",
+  "field": "proof.idea",
+  "text": "ekvivalencia stavov",
+  "target": "dfn.k-ekvivalentne-stavy",
+  "score": 5
+ },
+ {
+  "node": "alg.sucinova-konstrukcia",
+  "field": "proof.idea",
+  "text": "Pomocné tvrdenie",
+  "target": "thm.eps-cesta-kratka",
+  "score": 5
+ },
+ {
+  "node": "thm.uzavretost-prienik",
+  "field": "explanation.detailed",
+  "text": "pomocné tvrdenie",
+  "target": "thm.eps-cesta-kratka",
+  "score": 5
+ },
+ {
+  "node": "thm.rozhodnutelnost-prazdnosti",
+  "field": "explanation.detailed",
+  "text": "dosiahnuteľné stavy",
+  "target": "dfn.dosiahnutelny-stav",
+  "score": 5
+ },
+ {
+  "node": "thm.rozhodnutelnost-inkluzie-rovnosti",
+  "field": "explanation.intuition",
+  "text": "regulárny jazyk",
+  "target": "dfn.regularny-jazyk",
+  "score": 5
+ },
+ {
+  "node": "thm.rozhodnutelnost-inkluzie-rovnosti",
+  "field": "proof.steps[0].text",
+  "text": "akceptor $M$ pre",
+  "target": "ex.thompson-priklad",
+  "score": 5
+ },
+ {
+  "node": "thm.veta-8-1-nfa-na-dfa",
+  "field": "explanation.detailed",
+  "text": "pomocným tvrdením",
+  "target": "thm.eps-cesta-kratka",
+  "score": 5
+ },
+ {
+  "node": "dfn.rozsirena-regularna-gramatika",
+  "field": "explanation.detailed",
+  "text": "regulárne jazyky",
+  "target": "dfn.regularny-jazyk",
+  "score": 5
+ },
+ {
+  "node": "thm.veta-10-1-dfa-na-gramatiku",
+  "field": "explanation.detailed",
+  "text": "Pomocné tvrdenie",
+  "target": "thm.eps-cesta-kratka",
+  "score": 5
+ },
+ {
+  "node": "alg.gramatika-na-eps-akceptor",
+  "field": "statement",
+  "text": "regulárnu gramatiku",
+  "target": "dfn.regularna-gramatika",
+  "score": 5
+ },
+ {
+  "node": "thm.veta-10-2-gramatika-na-eps-akceptor",
+  "field": "statement",
+  "text": "regulárna gramatika",
+  "target": "dfn.regularna-gramatika",
+  "score": 5
+ },
+ {
+  "node": "thm.veta-11-1-vyraz-na-eps-akceptor",
+  "field": "explanation.intuition",
+  "text": "regulárny jazyk",
+  "target": "dfn.regularny-jazyk",
+  "score": 5
+ },
+ {
+  "node": "def.konverzie-reprezentacii",
+  "field": "statement",
+  "text": "Regulárne jazyky",
+  "target": "dfn.regularny-jazyk",
+  "score": 5
+ },
+ {
+  "node": "def.konverzie-reprezentacii",
+  "field": "statement",
+  "text": "regulárna gramatika",
+  "target": "dfn.regularna-gramatika",
+  "score": 5
+ },
+ {
+  "node": "def.uzavretost-regularnych",
+  "field": "statement",
+  "text": "homomorfizmus",
+  "target": "dfn.homomorfizmus",
+  "score": 5
+ },
+ {
+  "node": "thm.uzavretost-zretazenie-iteracia",
+  "field": "proof.steps[2].text",
+  "text": "akceptor pre",
+  "target": "ex.thompson-priklad",
+  "score": 5
+ },
+ {
+  "node": "alg.konstrukcia-zretazenia-iteracie",
+  "field": "statement",
+  "text": "akceptor $M$ pre",
+  "target": "ex.thompson-priklad",
+  "score": 5
+ },
+ {
+  "node": "thm.uzavretost-zrkadlo",
+  "field": "proof.steps[0].text",
+  "text": "regulárny jazyk",
+  "target": "dfn.regularny-jazyk",
+  "score": 5
+ },
+ {
+  "node": "alg.konstrukcia-zrkadla",
+  "field": "statement",
+  "text": "akceptor $M^R$ pre",
+  "target": "ex.thompson-priklad",
+  "score": 5
+ },
+ {
+  "node": "ex.homomorfizmus-priklad",
+  "field": "statement",
+  "text": "Akceptor pre",
+  "target": "ex.thompson-priklad",
+  "score": 5
+ },
+ {
+  "node": "thm.veta-13-4-anbn-nie-je-regularny",
+  "field": "explanation.detailed",
+  "text": "regulárne jazyky",
+  "target": "dfn.regularny-jazyk",
+  "score": 5
+ },
+ {
+  "node": "thm.veta-13-4-anbn-nie-je-regularny",
+  "field": "proof.steps[1].text",
+  "text": "akceptor $M=(Q,\\Sigma,f,q_I,F)$. Pre",
+  "target": "ex.thompson-priklad",
+  "score": 5
+ },
+ {
+  "node": "thm.pda-prazdny-na-koncove",
+  "field": "proof.steps[1].text",
+  "text": "konfigurácie",
+  "target": "dfn.konfiguracia-pda",
+  "score": 5
+ },
+ {
+  "node": "dfn.dpda",
+  "field": "statement",
+  "text": "else“ $\\varepsilon$-prechod",
+  "target": "def.else-eps-prechod",
+  "score": 5
+ },
+ {
+  "node": "dfn.lave-odvodenie",
+  "field": "explanation.detailed",
+  "text": "derivačný strom",
+  "target": "dfn.derivacny-strom",
+  "score": 5
+ },
+ {
+  "node": "alg.hladanie-nullable",
+  "field": "proof.idea",
+  "text": "derivačný strom",
+  "target": "dfn.derivacny-strom",
+  "score": 5
+ },
+ {
+  "node": "dfn.chomskeho-normalny-tvar",
+  "field": "explanation.detailed",
+  "text": "Derivačný strom",
+  "target": "dfn.derivacny-strom",
+  "score": 5
+ },
+ {
+  "node": "ex.cnf-aritmeticke-vyrazy",
+  "field": "statement",
+  "text": "derivačný strom",
+  "target": "dfn.derivacny-strom",
+  "score": 5
+ },
+ {
+  "node": "alg.pda-z-gramatiky",
+  "field": "explanation.detailed",
+  "text": "ľavému odvodeniu",
+  "target": "dfn.lave-odvodenie",
+  "score": 5
+ },
+ {
+  "node": "thm.bezgram-na-pda",
+  "field": "proof.steps[3].text",
+  "text": "konfigurácii",
+  "target": "dfn.konfiguracia-pda",
+  "score": 5
+ },
+ {
+  "node": "thm.pda-na-bezgram",
+  "field": "proof.steps[1].text",
+  "text": "Pomocné tvrdenie",
+  "target": "thm.eps-cesta-kratka",
+  "score": 5
+ },
+ {
+  "node": "thm.anbn-dcfl-nie-regularny",
+  "field": "proof.steps[1].text",
+  "text": "akceptor $M=(Q,\\Sigma,f,q_I,F)$ pre",
+  "target": "ex.thompson-priklad",
+  "score": 5
+ },
+ {
+  "node": "def.vyska-binarneho-stromu",
+  "field": "explanation.detailed",
+  "text": "derivačný strom",
+  "target": "dfn.derivacny-strom",
+  "score": 5
+ },
+ {
+  "node": "thm.pumping-lema-bezkontextove",
+  "field": "explanation.pitfalls",
+  "text": "dôkaze sporom",
+  "target": "def.dokaz-sporom",
+  "score": 5
+ },
+ {
+  "node": "thm.cfl-nie-uzavrete-doplnok",
+  "field": "explanation.detailed",
+  "text": "Gramatika pre",
+  "target": "ex.gramatika-anbn",
+  "score": 5
+ },
+ {
+  "node": "alg.sucin-pda-dfa",
+  "field": "statement",
+  "text": "akceptor $M_2=(Q_2,\\Sigma,f_2,q_{I,2},F_2)$ pre",
+  "target": "ex.thompson-priklad",
+  "score": 5
+ },
+ {
+  "node": "thm.cfl-regularny-prienik",
+  "field": "proof.steps[0].text",
+  "text": "akceptor pre",
+  "target": "ex.thompson-priklad",
+  "score": 5
+ },
+ {
+  "node": "thm.cfl-regularny-prienik",
+  "field": "proof.steps[1].text",
+  "text": "Konfigurácia",
+  "target": "dfn.konfiguracia-pda",
+  "score": 5
+ },
+ {
+  "node": "def.prehlad-uzavretosti-cfl",
+  "field": "statement",
+  "text": "Uzavretosť",
+  "target": "def.uzavretost",
+  "score": 5
+ },
+ {
+  "node": "def.nekonecne-eps-vypocty",
+  "field": "explanation.detailed",
+  "text": "konfigurácie",
+  "target": "dfn.konfiguracia-pda",
+  "score": 5
+ },
+ {
+  "node": "dfn.funkcia-h",
+  "field": "statement",
+  "text": "konfigurácie",
+  "target": "dfn.konfiguracia-pda",
+  "score": 5
+ },
+ {
+  "node": "alg.vypocet-tabulky-h",
+  "field": "statement",
+  "text": "konfigurácie",
+  "target": "dfn.konfiguracia-pda",
+  "score": 5
+ },
+ {
+  "node": "thm.cfl-nie-je-dcfl",
+  "field": "explanation.detailed",
+  "text": "uzavretosť",
+  "target": "def.uzavretost",
+  "score": 5
+ },
+ {
+  "node": "thm.dcfl-nie-uzavrete-zjednotenie",
+  "field": "proof.steps[0].why",
+  "text": "Uzavretosť",
+  "target": "def.uzavretost",
+  "score": 5
+ },
+ {
+  "node": "thm.dcfl-regularny-prienik-zjednotenie",
+  "field": "statement",
+  "text": "regulárny jazyk",
+  "target": "dfn.regularny-jazyk",
+  "score": 5
+ },
+ {
+  "node": "def.prehlad-uzavretosti-dcfl",
+  "field": "statement",
+  "text": "Uzavretosť",
+  "target": "def.uzavretost",
+  "score": 5
+ },
+ {
+  "node": "ex.preklad-do-postfix",
+  "field": "statement",
+  "text": "DPDA pre",
+  "target": "ex.dpda-anbn",
+  "score": 5
+ },
+ {
+  "node": "thm.lba-na-kontextovu",
+  "field": "statement",
+  "text": "Turingov stroj",
+  "target": "dfn.turingov-stroj",
+  "score": 5
+ },
+ {
+  "node": "thm.kontextova-na-lba",
+  "field": "statement",
+  "text": "Turingov stroj",
+  "target": "dfn.turingov-stroj",
+  "score": 5
+ },
+ {
+  "node": "thm.kontextova-na-lba",
+  "field": "explanation.intuition",
+  "text": "Kontextové jazyky",
+  "target": "dfn.kontextovy-jazyk",
+  "score": 5
+ },
+ {
+  "node": "dfn.kontextovy-jazyk",
+  "field": "explanation.detailed",
+  "text": "otvorený problém",
+  "target": "prob.lba-problem",
+  "score": 5
+ },
+ {
+  "node": "thm.lba-kratky-vypocet",
+  "field": "explanation.intuition",
+  "text": "konfigurácií",
+  "target": "dfn.konfiguracia-pda",
+  "score": 5
+ },
+ {
+  "node": "thm.lba-vzdy-zastavi",
+  "field": "statement",
+  "text": "Turingov stroj",
+  "target": "dfn.turingov-stroj",
+  "score": 5
+ },
+ {
+  "node": "thm.lba-vzdy-zastavi",
+  "field": "explanation.detailed",
+  "text": "konfigurácií",
+  "target": "dfn.konfiguracia-pda",
+  "score": 5
+ },
+ {
+  "node": "thm.dcsl-uzavrete-doplnok",
+  "field": "statement",
+  "text": "Turingov stroj",
+  "target": "dfn.turingov-stroj",
+  "score": 5
+ },
+ {
+  "node": "thm.dcsl-uzavrete-doplnok",
+  "field": "statement",
+  "text": "LBA $M''$ pre",
+  "target": "ex.lba-anbncn",
+  "score": 5
+ },
+ {
+  "node": "thm.csl-uzavrete-doplnok",
+  "field": "statement",
+  "text": "LBA $M''$ pre",
+  "target": "ex.lba-anbncn",
+  "score": 5
+ },
+ {
+  "node": "thm.csl-uzavrete-doplnok",
+  "field": "explanation.detailed",
+  "text": "konfigurácií",
+  "target": "dfn.konfiguracia-pda",
+  "score": 5
+ },
+ {
+  "node": "thm.csl-uzavrete-prienik-zjednotenie",
+  "field": "statement",
+  "text": "kontextové) jazyky",
+  "target": "dfn.kontextovy-jazyk",
+  "score": 5
+ },
+ {
+  "node": "thm.csl-uzavrete-zretazenie-iteracia-zrkadlo",
+  "field": "statement",
+  "text": "kontextové) jazyky",
+  "target": "dfn.kontextovy-jazyk",
+  "score": 5
+ },
+ {
+  "node": "thm.csl-uzavrete-zretazenie-iteracia-zrkadlo",
+  "field": "explanation.detailed",
+  "text": "frázové gramatiky",
+  "target": "dfn.frazova-gramatika",
+  "score": 5
+ },
+ {
+  "node": "thm.csl-uzavrete-zretazenie-iteracia-zrkadlo",
+  "field": "proof.steps[0].text",
+  "text": "gramatika pre",
+  "target": "ex.gramatika-anbn",
+  "score": 5
+ },
+ {
+  "node": "def.prehlad-uzavretosti-csl",
+  "field": "statement",
+  "text": "Uzavretosť",
+  "target": "def.uzavretost",
+  "score": 5
+ },
+ {
+  "node": "thm.frazova-na-dts",
+  "field": "statement",
+  "text": "Turingov stroj",
+  "target": "dfn.turingov-stroj",
+  "score": 5
+ },
+ {
+  "node": "dfn.rekurzivne-vycisliteny-jazyk",
+  "field": "statement",
+  "text": "Frázové gramatiky",
+  "target": "dfn.frazova-gramatika",
+  "score": 5
+ },
+ {
+  "node": "def.prehlad-uzavretosti-vsetkych",
+  "field": "statement",
+  "text": "Uzavretosť",
+  "target": "def.uzavretost",
+  "score": 5
+ },
+ {
+  "node": "thm.veta-5-5-izomorfizmus",
+  "field": "explanation.intuition",
+  "text": "Minimálny",
+  "target": "dfn.minimalny-automat",
+  "score": 4
+ },
+ {
+  "node": "alg.minimalizacia-akceptora",
+  "field": "explanation.detailed",
+  "text": "minimálny",
+  "target": "dfn.minimalny-automat",
+  "score": 4
+ },
+ {
+  "node": "thm.rozhodnutelnost-inkluzie-rovnosti",
+  "field": "explanation.detailed",
+  "text": "minimálne",
+  "target": "dfn.minimalny-automat",
+  "score": 4
+ },
+ {
+  "node": "thm.veta-12-2-ardenovo-lemma",
+  "field": "explanation.detailed",
+  "text": "minimálne",
+  "target": "dfn.minimalny-automat",
+  "score": 4
+ },
+ {
+  "node": "alg.riesenie-sustavy-rovnic",
+  "field": "proof.idea",
+  "text": "minimálne",
+  "target": "dfn.minimalny-automat",
+  "score": 4
+ },
+ {
+  "node": "thm.veta-12-3-dfa-na-vyraz",
+  "field": "explanation.detailed",
+  "text": "minimálne",
+  "target": "dfn.minimalny-automat",
+  "score": 4
+ }
+]

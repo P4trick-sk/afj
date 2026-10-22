@@ -1,0 +1,841 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "nedosiahnutelne",
+  "title": "Redukcia automatov I: nedosiahnuteľné stavy",
+  "course": "A",
+  "order": 3,
+  "sourceFiles": [
+   "Afja03_redukcia_nedos_P.pdf"
+  ],
+  "summary": "Dva automaty sú ekvivalentné, ak na každom vstupe vydávajú ten istý výstup; automat je minimálny, ak nemá menší ekvivalent. Prvým krokom zmenšovania je odstránenie stavov, do ktorých sa zo začiatku nedá dostať.",
+  "overview": "Prednáška otvára trojdielnu tému redukcie automatov. Definujeme ekvivalenciu automatov a minimálny automat, a potom prvý zjednodušujúci krok: nedosiahnuteľné stavy možno odstrániť bez zmeny správania. Dosiahnuteľné stavy sa hľadajú postupnou iteráciou množín $Q_0\\subseteq Q_1\\subseteq\\dots$ zo štartovacieho stavu. Ďalší krok (odstránenie ekvivalentných stavov) je v prednáške 4 a dôkaz optimality vo 5.",
+  "keyQuestions": [
+   "Kedy sú dva automaty ekvivalentné a čo je minimálny automat?",
+   "Ako nájdeme všetky dosiahnuteľné stavy?",
+   "Prečo odstránenie nedosiahnuteľných stavov nezmení správanie automatu?"
+  ],
+  "prerequisites": [
+   "automaty-vystup"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "dfn.ekvivalentne-automaty",
+   "type": "definition",
+   "topic": "nedosiahnutelne",
+   "title": "Ekvivalentné automaty",
+   "terms": [
+    {
+     "term": "ekvivalentné automaty",
+     "alt": "equivalent automata"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja03_redukcia_nedos_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "Dva [automaty](dfn.konecnostavovy-automat) $M_1=(Q_1,\\Sigma_1,\\Delta_1,q_{I,1},f_1,g_1)$ a $M_2=(Q_2,\\Sigma_2,\\Delta_2,q_{I,2},f_2,g_2)$ sú **ekvivalentné**, ak $\\Sigma_1=\\Sigma_2=\\Sigma$, $\\Delta_1=\\Delta_2=\\Delta$ a platí $g^*_1(q_{I,1},\\omega)=g^*_2(q_{I,2},\\omega)$ pre každé $\\omega\\in\\Sigma^*$.",
+   "explanation": {
+    "intuition": "Zvonka sa dva ekvivalentné automaty nedajú rozlíšiť: na rovnaký vstup odpovedajú rovnakým výstupom.",
+    "detailed": "Ekvivalencia sa týka iba pozorovateľného správania (vstup $\\to$ výstup), nie vnútornej štruktúry. Dva ekvivalentné automaty môžu mať rôzny počet stavov; cieľom redukcie je nájsť z nich ten najmenší.",
+    "pitfalls": [
+     "Ekvivalentné automaty musia mať rovnaké vstupné aj výstupné abecedy."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.konecnostavovy-automat",
+    "dfn.rozsirene-funkcie"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.minimalny-automat",
+   "type": "definition",
+   "topic": "nedosiahnutelne",
+   "title": "Minimálny (optimálny) automat",
+   "terms": [
+    {
+     "term": "minimálny automat",
+     "alt": "minimal automaton"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja03_redukcia_nedos_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "[Automat](dfn.konecnostavovy-automat) $M=(Q,\\Sigma,\\Delta,q_I,f,g)$ je **minimálny** (optimálny), ak s ním nie je [ekvivalentný](dfn.ekvivalentne-automaty) žiadny automat, ktorý má menej ako $|Q|$ stavov.",
+   "explanation": {
+    "intuition": "Minimálny automat je taký, ktorý sa už nedá zmenšiť bez zmeny správania.",
+    "detailed": "Minimálnosť sa týka počtu stavov, nie počtu prechodov. V prednáške 5 dokážeme, že automat bez nedosiahnuteľných a [ekvivalentných stavov](dfn.ekvivalentne-stavy) je minimálny a že minimálny automat je až na izomorfizmus jediný.",
+    "pitfalls": [
+     "Automat môže mať viacero minimálnych ekvivalentov, ak ich nepočítame až na izomorfizmus (premenovanie stavov)."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.ekvivalentne-automaty",
+    "dfn.konecnostavovy-automat"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.ekvivalentne-stavy"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.neoptimalny-automat",
+   "type": "example",
+   "topic": "nedosiahnutelne",
+   "title": "Neoptimálny automat M1 a jeho trojstavový ekvivalent M2",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja03_redukcia_nedos_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "Automat $M_1$ s ôsmimi stavmi $A,\\dots,H$ nie je optimálny: stavy $G,H$ sú nedosiahnuteľné a medzi dosiahnuteľnými ($A,B,C,D,E,F$) sú niektoré ekvivalentné. Nahradí ho [ekvivalentný automat](dfn.ekvivalentne-automaty) $M_2$ iba s tromi stavmi $A,C,F$. $M_2$ už je optimálny: ekvivalentný dvojstavový automat neexistuje.",
+   "explanation": {
+    "intuition": "Nadbytočné stavy sa dajú buď nikdy nenavštíviť (nedosiahnuteľné), alebo spojiť s iným (ekvivalentné).",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "dfn.minimalny-automat"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.ekvivalentne-automaty"
+    }
+   ],
+   "figures": [
+    "fig.m1-dosiahnutelnost"
+   ],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Obrázky automatov $M_1$ a $M_2$ sú zo slajdu nečitateľné; prechody sú zrekonštruované tak, aby súhlasili s množinami $Q_0$–$Q_3$ (slajd 6) a s triedami ekvivalencie z prednášky 4 (slajd 13). Správanie $M_1$ a $M_2$ je overené porovnaním výstupov na všetkých slovách do dĺžky 10."
+    ]
+   }
+  },
+  {
+   "id": "dfn.dosiahnutelny-stav",
+   "type": "definition",
+   "topic": "nedosiahnutelne",
+   "title": "Dosiahnuteľný stav",
+   "terms": [
+    {
+     "term": "dosiahnuteľný stav",
+     "alt": "reachable state"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja03_redukcia_nedos_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "Stav $q\\in Q$ je v [automate](dfn.konecnostavovy-automat) $M$ **dosiahnuteľný**, ak existuje $\\omega\\in\\Sigma^*$ také, že $f^*(q_I,\\omega)=q$.",
+   "explanation": {
+    "intuition": "Stav je dosiahnuteľný, ak existuje vstup, ktorý automat do neho zavedie zo štartu.",
+    "detailed": "V stavovom diagrame ide o vrcholy, do ktorých vedie orientovaná cesta z počiatočného stavu. Nedosiahnuteľný stav sa nikdy nepoužije pri výpočte, preto ho možno vynechať.",
+    "pitfalls": [
+     "Počiatočný stav je vždy dosiahnuteľný (slovom $\\varepsilon$)."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.rozsirene-funkcie",
+    "dfn.konecnostavovy-automat"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.lema-3-1-nasledovnik",
+   "type": "theorem",
+   "topic": "nedosiahnutelne",
+   "title": "Lema 3.1: nasledovník dosiahnuteľného stavu je dosiahnuteľný",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja03_redukcia_nedos_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "Pre každé $q\\in Q$ a $a\\in\\Sigma$ platí: ak je $q$ [dosiahnuteľný](dfn.dosiahnutelny-stav) stav v $M$, tak aj $q'=f(q,a)$ je dosiahnuteľný.",
+   "explanation": {
+    "intuition": "Z [dosiahnuteľného stavu](dfn.dosiahnutelny-stav) sa jedným krokom dostaneme iba do ďalšieho dosiahnuteľného.",
+    "detailed": "Lema je dôvodom, že po odstránení ne[dosiahnuteľných stavov](dfn.dosiahnutelny-stav) ostane [prechodová funkcia](dfn.konecnostavovy-automat) dobre definovaná: žiadna hrana z ponechaného stavu nevedie do odstráneného.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Nech $f^*(q_I,\\omega)=q$. Slovo $\\omega'=\\omega a$ zavedie $M$ z $q_I$ do stavu $f^*(q_I,\\omega a)=f(f^*(q_I,\\omega),a)=f(q,a)=q'$.",
+      "why": "Použijeme definíciu $f^*$ pre slovo s posledným symbolom $a$.",
+      "uses": [
+       "dfn.rozsirene-funkcie"
+      ]
+     },
+     {
+      "text": "Teda $q'$ je dosiahnuteľný slovom $\\omega a$. (Počiatočný stav je dosiahnuteľný slovom $\\varepsilon$, lebo $f^*(q_I,\\varepsilon)=q_I$.)",
+      "why": "Existuje slovo, ktoré vedie z $q_I$ do $q'$.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.dosiahnutelny-stav",
+    "thm.lema-2-2-zretazenie",
+    "dfn.konecnostavovy-automat"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.dosiahnutelne-stavy",
+   "type": "algorithm",
+   "topic": "nedosiahnutelne",
+   "title": "Hľadanie dosiahnuteľných stavov",
+   "terms": [
+    {
+     "term": "hľadanie dosiahnuteľných stavov",
+     "alt": "reachability search"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja03_redukcia_nedos_P.pdf",
+     "page": 5
+    }
+   ],
+   "statement": "$Q_0:=\\{q_I\\}$, $Q_{i+1}:=Q_i\\cup\\{f(q,a):q\\in Q_i,a\\in\\Sigma\\}$, až kým nenastane $Q_{i+1}=Q_i$. Potom $Q'=Q_i$ je množina [dosiahnuteľných stavov](dfn.dosiahnutelny-stav).",
+   "explanation": {
+    "intuition": "Šírime sa zo štartu vrstva po vrstve a zastavíme sa, keď už nič nepribúda.",
+    "detailed": "Postupnosť množín $Q_0\\subseteq Q_1\\subseteq\\dots\\subseteq Q$ je rastúca a ohraničená $|Q|$, preto sa po najviac $|Q|-1$ krokoch ustáli. $Q_i$ obsahuje práve stavy dosiahnuteľné [slovom](dfn.slovo) dĺžky najviac $i$. Algoritmus je prehľadávanie grafu do šírky.",
+    "pitfalls": [
+     "Zastavovacia podmienka je $Q_{i+1}=Q_i$, nie prázdna množina nových stavov v jednej vrstve."
+    ],
+    "examples": [
+     "Pre $M_1$: $Q_0=\\{A\\}$, $Q_1=\\{A,B,D\\}$, $Q_2=\\{A,B,C,D,E,F\\}=Q_3$."
+    ]
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Indukciou podľa $i$: $Q_i$ je množina stavov dosiahnuteľných slovom dĺžky najviac $i$. Báza: $Q_0=\\{q_I\\}$. Krok: stav dosiahnuteľný slovom $\\omega a$ je $f(q,a)$ pre $q=f^*(q_I,\\omega)\\in Q_i$. Po ustálení $Q_{i+1}=Q_i$ je množina uzavretá na nasledovníkov, takže každý dosiahnuteľný stav je v nej (Lema 3.1). Zastavenie plynie z toho, že $Q_i\\subseteq Q$ je rastúca.",
+    "steps": []
+   },
+   "uses": [
+    "dfn.dosiahnutelny-stav",
+    "dfn.slovo"
+   ],
+   "relations": [
+    {
+     "type": "analogue",
+     "target": "alg.odstranenie-nedosiahnutelnych",
+     "note": "využíva jeho výstup"
+    }
+   ],
+   "figures": [
+    "fig.m1-dosiahnutelnost",
+    "fig.m1-iteracia"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.odstranenie-nedosiahnutelnych",
+   "type": "algorithm",
+   "topic": "nedosiahnutelne",
+   "title": "Odstránenie nedosiahnuteľných stavov",
+   "terms": [
+    {
+     "term": "odstránenie nedosiahnuteľných stavov",
+     "alt": "removal of unreachable states"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja03_redukcia_nedos_P.pdf",
+     "page": 5
+    }
+   ],
+   "statement": "Pôvodný automat $M=(Q,\\Sigma,\\Delta,q_I,f,g)$ nahradíme automatom $M'=(Q',\\Sigma,\\Delta,q_I,f',g')$, kde $Q'$ je množina [dosiahnuteľných stavov](alg.dosiahnutelne-stavy) v $M$ a $f',g'$ sú zúženia $f,g$ na $Q'\\times\\Sigma$, t.j. $f'(q,a)=f(q,a)$ a $g'(q,a)=g(q,a)$ pre $q\\in Q'$, $a\\in\\Sigma$.",
+   "explanation": {
+    "intuition": "Zahodíme stavy, do ktorých sa zo štartu nikdy nedostaneme, a hrany z nich.",
+    "detailed": "Zúženie je dobre definované vďaka Leme 3.1: nasledovník stavu z $Q'$ leží v $Q'$. Správanie sa nemení, lebo výpočty z $q_I$ nikdy neopustia $Q'$, takže $g'^*(q_I,\\omega)=g^*(q_I,\\omega)$.",
+    "pitfalls": [
+     "Odstrániť treba aj všetky hrany vychádzajúce z nedosiahnuteľných stavov."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Pre každé $\\omega$ prebieha výpočet $M$ z $q_I$ iba cez dosiahnuteľné stavy, na ktorých sa $f',g'$ zhodujú s $f,g$. Indukciou podľa $|\\omega|$ platí $f'^*(q_I,\\omega)=f^*(q_I,\\omega)\\in Q'$ a $g'^*(q_I,\\omega)=g^*(q_I,\\omega)$, takže $M'$ je ekvivalentný s $M$.",
+    "steps": []
+   },
+   "uses": [
+    "alg.dosiahnutelne-stavy",
+    "thm.lema-3-1-nasledovnik",
+    "dfn.ekvivalentne-automaty"
+   ],
+   "relations": [
+    {
+     "type": "implies",
+     "target": "dfn.ekvivalentne-automaty",
+     "note": "výsledný automat je ekvivalentný s pôvodným"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.odstranenie-nedosiahnutelnych",
+   "type": "example",
+   "topic": "nedosiahnutelne",
+   "title": "Odstránenie nedosiahnuteľných stavov z M1",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja03_redukcia_nedos_P.pdf",
+     "page": 6
+    }
+   ],
+   "statement": "Pre automat $M_1$: $Q_0=\\{A\\}$, $Q_1=\\{A,B,D\\}$, $Q_2=\\{A,B,C,D,E,F\\}$, $Q_3=Q_2$, takže $Q'=\\{A,B,C,D,E,F\\}$. Stavy $G,H$ s ich hranami sa odstránia a vznikne automat $M'$.",
+   "explanation": {
+    "intuition": "Z $A$ sa dostaneme do $B,D$; z nich do $E,C,F$; potom už nič nové.",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "alg.odstranenie-nedosiahnutelnych"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Na slajde 6 je $Q_2$ zapísané so zdvojenými prvkami (nasledovníci $B,D$ po jednom); rovnaký výsledok dáva rekonštruovaný automat $M_1$."
+    ]
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.m1-dosiahnutelnost",
+   "title": "Automat M1 (G a H sú nedosiahnuteľné)",
+   "caption": "Zrekonštruovaný automat $M_1$. Animácia ukazuje množiny $Q_0,Q_1,Q_2$.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.neoptimalny-automat",
+    "alg.dosiahnutelne-stavy"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "A",
+     "x": 0,
+     "y": 90,
+     "label": "▸ A"
+    },
+    {
+     "id": "B",
+     "x": 150,
+     "y": 10,
+     "label": "B"
+    },
+    {
+     "id": "D",
+     "x": 150,
+     "y": 170,
+     "label": "D"
+    },
+    {
+     "id": "E",
+     "x": 300,
+     "y": 10,
+     "label": "E"
+    },
+    {
+     "id": "C",
+     "x": 300,
+     "y": 90,
+     "label": "C"
+    },
+    {
+     "id": "F",
+     "x": 300,
+     "y": 170,
+     "label": "F"
+    },
+    {
+     "id": "G",
+     "x": 450,
+     "y": 40,
+     "label": "G"
+    },
+    {
+     "id": "H",
+     "x": 450,
+     "y": 140,
+     "label": "H"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "A",
+     "target": "B",
+     "label": "a/b",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "A",
+     "target": "D",
+     "label": "b/b",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "B",
+     "target": "E",
+     "label": "a/b",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "B",
+     "target": "C",
+     "label": "b/b",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "C",
+     "target": "D",
+     "label": "a/a",
+     "directed": true
+    },
+    {
+     "id": "e5",
+     "source": "C",
+     "target": "F",
+     "label": "b/a",
+     "directed": true
+    },
+    {
+     "id": "e6",
+     "source": "D",
+     "target": "C",
+     "label": "a/a",
+     "directed": true
+    },
+    {
+     "id": "e7",
+     "source": "D",
+     "target": "F",
+     "label": "b/a",
+     "directed": true
+    },
+    {
+     "id": "e8",
+     "source": "E",
+     "target": "A",
+     "label": "a/b",
+     "directed": true
+    },
+    {
+     "id": "e9",
+     "source": "E",
+     "target": "C",
+     "label": "b/b",
+     "directed": true
+    },
+    {
+     "id": "e10",
+     "source": "F",
+     "target": "C",
+     "label": "a/b",
+     "directed": true
+    },
+    {
+     "id": "e11",
+     "source": "F",
+     "target": "D",
+     "label": "b/b",
+     "directed": true
+    },
+    {
+     "id": "e12",
+     "source": "G",
+     "target": "H",
+     "label": "a/a",
+     "directed": true
+    },
+    {
+     "id": "e13",
+     "source": "G",
+     "target": "A",
+     "label": "b/a",
+     "directed": true
+    },
+    {
+     "id": "e14",
+     "source": "H",
+     "target": "G",
+     "label": "a/a",
+     "directed": true
+    },
+    {
+     "id": "e15",
+     "source": "H",
+     "target": "F",
+     "label": "b/a",
+     "directed": true
+    }
+   ],
+   "animations": [
+    {
+     "title": "Hľadanie dosiahnuteľných stavov",
+     "steps": [
+      {
+       "caption": "Q0 = {A}",
+       "highlight": [
+        "A"
+       ]
+      },
+      {
+       "caption": "Q1 = {A, B, D}: z A vedú hrany do B a D.",
+       "highlight": [
+        "A",
+        "B",
+        "D",
+        "e0",
+        "e1"
+       ]
+      },
+      {
+       "caption": "Q2 = {A,B,C,D,E,F}: z B do E, C a z D do C, F.",
+       "highlight": [
+        "B",
+        "D",
+        "E",
+        "C",
+        "F",
+        "e2",
+        "e3",
+        "e6",
+        "e7"
+       ]
+      },
+      {
+       "caption": "Q3 = Q2, algoritmus končí. G a H zostávajú nedosiahnuteľné.",
+       "highlight": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fig.m1-iteracia",
+   "title": "Iterácia hľadania dosiahnuteľných stavov",
+   "caption": "Slajd 6, overené výpočtom.",
+   "origin": "slides",
+   "illustrates": [
+    "alg.dosiahnutelne-stavy"
+   ],
+   "sources": [
+    {
+     "file": "Afja03_redukcia_nedos_P.pdf",
+     "page": 6
+    }
+   ],
+   "kind": "table",
+   "columns": [
+    "i",
+    "$Q_i$"
+   ],
+   "rows": [
+    [
+     "0",
+     "$\\{A\\}$"
+    ],
+    [
+     "1",
+     "$\\{A,B,D\\}$"
+    ],
+    [
+     "2",
+     "$\\{A,B,C,D,E,F\\}$"
+    ],
+    [
+     "3",
+     "$\\{A,B,C,D,E,F\\}$ (zhoda, koniec)"
+    ]
+   ]
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.mrtvy-kod",
+   "title": "Odstraňovanie nedosiahnuteľných častí v kompilátoroch",
+   "summary": "Nedosiahnuteľné stavy ako mŕtvy kód.",
+   "scenario": "Generátor lexikálnych analyzátorov alebo prekladač vytvára veľký stavový automat, z ktorého sa nikdy nedostane do niektorých stavov.",
+   "modelling": "Stavy sú vrcholy grafu, hrany sú prechody a počiatočný stav je koreň prehľadávania.",
+   "solution": "Prehľadávanie do šírky nájde dosiahnuteľné stavy v čase lineárnom od počtu stavov a prechodov; zvyšok sa zahodí, čím sa zmenší pamäť aj tabuľky.",
+   "connects": [
+    "alg.dosiahnutelne-stavy",
+    "alg.odstranenie-nedosiahnutelnych"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.navrh-obvodov",
+   "title": "Úspora hardvéru pri návrhu obvodov",
+   "summary": "Menej stavov znamená menej klopných obvodov.",
+   "scenario": "Konečný automat sa implementuje v obvode, kde počet stavov určuje počet bitov stavového registra.",
+   "modelling": "Stav kódujeme $\\lceil\\log_2|Q|\\rceil$ bitmi; zmenšením $|Q|$ šetríme plochu a energiu.",
+   "solution": "Odstránenie nedosiahnuteľných (a neskôr ekvivalentných) stavov zachová správanie a zmenší obvod.",
+   "connects": [
+    "dfn.minimalny-automat",
+    "alg.odstranenie-nedosiahnutelnych"
+   ],
+   "figures": [],
+   "tags": [
+    "hardvér"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.verifikacia-protokolov",
+   "title": "Zjednodušenie modelov protokolov",
+   "summary": "Model protokolu často obsahuje stavy, ktoré v praxi nenastanú.",
+   "scenario": "Pri verifikácii protokolov sa počet stavov modelu priamo prejaví na čase kontroly.",
+   "modelling": "Protokol je automat; nedosiahnuteľné stavy sú konfigurácie, do ktorých sa zo štartovacej nedá dostať.",
+   "solution": "Po odstránení nedosiahnuteľných stavov je model menší a pritom ekvivalentný, takže overenie je rýchlejšie.",
+   "connects": [
+    "alg.dosiahnutelne-stavy",
+    "dfn.ekvivalentne-automaty"
+   ],
+   "figures": [],
+   "tags": [
+    "verifikácia"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.ned-1",
+   "kind": "truefalse",
+   "prompt": "Počiatočný stav je vždy dosiahnuteľný.",
+   "answer": true,
+   "explanation": "Je dosiahnuteľný slovom $\\varepsilon$, lebo $f^*(q_I,\\varepsilon)=q_I$.",
+   "about": [
+    "dfn.dosiahnutelny-stav"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ned-2",
+   "kind": "mcq",
+   "prompt": "Kedy sa algoritmus hľadania dosiahnuteľných stavov zastaví?",
+   "options": [
+    "keď $Q_i=Q$",
+    "keď $Q_{i+1}=Q_i$",
+    "keď $Q_i=\\emptyset$",
+    "po $|\\Sigma|$ krokoch"
+   ],
+   "answer": 1,
+   "explanation": "Ak už nepribudol žiaden stav, ďalšie iterácie nič nezmenia.",
+   "about": [
+    "alg.dosiahnutelne-stavy"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ned-3",
+   "kind": "mcq",
+   "prompt": "Koľko stavov je dosiahnuteľných v $M_1$ (ôsmich stavov $A$–$H$)?",
+   "options": [
+    "8",
+    "6",
+    "3",
+    "2"
+   ],
+   "answer": 1,
+   "explanation": "Dosiahnuteľné sú $A,B,C,D,E,F$; $G$ a $H$ nie.",
+   "about": [
+    "ex.odstranenie-nedosiahnutelnych"
+   ],
+   "difficulty": 1,
+   "check": {
+    "verifier": "expr",
+    "expr": "3+3"
+   }
+  },
+  {
+   "id": "quiz.ned-4",
+   "kind": "flashcard",
+   "prompt": "Kedy sú dva automaty ekvivalentné?",
+   "answer": "Keď majú rovnaké vstupné aj výstupné abecedy a $g_1^*(q_{I,1},\\omega)=g_2^*(q_{I,2},\\omega)$ pre každé $\\omega\\in\\Sigma^*$.",
+   "explanation": "Porovnáva sa výstup na všetkých vstupoch.",
+   "about": [
+    "dfn.ekvivalentne-automaty"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ned-5",
+   "kind": "truefalse",
+   "prompt": "Dva ekvivalentné automaty musia mať rovnaký počet stavov.",
+   "answer": false,
+   "explanation": "Napríklad $M_1$ (8 stavov) a $M_2$ (3 stavy) sú ekvivalentné.",
+   "about": [
+    "dfn.ekvivalentne-automaty",
+    "ex.neoptimalny-automat"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ned-6",
+   "kind": "mcq",
+   "prompt": "Prečo je zúženie $f'$ na $Q'$ dobre definované?",
+   "options": [
+    "Lebo $Q'=Q$",
+    "Lebo nasledovník dosiahnuteľného stavu je dosiahnuteľný",
+    "Lebo $\\Sigma$ je konečná",
+    "Lebo $g$ je totálna"
+   ],
+   "answer": 1,
+   "explanation": "Lema 3.1.",
+   "about": [
+    "thm.lema-3-1-nasledovnik"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.ned-7",
+   "kind": "open",
+   "prompt": "Dokážte Lemu 3.1.",
+   "answer": "Ak $f^*(q_I,\\omega)=q$, tak $f^*(q_I,\\omega a)=f(q,a)$, teda $f(q,a)$ je dosiahnuteľný slovom $\\omega a$.",
+   "explanation": "Pridajte symbol $a$ k slovu, ktoré vedie do $q$.",
+   "about": [
+    "thm.lema-3-1-nasledovnik"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.ned-8",
+   "kind": "mcq",
+   "prompt": "Čo znamená, že je automat minimálny?",
+   "options": [
+    "nemá nedosiahnuteľné stavy",
+    "nie je s ním ekvivalentný žiadny automat s menej stavmi",
+    "má jeden stav",
+    "nemá cykly"
+   ],
+   "answer": 1,
+   "explanation": "Minimálnosť je o počte stavov medzi ekvivalentnými automatmi.",
+   "about": [
+    "dfn.minimalny-automat"
+   ],
+   "difficulty": 1
+  }
+ ]
+}

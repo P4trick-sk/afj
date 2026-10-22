@@ -1,0 +1,1020 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "rekurzivne-oc",
+  "title": "Rekurzívne vyčísliteľné jazyky",
+  "course": "B",
+  "order": 26,
+  "sourceFiles": [
+   "Afjb13_RekOcisJ_P.pdf"
+  ],
+  "summary": "Frázové gramatiky (typ 0) nemajú obmedzenie na dĺžku pravidiel a zodpovedajú Turingovým strojom; jazyky, ktoré generujú, sa nazývajú rekurzívne vyčísliteľné. Trieda rekurzívne vyčísliteľných jazykov je uzavretá na prienik, zjednotenie, zreťazenie, iteráciu a zrkadlo, ale nie na doplnok.",
+  "overview": "Posledná prednáška uzatvára Chomského hierarchiu. Frázové gramatiky majú jediné obmedzenie: na ľavej strane musí byť aspoň jeden neterminál. Pomocná lema o normálnom tvare rozdelí neterminály na dve disjunktné množiny a každé pravidlo rozdelí na dve (výber pravidla a jeho použitie). Dokazuje sa ekvivalencia s Turingovými strojmi: nedeterministický TS $\\to$ frázová gramatika (simulácia po stopách) a frázová gramatika $\\to$ deterministický TS (stroj postupne generuje všetky reťazce a testuje, či opisujú odvodenie slova). Z toho plynie jednotná trieda rekurzívne vyčísliteľných jazykov. Záverečný prehľad porovnáva uzáverové vlastnosti všetkých tried.",
+  "keyQuestions": [
+   "Čo je frázová gramatika a prečo sa jej jazyky volajú rekurzívne vyčísliteľné?",
+   "Ako Turingov stroj generuje a testuje odvodenia?",
+   "Aké sú uzáverové vlastnosti všetkých tried jazykov?"
+  ],
+  "prerequisites": [
+   "kontextove",
+   "uzaver-kont"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "dfn.frazova-gramatika",
+   "type": "definition",
+   "topic": "rekurzivne-oc",
+   "title": "Frázová gramatika",
+   "terms": [
+    {
+     "term": "frázová gramatika",
+     "alt": "unrestricted grammar, phrase-structure grammar, type-0 grammar"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb13_RekOcisJ_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "**Frázová gramatika** je [gramatika](dfn.gramatika) $G=(N,T,P,S)$, ktorá má iba jediné obmedzenie na tvar pravidiel: na ľavej strane musí byť vždy aspoň jeden neterminálový symbol. Teda aj pravidlá $aAB\\to a$ alebo $ABC\\to\\varepsilon$ sú povolené, ale $\\varepsilon\\to ABC$ alebo $a\\to ba$ nie.",
+   "explanation": {
+    "intuition": "Pravidlá môžu aj skracovať: výpočet môže zmazať časti reťazca.",
+    "detailed": "Skracovanie dovoľuje simulovať ľubovoľný výpočet: [gramatika](dfn.gramatika) vie „spotrebovať“ pomocné značky. Preto sa nedá obmedziť dĺžka vetných foriem a [odvodenie](dfn.odvodenie) [slova](dfn.slovo) môže byť ľubovoľne dlhé a nedá sa vopred ohraničiť.",
+    "pitfalls": [
+     "Ľavá strana musí obsahovať neterminál, aby sa terminál nedal prepisovať."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.gramatika",
+    "def.chomskeho-hierarchia",
+    "dfn.slovo",
+    "dfn.odvodenie"
+   ],
+   "relations": [
+    {
+     "type": "generalizes",
+     "target": "dfn.kontextova-gramatika",
+     "note": "bez obmedzenia dĺžok"
+    },
+    {
+     "type": "equivalent",
+     "target": "dfn.turingov-stroj",
+     "note": "generujú rekurzívne vyčísliteľné jazyky"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.lema-n-normalny-tvar",
+   "type": "theorem",
+   "topic": "rekurzivne-oc",
+   "title": "Lema N: normálny tvar frázových gramatík",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb13_RekOcisJ_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "Každá [frázová gramatika](dfn.frazova-gramatika) $G=(N,T,P,S)$ sa dá nahradiť ekvivalentnou frázovou [gramatikou](dfn.gramatika) $G'=(N',T,P',S)$, ktorá používa dve disjunktné množiny neterminálov $N'=N_1\\cup N_2$, $N_1\\cap N_2=\\emptyset$, a všetky pravidlá $G'$ sú buď tvaru $\\alpha\\to A$, kde $\\alpha\\in(N_1\\cup T)^*$ a $A\\in N_2$, alebo tvaru $A\\to\\beta$, kde $A\\in N_2$ a $\\beta\\in(N_1\\cup T)^*$.",
+   "explanation": {
+    "intuition": "Každé pravidlo rozdelíme na „vyber ho“ a „použi ho“ pomocou nového neterminálu.",
+    "detailed": "Ak $G$ má $m$ pravidiel, pridáme neterminály $\\langle1\\rangle,\\dots,\\langle m\\rangle$, $N_1=N$, $N_2=\\{\\langle1\\rangle,\\dots,\\langle m\\rangle\\}$. $k$-te pravidlo $\\alpha\\to\\beta$ nahradia dve pravidlá $\\alpha\\to\\langle k\\rangle$ a $\\langle k\\rangle\\to\\beta$. Gramatika po úprave generuje ten istý [jazyk](dfn.jazyk); výhoda je, že pravidlo „ľavá strana na jeden neterminál“ a „neterminál na pravú stranu“ sa dá rozpoznať jednoduchšie [Turingovým strojom](dfn.turingov-stroj).",
+    "pitfalls": [
+     "Ľavé strany $\\alpha$ môžu obsahovať len symboly z $N_1\\cup T$, a neterminály z $N_2$ sa vyskytujú iba ako dočasné značky."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Ak $G$ používa $m$ pravidiel, vezmime $N'=N\\cup\\{\\langle1\\rangle,\\dots,\\langle m\\rangle\\}$, $N_1=N$ a $N_2=\\{\\langle1\\rangle,\\dots,\\langle m\\rangle\\}$.",
+      "why": "Nové neterminály označujú pravidlá.",
+      "uses": []
+     },
+     {
+      "text": "Ak $\\alpha\\to\\beta$ je $k$-te pravidlo $G$, v $G'$ ho nahradia dve pravidlá: $\\alpha\\to\\langle k\\rangle$ a $\\langle k\\rangle\\to\\beta$.",
+      "why": "Obe sú v požadovanom tvare.",
+      "uses": []
+     },
+     {
+      "text": "Odvodenie krokom $\\alpha\\to\\beta$ v $G$ zodpovedá dvom krokom $\\alpha\\Rightarrow\\langle k\\rangle\\Rightarrow\\beta$ v $G'$ a naopak; preto $L(G')=L(G)$.",
+      "why": "Pomocný neterminál $\\langle k\\rangle$ možno rozbaliť iba pravidlom $k$.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.frazova-gramatika",
+    "dfn.gramatika",
+    "dfn.turingov-stroj",
+    "dfn.jazyk"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.nf-lema-n"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Overené výpočtom na gramatike pre $a^nb^nc^n$ ($7$ pravidiel $\\to$ $14$): jazyky sa zhodujú na slovách do dĺžky 6. Pozn.: ľavá strana $\\alpha\\to\\langle k\\rangle$ môže podľa slajdov obsahovať aj $\\alpha\\in(N_1\\cup T)^*$ s neterminálmi z $N_1$."
+    ]
+   }
+  },
+  {
+   "id": "dfn.turingov-stroj",
+   "type": "definition",
+   "topic": "rekurzivne-oc",
+   "title": "Turingov stroj",
+   "terms": [
+    {
+     "term": "Turingov stroj",
+     "alt": "Turing machine, TM"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb13_RekOcisJ_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "**Nedeterministický Turingov stroj** je $M=(Q,\\Sigma,\\Gamma,q_I,q_F,\\vdash,\\#,H)$, kde $Q$ je konečná množina stavov, $\\Sigma$ vstupná [abeceda](dfn.abeceda), $\\Gamma$ konečná abeceda páskových symbolov, $\\Sigma\\subseteq\\Gamma$, $q_I\\in Q$ počiatočný stav, $q_F\\in Q$ koncový (akceptujúci) stav, $q_I\\ne q_F$, $\\vdash\\in\\Gamma-\\Sigma$ ľavý okraj pásky, $\\#\\in\\Gamma-\\Sigma$ prázdny symbol (medzera), $\\#\\ne\\vdash$, a $H\\subseteq Q\\times\\Gamma\\times\\Gamma\\times Q\\times\\{-1,0,+1\\}$ množina inštrukcií s rovnakým významom aj obmedzeniami ako u lineárne ohraničených strojov. Páska je v pravom smere neohraničená: $a_1a_2\\dots a_n\\#\\#\\#\\dots$.",
+   "explanation": {
+    "intuition": "Stroj s nekonečnou páskou, ktorý číta a prepisuje symboly a posúva hlavu.",
+    "detailed": "Rozdiel oproti [LBA](dfn.lba): pravý koniec pásky nie je značený, stroj môže zapisovať do ľubovoľne vzdialených políčok. Preto výpočty môžu byť nekonečne dlhé a stroj nemusí zastaviť; to je podstata nerozhodnuteľných problémov.",
+    "pitfalls": [
+     "Nedeterministické a deterministické Turingove stroje rozpoznávajú tú istú triedu jazykov."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.lba",
+    "dfn.abeceda"
+   ],
+   "relations": [
+    {
+     "type": "generalizes",
+     "target": "dfn.lba",
+     "note": "pásku neohraničuje"
+    },
+    {
+     "type": "equivalent",
+     "target": "dfn.frazova-gramatika",
+     "note": "rovnaká trieda jazykov"
+    },
+    {
+     "type": "generalizes",
+     "target": "dfn.zasobnikovy-automat"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.ts-na-frazovu",
+   "type": "theorem",
+   "topic": "rekurzivne-oc",
+   "title": "Veta (TS → frázová gramatika): ku každému TS existuje frázová gramatika",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb13_RekOcisJ_P.pdf",
+     "page": 5
+    }
+   ],
+   "statement": "Pre každý nedeterministický [Turingov stroj](dfn.turingov-stroj) $M$ existuje [frázová gramatika](dfn.frazova-gramatika) $G$ taká, že $L(G)=L(M)$.",
+   "explanation": {
+    "intuition": "Gramatika simuluje stroj na stopách, rovnako ako pri [LBA](dfn.lba), ale s dostatočne dlhým úsekom prázdnej pásky.",
+    "detailed": "Dôkaz je veľmi podobný ako pre [LBA](dfn.lba) (prednáška 11), preto sa uvádza len hlavná myšlienka. Odlišnosť: pásku treba generovať dostatočne dlhú; skracujúce pravidlá umožnia po akceptovaní vymazať pomocné dáta.",
+    "pitfalls": [
+     "Gramatika nemusí zastaviť na neakceptovaných slovách — nič nevygeneruje."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "sketch",
+    "steps": [
+     {
+      "text": "Fáza 1: generovanie slova $a_1\\dots a_n\\in\\Sigma^*$ spolu s dostatočne dlhou páskou: tri stopy — archivovaná kópia, pracovná páska ($a_1\\dots a_n\\#\\dots\\#$ s koncovou značkou $B$) a stav s polohou hlavy.",
+      "why": "Slajd 6.",
+      "uses": []
+     },
+     {
+      "text": "Fáza 2: simulácia výpočtu $M$ pravidlami pre každú inštrukciu, rovnako ako pri LBA; ak treba, páska sa predĺži pravidlom, ktoré nahradí koncovú značku $B$ prázdnym políčkom a novým $B$.",
+      "why": "Slajd 7.",
+      "uses": []
+     },
+     {
+      "text": "Fáza 3: ak sa dosiahne $q_F$, čistiace pravidlá vymažú pracovnú páska a stav, a ostane archivované slovo $a_1\\dots a_n$.",
+      "why": "Slajd 8; skracovanie je povolené.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.turingov-stroj",
+    "dfn.frazova-gramatika",
+    "thm.lba-na-kontextovu",
+    "dfn.lba"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajdy 5–8 uvádzajú iba hlavnú myšlienku; konštrukcia pravidiel nie je rozpísaná. Neimplementované."
+    ]
+   }
+  },
+  {
+   "id": "alg.generovanie-retazcov",
+   "type": "algorithm",
+   "topic": "rekurzivne-oc",
+   "title": "Generovanie všetkých reťazcov nad N ∪ T ∪ {$}",
+   "terms": [
+    {
+     "term": "generovanie reťazcov",
+     "alt": "string enumeration"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb13_RekOcisJ_P.pdf",
+     "page": 10
+    }
+   ],
+   "statement": "Ak je na páske napísaný špeciálny znak $\\text{€}$, generujeme za ním v nekonečnom cykle postupne všetky reťazce $\\gamma=b_1\\dots b_s\\in(N\\cup T\\cup\\{\\diamond \\})^*$ podobne, ako keby sme zvyšovali o jednotku číslo zapísané sprava doľava v číselnej sústave so základom $d=|N|+|T|+1$: symboly chápeme ako číslice $0,\\dots,d-1$. Ak je na páske $\\text{€}\\,(d{-}1)\\dots(d{-}1)\\,c\\,b_{i+1}\\dots b_s$, prepíše sa na $\\text{€}\\,0\\dots0\\,(c{+}1)\\,b_{i+1}\\dots b_s$; podobne $\\text{€}\\,(d{-}1)\\dots(d{-}1)\\,\\#\\#\\dots$ sa prepíše na $\\text{€}\\,0\\dots0\\,0\\,\\#\\dots$.",
+   "explanation": {
+    "intuition": "Počítame ako na počítadle: ďalšie [slovo](dfn.slovo) v poradí, takže skôr či neskôr dostaneme každé.",
+    "detailed": "Každý konečný reťazec sa v tomto poradí objaví po konečnom počte krokov. Tým sa dosiahne, že TS „nezabudne“ žiadne [odvodenie](dfn.odvodenie), a preto skôr či neskôr nájde odvodenie akéhokoľvek [slova](dfn.slovo) z $L(G)$.",
+    "pitfalls": [
+     "Poradie generovania je podľa dĺžky a potom lexikograficky; všetky slová dĺžky $k$ sa vygenerujú pred slovami dĺžky $k+1$."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Počítanie v číselnej sústave so základom $d$: každý konečný reťazec zodpovedá nejakému číslu (s dĺžkou), a počítadlo dosiahne každé číslo. Overené výpočtom: pre $d=3$ sa v prvých $d^4+\\dots+1$ krokoch objavia všetky reťazce dĺžky najviac $3$.",
+    "steps": []
+   },
+   "uses": [
+    "dfn.turingov-stroj",
+    "dfn.slovo",
+    "dfn.odvodenie"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "alg.test-kroku-odvodenia",
+     "note": "používa sa spolu"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.test-kroku-odvodenia",
+   "type": "algorithm",
+   "topic": "rekurzivne-oc",
+   "title": "Test jedného kroku odvodenia u ⇒ v",
+   "terms": [
+    {
+     "term": "test kroku odvodenia",
+     "alt": "derivation step test"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb13_RekOcisJ_P.pdf",
+     "page": 11
+    }
+   ],
+   "statement": "Na páske je úsek tvaru $\\diamond u\\diamond v\\diamond $ a overuje sa, či $v$ vznikne z $u$ jedným krokom [odvodenia](dfn.odvodenie) v [gramatike](dfn.gramatika) $G$ v normálnom tvare Lemy N. Pre pravidlo typu $z_1\\dots z_g\\to A$ ($z_i\\in N_1\\cup T$, $A\\in N_2$) stroj nájde v $u$ výskyt $z_1\\dots z_g$, nahradí ho $A$ v $v$ a porovná zvyšok (znak po znaku, so značkami pre porovnané symboly). Pre pravidlo typu $A\\to z_1\\dots z_g$ analogicky opačne.",
+   "explanation": {
+    "intuition": "[Turingov stroj](dfn.turingov-stroj) vie porovnať dva úseky pásky, ktoré sa líšia iba v jednej náhrade.",
+    "detailed": "Normálny tvar (Lema N) zjednodušuje test: v jednom kroku sa mení iba jedna „podslovo $\\leftrightarrow$ neterminál“ náhrada, ktorú sa dá rozpoznať lokálnym porovnaním.",
+    "pitfalls": [
+     "Test sa musí vykonať pre všetky pravidlá a všetky možné polohy; nedeterminizmus možno odstrániť skúšaním všetkých možností."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Stroj prechádza $u$ a $v$ súčasne, porovnáva rovnaké úseky pred a za náhradou a v mieste náhrady overí zhodu s pravidlom. Všetky porovnania sú lokálne, preto stačí konečný počet stavov.",
+    "steps": []
+   },
+   "uses": [
+    "thm.lema-n-normalny-tvar",
+    "dfn.turingov-stroj",
+    "dfn.gramatika",
+    "dfn.odvodenie"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.frazova-na-dts",
+   "type": "theorem",
+   "topic": "rekurzivne-oc",
+   "title": "Veta (frázová gramatika → DTS): ku každej frázovej gramatike existuje deterministický TS",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb13_RekOcisJ_P.pdf",
+     "page": 9
+    }
+   ],
+   "statement": "Pre každú [frázovú gramatiku](dfn.frazova-gramatika) $G=(N,T,P,S)$ existuje deterministický [Turingov stroj](dfn.turingov-stroj) $M$ taký, že $L(M)=L(G)$.",
+   "explanation": {
+    "intuition": "Stroj skúša všetky možné [odvodenia](dfn.odvodenie) a ak nájde to správne, akceptuje.",
+    "detailed": "Stroj $M$ napíše vpravo od vstupu $a_1\\dots a_n$ značku $\\text{€}$ a za ňou v nekonečnom cykle generuje postupne všetky reťazce $\\gamma$. Pre každý $\\gamma$ testuje, či má tvar $\\text{€}\\,w_{r-1}\\diamond w_{r-2}\\diamond\\dots\\diamond w_k\\diamond\\dots\\diamond w_1\\diamond w_0\\diamond $, kde $w_r=a_1\\dots a_n$, $w_0=S$ a $w_k\\Rightarrow w_{k+1}$, $k=0,\\dots,r-1$. Ak $w\\in L(G)$, nájde sa taký $\\gamma$ po konečnom počte krokov, $M$ akceptuje; ak $w\\notin L(G)$, taký $\\gamma$ neexistuje a $M$ nikdy nezastaví.",
+    "pitfalls": [
+     "Stroj nezastaví na slovách, ktoré nie sú v jazyku; preto sa jazyk nazýva rekurzívne vyčísliteľný, nie rekurzívny."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Gramatiku $G$ najprv upravíme do normálneho tvaru Lemy N (bez zmeny jazyka).",
+      "why": "Zjednodušuje test kroku.",
+      "uses": [
+       "thm.lema-n-normalny-tvar"
+      ]
+     },
+     {
+      "text": "Stroj $M$ na vstupe $a_1\\dots a_n$ doprava napíše $\\text{€}$ a v nekonečnom cykle generuje všetky reťazce $\\gamma\\in(N\\cup T\\cup\\{\\diamond \\})^*$.",
+      "why": "Úloha (a).",
+      "uses": [
+       "alg.generovanie-retazcov"
+      ]
+     },
+     {
+      "text": "Pre každý $\\gamma$ overí, či má tvar $\\text{€}\\,w_r\\diamond w_{r-1}\\diamond\\dots\\diamond w_1\\diamond w_0\\diamond $ s $w_r=a_1\\dots a_n$ (vstup), $w_0=S$ a $w_k\\Rightarrow_Gw_{k+1}$ pre $k=0,\\dots,r-1$ (testom jedného kroku).",
+      "why": "Úlohy (b) a (c).",
+      "uses": [
+       "alg.test-kroku-odvodenia"
+      ]
+     },
+     {
+      "text": "Ak $w\\in L(G)$, existuje odvodenie $S=w_0\\Rightarrow\\dots\\Rightarrow w_r=w$, a reťazec popisujúci ho sa objaví po konečnom počte krokov: $M$ ho nájde, zastaví a akceptuje.",
+      "why": "Každý konečný reťazec sa objaví.",
+      "uses": []
+     },
+     {
+      "text": "Ak $w\\notin L(G)$, žiaden $\\gamma$ nepopisuje odvodenie $w$, teda $M$ testuje ďalšie a ďalšie reťazce a nezastaví. Preto $L(M)=L(G)$.",
+      "why": "Správnosť stroja.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.frazova-gramatika",
+    "thm.lema-n-normalny-tvar",
+    "alg.generovanie-retazcov",
+    "alg.test-kroku-odvodenia",
+    "dfn.turingov-stroj",
+    "dfn.odvodenie"
+   ],
+   "relations": [
+    {
+     "type": "converse-of",
+     "target": "thm.ts-na-frazovu"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.rekurzivne-vycisliteny-jazyk",
+   "type": "definition",
+   "topic": "rekurzivne-oc",
+   "title": "Rekurzívne vyčísliteľný a rekurzívny jazyk",
+   "terms": [
+    {
+     "term": "rekurzívne vyčísliteľný jazyk",
+     "alt": "recursively enumerable language, RE"
+    },
+    {
+     "term": "rekurzívny jazyk",
+     "alt": "recursive language, decidable language"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb13_RekOcisJ_P.pdf",
+     "page": 14
+    }
+   ],
+   "statement": "Frázové [gramatiky](dfn.gramatika), deterministické [Turingove stroje](dfn.turingov-stroj), ako aj nedeterministické Turingove stroje reprezentujú tú istú triedu [jazykov](dfn.jazyk), ktoré nazývame **rekurzívne vyčísliteľné** (očíslovateľné). Jazyk $L$ je **rekurzívny**, ak existuje taký Turingov stroj $M$, že $L=L(M)$, navyše $M$ na každom vstupe po konečnom počte krokov zastaví.",
+   "explanation": {
+    "intuition": "RE [jazyk](dfn.jazyk) sa dá „potvrdiť“ stroje; rekurzívny sa dá aj „vyvrátiť“.",
+    "detailed": "Každý rekurzívny [jazyk](dfn.jazyk) je rekurzívne vyčísliteľný, opak neplatí: neexistuje algoritmus, ktorý by o každom [slove](dfn.slovo) rozhodol (halting problém). Rekurzívne jazyky sú [uzavreté](def.uzavretost) na doplnok, kým RE jazyky nie.",
+    "pitfalls": [
+     "Rekurzívne vyčísliteľný znamená „existuje stroj, ktorý slová jazyka akceptuje“, nie „existuje algoritmus rozhodnutia“."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "thm.ts-na-frazovu",
+    "thm.frazova-na-dts",
+    "dfn.turingov-stroj",
+    "dfn.jazyk",
+    "dfn.gramatika",
+    "dfn.slovo",
+    "def.uzavretost"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.chomsky-stroje"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.re-uzavrete-prienik",
+   "type": "theorem",
+   "topic": "rekurzivne-oc",
+   "title": "RE jazyky sú uzavreté na prienik",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb13_RekOcisJ_P.pdf",
+     "page": 15
+    }
+   ],
+   "statement": "Ak $L_1$ a $L_2$ sú [rekurzívne vyčísliteľné jazyky](dfn.rekurzivne-vycisliteny-jazyk), tak aj $L_1\\cap L_2$ je rekurzívne vyčísliteľný. Teda aj trieda rekurzívne vyčísliteľných [jazykov](dfn.jazyk) je [uzavretá](def.uzavretost) na prienik.",
+   "explanation": {
+    "intuition": "Spustíme jeden stroj a po jeho akceptovaní druhý.",
+    "detailed": "Rovnaká konštrukcia ako pre [LBA](dfn.lba), s rozdielom, že $M_1$ môže bežať donekonečna; potom $M$ nezastaví, čo je v poriadku, lebo [slovo](dfn.slovo) by nebolo v $L_1$.",
+    "pitfalls": [
+     "Pri zjednotení takto postupovať nemožno (ak by $M_1$ cyklilo, $M_2$ by sa nespustil); používa sa striedavá simulácia alebo gramatiky."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Nech $M_1,M_2$ sú deterministické Turingove stroje pre $L_1,L_2$.",
+      "why": "Ekvivalencia deterministických a nedeterministických strojov.",
+      "uses": []
+     },
+     {
+      "text": "$M$ na dvoch stopách vyrobí dve kópie vstupu $w=a_1\\dots a_n$.",
+      "why": "Slajd 16.",
+      "uses": []
+     },
+     {
+      "text": "Na prvej kópii simuluje $M_1$. Ak $M_1$ zastaví a akceptuje, $M$ simuluje na druhej kópii $M_2$; ak aj $M_2$ zastaví a akceptuje, $M$ zastaví a akceptuje.",
+      "why": "Slovo musí byť v oboch jazykoch.",
+      "uses": []
+     },
+     {
+      "text": "Ak niektorý stroj nezastaví alebo odmietne, $M$ slovo neakceptuje; teda $L(M)=L_1\\cap L_2$.",
+      "why": "Definícia akceptovania.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.rekurzivne-vycisliteny-jazyk",
+    "dfn.turingov-stroj",
+    "dfn.jazyk",
+    "def.uzavretost",
+    "dfn.lba",
+    "dfn.slovo"
+   ],
+   "relations": [
+    {
+     "type": "analogue",
+     "target": "thm.csl-uzavrete-prienik-zjednotenie",
+     "note": "rovnaká simulácia na dvoch stopách"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.re-uzavrete-ostatne",
+   "type": "theorem",
+   "topic": "rekurzivne-oc",
+   "title": "Uzavretosť RE na zjednotenie, zreťazenie, iteráciu a zrkadlo",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb13_RekOcisJ_P.pdf",
+     "page": 17
+    }
+   ],
+   "statement": "Ak $L_1,L_2$ sú [rekurzívne vyčísliteľné jazyky](dfn.rekurzivne-vycisliteny-jazyk), tak aj $L_1\\cup L_2$, $L_1L_2$, $L_1^*$ a $L_1^R$ sú rekurzívne vyčísliteľné. Teda trieda rekurzívne vyčísliteľných [jazykov](dfn.jazyk) je [uzavretá](def.uzavretost) na zjednotenie, [zreťazenie](dfn.zretazenie-slov), iteráciu a zrkadlenie.",
+   "explanation": {
+    "intuition": "Používame [gramatiky](dfn.gramatika): zjednotenie a zrkadlo ako pri CFG, pre [zreťazenie](dfn.zretazenie-slov) a iteráciu treba oddeľovače.",
+    "detailed": "Konštrukcie frázových gramatík pre $L_1\\cup L_2$ a $L_1^R$ sú rovnaké ako pre [bezkontextové gramatiky](dfn.bezkontextova-gramatika) (len treba disjunktné neterminály). Problémom sú $L_1^*$ a $L_1L_2$: priamy zápis $S\\to S_1S$ by dovolil interferenciu pravidiel susedných úsekov.",
+    "pitfalls": [
+     "Bez oddeľovača $\\diamond $ by pravidlá s ľavými stranami presahujúcimi hranicu medzi úsekmi mohli nesprávne prepísať susedné časti."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "sketch",
+    "steps": [
+     {
+      "text": "Pre $L_1\\cup L_2$ a $L_1^R$ použijeme tú istú konštrukciu ako pre bezkontextové gramatiky, po zabezpečení disjunktných množín neterminálov.",
+      "why": "Slajd 17.",
+      "uses": []
+     },
+     {
+      "text": "Pre $L_1^*$: $G=(N,T,P,S)$, $N=\\{S,A,B,S_1,\\diamond ,\\langle\\rangle\\}\\cup N_1$, pravidlá $S\\to AB$, $A\\to A\\diamond S_1\\mid\\varepsilon$ (generuje $k$ úsekov $\\diamond S_1$), $\\diamond \\to$ \\dots Odvodenie $S\\Rightarrow AB\\Rightarrow A\\diamond S_1B\\Rightarrow\\dots\\Rightarrow A\\diamond S_1\\diamond S_1\\dots\\diamond S_1B$; po $S_1\\Rightarrow^*w_i$ sa $\\diamond $ odstránia a $B\\to\\varepsilon$.",
+      "why": "Slajd 18.",
+      "uses": []
+     },
+     {
+      "text": "Značky $\\diamond $ oddeľujú susedné úseky počas generovania $S_1\\Rightarrow^*w_1$, \\dots, $S_1\\Rightarrow^*w_k$, aby pravidlá z $P_1$ neinterferovali; naľavo od neterminálu $\\langle\\rangle$ sú len terminály.",
+      "why": "Slajd 19.",
+      "uses": []
+     },
+     {
+      "text": "Rovnaký trik sa použije pre $L_1L_2$.",
+      "why": "Slajd 19.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.rekurzivne-vycisliteny-jazyk",
+    "dfn.frazova-gramatika",
+    "thm.cfl-uzavrete-zjednotenie-zretazenie-iteracia-zrkadlo",
+    "dfn.zretazenie-slov",
+    "dfn.jazyk",
+    "def.uzavretost",
+    "dfn.gramatika",
+    "dfn.bezkontextova-gramatika"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Slajd 18 je pri extrakcii poškodený (pravidlá s $\\diamond $ a $\\langle\\rangle$ sú čiastočne nečitateľné); konštrukcia je rekonštruovaná iba v hlavných črtách."
+    ]
+   }
+  },
+  {
+   "id": "def.prehlad-uzavretosti-vsetkych",
+   "type": "concept",
+   "topic": "rekurzivne-oc",
+   "title": "Prehľad uzavretosti všetkých tried jazykov",
+   "terms": [
+    {
+     "term": "prehľad uzavretosti všetkých tried",
+     "alt": "closure summary for all language classes"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afjb13_RekOcisJ_P.pdf",
+     "page": 20
+    }
+   ],
+   "statement": "Uzavretosť tried RE, CSL, DCSL, CFL, DCFL, REG: doplnok: nie, áno, áno, nie, áno, áno; prienik: áno, áno, áno, nie, nie, áno; zjednotenie: áno, áno, áno, áno, nie, áno; [zreťazenie](dfn.zretazenie-slov), iterácia, zrkadlo: áno, áno, áno, áno, nie, áno; prienik s regulárnym: áno vo všetkých; zjednotenie s regulárnym: áno vo všetkých.",
+   "explanation": {
+    "intuition": "Čím silnejší stroj, tým viac operácií, ale pri RE sa stratí doplnok.",
+    "detailed": "Posledný stĺpec (REG) má všetky operácie, riadok „doplnok“ ukazuje, že RE ho nemajú, a bezkontextové tiež nie. Medzi trojicou REG, CSL, DCFL je doplnok bezpečný, medzi CFL a RE nie.",
+    "pitfalls": [
+     "Doplnok RE jazyka je RE práve vtedy, keď je jazyk rekurzívny."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "thm.re-uzavrete-prienik",
+    "thm.re-uzavrete-ostatne",
+    "def.prehlad-uzavretosti-csl",
+    "dfn.zretazenie-slov"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.uzavretost-vsetky-triedy"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.uzavretost-vsetky-triedy",
+   "title": "Uzavretosť všetkých tried",
+   "caption": "Slajd 20.",
+   "origin": "slides",
+   "illustrates": [
+    "def.prehlad-uzavretosti-vsetkych"
+   ],
+   "sources": [
+    {
+     "file": "Afjb13_RekOcisJ_P.pdf",
+     "page": 20
+    }
+   ],
+   "kind": "table",
+   "columns": [
+    "operácia",
+    "RE",
+    "CSL",
+    "DCSL",
+    "CFL",
+    "DCFL",
+    "REG"
+   ],
+   "rows": [
+    [
+     "doplnok",
+     "−",
+     "+",
+     "+",
+     "−",
+     "+",
+     "+"
+    ],
+    [
+     "prienik",
+     "+",
+     "+",
+     "+",
+     "−",
+     "−",
+     "+"
+    ],
+    [
+     "zjednotenie",
+     "+",
+     "+",
+     "+",
+     "+",
+     "−",
+     "+"
+    ],
+    [
+     "zreťazenie",
+     "+",
+     "+",
+     "+",
+     "+",
+     "−",
+     "+"
+    ],
+    [
+     "iterácia",
+     "+",
+     "+",
+     "+",
+     "+",
+     "−",
+     "+"
+    ],
+    [
+     "zrkadlo",
+     "+",
+     "+",
+     "+",
+     "+",
+     "−",
+     "+"
+    ],
+    [
+     "prienik s REG",
+     "+",
+     "+",
+     "+",
+     "+",
+     "+",
+     "+"
+    ],
+    [
+     "zjednotenie s REG",
+     "+",
+     "+",
+     "+",
+     "+",
+     "+",
+     "+"
+    ]
+   ]
+  },
+  {
+   "id": "fig.chomsky-stroje",
+   "title": "Chomského hierarchia a stroje",
+   "caption": "Zhrnutie celého kurzu.",
+   "origin": "generated",
+   "illustrates": [
+    "dfn.rekurzivne-vycisliteny-jazyk"
+   ],
+   "sources": [],
+   "kind": "mermaid",
+   "code": "flowchart LR\n  R[\"regulárne – konečný automat\"] --> B[\"bezkontextové – zásobníkový automat\"] --> K[\"kontextové – LBA\"] --> RE[\"rekurzívne vyčísliteľné – Turingov stroj\"]"
+  },
+  {
+   "id": "fig.nf-lema-n",
+   "title": "Normálny tvar pre gramatiku a^n b^n c^n",
+   "caption": "Slajd 3, overené výpočtom.",
+   "origin": "slides",
+   "illustrates": [
+    "thm.lema-n-normalny-tvar"
+   ],
+   "sources": [
+    {
+     "file": "Afjb13_RekOcisJ_P.pdf",
+     "page": 3
+    }
+   ],
+   "kind": "table",
+   "columns": [
+    "pôvodné pravidlo",
+    "po úprave"
+   ],
+   "rows": [
+    [
+     "$S\\to aSBC$",
+     "$S\\to\\langle1\\rangle$, $\\langle1\\rangle\\to aSBC$"
+    ],
+    [
+     "$S\\to aBC$",
+     "$S\\to\\langle2\\rangle$, $\\langle2\\rangle\\to aBC$"
+    ],
+    [
+     "$CB\\to BC$",
+     "$CB\\to\\langle3\\rangle$, $\\langle3\\rangle\\to BC$"
+    ],
+    [
+     "$aB\\to ab$",
+     "$aB\\to\\langle4\\rangle$, $\\langle4\\rangle\\to ab$"
+    ],
+    [
+     "$bB\\to bb$",
+     "$bB\\to\\langle5\\rangle$, $\\langle5\\rangle\\to bb$"
+    ],
+    [
+     "$bC\\to bc$",
+     "$bC\\to\\langle6\\rangle$, $\\langle6\\rangle\\to bc$"
+    ],
+    [
+     "$cC\\to cc$",
+     "$cC\\to\\langle7\\rangle$, $\\langle7\\rangle\\to cc$"
+    ]
+   ]
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.rozhodnutelnost",
+   "title": "Hranice algoritmickej riešiteľnosti",
+   "summary": "Čo sa dá a čo nedá vyriešiť programom.",
+   "scenario": "Overujeme, či existuje program, ktorý o každom vstupe rozhodne, či má danú vlastnosť.",
+   "modelling": "Vlastnosť je jazyk; program je Turingov stroj.",
+   "solution": "Rekurzívny jazyk má vždy zastavujúci stroj; RE jazyk iba stroj, ktorý potvrdí príslušnosť.",
+   "connects": [
+    "dfn.rekurzivne-vycisliteny-jazyk",
+    "dfn.turingov-stroj"
+   ],
+   "figures": [],
+   "tags": [
+    "teória"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.polorozhodnutelnost",
+   "title": "Polorozhodnuteľnosť: hľadanie dôkazov a protipríkladov",
+   "summary": "Prehľadávanie nekonečného priestoru.",
+   "scenario": "Automatický dokazovač hľadá odvodenie vety v systéme pravidiel.",
+   "modelling": "Dôkaz je odvodenie z axiómy; hľadá sa prehľadávaním všetkých reťazcov.",
+   "solution": "Turingov stroj z vety o frázových gramatikách zastaví iba ak dôkaz existuje; inak beží donekonečna.",
+   "connects": [
+    "thm.frazova-na-dts",
+    "alg.generovanie-retazcov"
+   ],
+   "figures": [],
+   "tags": [
+    "logika"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.prepisovacie-systemy",
+   "title": "Prepisovacie systémy a výpočet",
+   "summary": "Gramatika ako univerzálny výpočtový model.",
+   "scenario": "Prepisovanie reťazcov (napr. Markovove algoritmy, makrá) môže simulovať ľubovoľný algoritmus.",
+   "modelling": "Frázová gramatika ako prepisovací systém.",
+   "solution": "Veta TS $\\to$ gramatika ukazuje, že prepisovanie reťazcov je výpočtovo úplné.",
+   "connects": [
+    "thm.ts-na-frazovu",
+    "dfn.frazova-gramatika"
+   ],
+   "figures": [],
+   "tags": [
+    "výpočty"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.re-1",
+   "kind": "mcq",
+   "prompt": "Aké jediné obmedzenie majú pravidlá frázovej gramatiky?",
+   "options": [
+    "ľavá strana obsahuje aspoň jeden neterminál",
+    "$|\\alpha|\\le|\\beta|$",
+    "ľavá strana je jediný neterminál",
+    "žiadne"
+   ],
+   "answer": 0,
+   "explanation": "Inak by sa terminály dali prepisovať.",
+   "about": [
+    "dfn.frazova-gramatika"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.re-2",
+   "kind": "truefalse",
+   "prompt": "Každý rekurzívne vyčísliteľný jazyk je rekurzívny.",
+   "answer": false,
+   "explanation": "Rekurzívny jazyk má vždy zastavujúci stroj; RE nie.",
+   "about": [
+    "dfn.rekurzivne-vycisliteny-jazyk"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.re-3",
+   "kind": "mcq",
+   "prompt": "Čo robí stroj z vety o frázových gramatikách pre $w\\notin L(G)$?",
+   "options": [
+    "zastaví a odmietne",
+    "nikdy nezastaví",
+    "akceptuje",
+    "zastaví v chybnom stave"
+   ],
+   "answer": 1,
+   "explanation": "Skúša ďalšie a ďalšie reťazce.",
+   "about": [
+    "thm.frazova-na-dts"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.re-4",
+   "kind": "mcq",
+   "prompt": "Ako sa v lema N nahradí pravidlo $\\alpha\\to\\beta$ ($k$-te)?",
+   "options": [
+    "$\\alpha\\to\\langle k\\rangle$ a $\\langle k\\rangle\\to\\beta$",
+    "$\\alpha\\to\\alpha\\beta$",
+    "$\\alpha\\to\\varepsilon$ a $\\varepsilon\\to\\beta$",
+    "nenahradí sa"
+   ],
+   "answer": 0,
+   "explanation": "Nový neterminál $\\langle k\\rangle$ označí použité pravidlo.",
+   "about": [
+    "thm.lema-n-normalny-tvar"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.re-5",
+   "kind": "truefalse",
+   "prompt": "RE jazyky sú uzavreté na doplnok.",
+   "answer": false,
+   "explanation": "Ak by boli, boli by všetky RE jazyky rekurzívne.",
+   "about": [
+    "def.prehlad-uzavretosti-vsetkych"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.re-6",
+   "kind": "flashcard",
+   "prompt": "Ktorý stroj zodpovedá ktorému typu gramatiky?",
+   "answer": "Typ 3: konečný automat; typ 2: zásobníkový automat; typ 1: lineárne ohraničený Turingov stroj; typ 0: Turingov stroj.",
+   "explanation": "Chomského hierarchia.",
+   "about": [
+    "dfn.frazova-gramatika"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.re-7",
+   "kind": "open",
+   "prompt": "Prečo pri iterácii frázovej gramatiky potrebujeme oddeľovače $\\diamond $?",
+   "answer": "Bez nich by pravidlá s dlhšími ľavými stranami mohli prekročiť hranicu medzi susednými úsekmi $S_1\\dots S_1$ a nesprávne ich prepísať.",
+   "explanation": "Interferencia pravidiel.",
+   "about": [
+    "thm.re-uzavrete-ostatne"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.re-8",
+   "kind": "open",
+   "prompt": "Načrtnite dôkaz, že RE jazyky sú uzavreté na prienik.",
+   "answer": "Stroj vyrobí dve kópie vstupu, simuluje $M_1$ na prvej; ak akceptuje, simuluje $M_2$ na druhej; akceptuje, ak oba akceptujú.",
+   "explanation": "Dve stopy pásky.",
+   "about": [
+    "thm.re-uzavrete-prienik"
+   ],
+   "difficulty": 2
+  }
+ ]
+}

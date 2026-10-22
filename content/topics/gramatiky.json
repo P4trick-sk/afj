@@ -1,0 +1,1421 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "gramatiky",
+  "title": "Jazyky, gramatiky a Chomského hierarchia",
+  "course": "A",
+  "order": 1,
+  "sourceFiles": [
+   "Afja01_gramatiky_P.pdf"
+  ],
+  "summary": "Základné pojmy teórie formálnych jazykov: abeceda, slovo, jazyk a gramatika s odvodzovaním. Na konci prednášky sa gramatiky triedia do Chomského hierarchie podľa tvaru pravidiel.",
+  "overview": "Formálny jazyk je množina slov nad konečnou abecedou a gramatika je konečný popis takého (často nekonečného) jazyka pomocou prepisovacích pravidiel. Prednáška zavádza slová, zreťazenie a jazyky, potom gramatiku $G=(N,T,P,S)$, odvodzovanie a jazyk generovaný gramatikou. Na troch príkladoch (párny počet núl, $a^nb^n$, $a^nb^nc^n$) vidíme, ako obmedzenia tvaru pravidiel zužujú, čo sa dá generovať. To vedie k Chomského hierarchii štyroch tried gramatík, ktorým v ďalších prednáškach priradíme zodpovedajúce stroje: regulárnym konečné automaty, bezkontextovým zásobníkové automaty, kontextovým lineárne ohraničené a frázovým Turingove stroje. Úvodné doplnkové uzly zbierajú matematické pojmy, ktoré sa neskôr používajú v dôkazoch.",
+  "keyQuestions": [
+   "Čo je jazyk a ako sa dá nekonečný jazyk popísať konečne?",
+   "Ako gramatika generuje slová a čo je jazyk generovaný gramatikou?",
+   "Čím sa líšia štyri typy gramatík Chomského hierarchie?"
+  ],
+  "prerequisites": [],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "def.mnozina-relacia-funkcia",
+   "type": "concept",
+   "topic": "gramatiky",
+   "title": "Množina, relácia a funkcia",
+   "terms": [
+    {
+     "term": "množina",
+     "alt": "set"
+    },
+    {
+     "term": "relácia",
+     "alt": "relation"
+    },
+    {
+     "term": "funkcia",
+     "alt": "function"
+    },
+    {
+     "term": "potenčná množina",
+     "alt": "power set",
+     "symbol": "2^Q"
+    }
+   ],
+   "aliases": [],
+   "tags": [
+    "základy"
+   ],
+   "origin": "supplement",
+   "statement": "**Množina** je súbor navzájom rôznych prvkov; $A\\subseteq B$ znamená, že každý prvok $A$ je aj v $B$. **Karteziánsky súčin** $A\\times B$ je množina usporiadaných dvojíc $[a,b]$, $a\\in A$, $b\\in B$. **Potenčná množina** $2^Q$ je množina všetkých podmnožín $Q$. **Relácia** medzi $A$ a $B$ je podmnožina $A\\times B$ a **funkcia** $f:A\\to B$ je relácia, v ktorej ku každému $a\\in A$ patrí práve jedno $f(a)\\in B$.",
+   "explanation": {
+    "intuition": "Všetky objekty teórie automatov (stavy, [abecedy](dfn.abeceda), prechody) sú konečné množiny a funkcie medzi nimi.",
+    "detailed": "Prechodová funkcia automatu je funkcia $f:Q\\times\\Sigma\\to Q$, teda zobrazenie z karteziánskeho súčinu. U nedeterministických automatov má hodnoty v potenčnej množine $2^Q$, pretože z jedného stavu možno prejsť do viacerých. Počet prvkov potenčnej množiny je $2^{|Q|}$, preto determinizácia môže stavy exponenciálne zväčšiť.",
+    "pitfalls": [
+     "Množina nezohľadňuje poradie ani opakovanie prvkov, na rozdiel od slova alebo usporiadanej dvojice.",
+     "$\\emptyset\\neq\\{\\varepsilon\\}$: prvá množina nemá žiaden prvok, druhá má jeden (prázdne slovo)."
+    ],
+    "examples": [
+     "$Q=\\{p,q\\}$: $2^Q=\\{\\emptyset,\\{p\\},\\{q\\},\\{p,q\\}\\}$ má $4=2^2$ prvky."
+    ]
+   },
+   "uses": [
+    "dfn.abeceda"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "def.ekvivalencia-rozklad",
+   "type": "concept",
+   "topic": "gramatiky",
+   "title": "Ekvivalencia a rozklad množiny",
+   "terms": [
+    {
+     "term": "ekvivalencia",
+     "alt": "equivalence relation"
+    },
+    {
+     "term": "rozklad množiny",
+     "alt": "partition"
+    },
+    {
+     "term": "trieda ekvivalencie",
+     "alt": "equivalence class"
+    }
+   ],
+   "aliases": [],
+   "tags": [
+    "základy"
+   ],
+   "origin": "supplement",
+   "statement": "Relácia $\\sim$ na množine $X$ je **ekvivalencia**, ak je reflexívna ($x\\sim x$), symetrická ($x\\sim y\\Rightarrow y\\sim x$) a tranzitívna ($x\\sim y\\wedge y\\sim z\\Rightarrow x\\sim z$). Ekvivalencia rozdelí $X$ na navzájom disjunktné neprázdne **triedy ekvivalencie**; takému rozdeleniu hovoríme **rozklad** množiny. Naopak, každý rozklad určuje ekvivalenciu: dva prvky sú ekvivalentné práve vtedy, keď ležia v tej istej množine rozkladu.",
+   "explanation": {
+    "intuition": "Ekvivalencia hovorí „tieto prvky sa nedajú rozlíšiť“ a rozklad je jej rozdelenie do skupín nerozlíšiteľných prvkov.",
+    "detailed": "Pri redukcii automatov sa stavy, ktoré sa správajú rovnako, zlepia do jednej triedy a automat dostane po jednom reprezentantovi z každej triedy. Dôkaz, že relácia je ekvivalencia, vždy vyžaduje overiť všetky tri vlastnosti; v tomto kurze to potrebujeme pre ekvivalenciu stavov.",
+    "pitfalls": [
+     "Relácia, ktorá je reflexívna a symetrická, ešte nemusí byť tranzitívna (napr. „líši sa najviac o 1“ na celých číslach)."
+    ],
+    "examples": [
+     "Na $\\mathbb{Z}$ je „rovnaký zvyšok po delení 3“ ekvivalencia s tromi triedami."
+    ]
+   },
+   "uses": [
+    "def.mnozina-relacia-funkcia"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "def.indukcia",
+   "type": "concept",
+   "topic": "gramatiky",
+   "title": "Matematická indukcia",
+   "terms": [
+    {
+     "term": "matematická indukcia",
+     "alt": "mathematical induction"
+    }
+   ],
+   "aliases": [],
+   "tags": [
+    "dôkazy"
+   ],
+   "origin": "supplement",
+   "statement": "Chceme dokázať tvrdenie $V(n)$ pre všetky $n\\ge n_0$. **Báza:** dokážeme $V(n_0)$. **Indukčný krok:** pre ľubovoľné $n\\ge n_0$ z **indukčného predpokladu** $V(n)$ dokážeme $V(n+1)$. Potom $V(n)$ platí pre každé $n\\ge n_0$. V teórii [jazykov](dfn.jazyk) sa často robí indukcia podľa dĺžky [slova](dfn.slovo): báza je prázdne slovo (alebo slovo dĺžky $1$), krok pridáva jeden symbol na koniec.",
+   "explanation": {
+    "intuition": "Ak tvrdenie platí na začiatku a prenáša sa z každého kroku na ďalší, platí všade.",
+    "detailed": "Rozšírené funkcie $f^*$ a $\\delta^*$ sú definované rekurzívne podľa dĺžky [slova](dfn.slovo), a preto sa ich vlastnosti dokazujú indukciou: napríklad $f^*(q,\\varepsilon)=q$ je báza a $f^*(q,wa)=f(f^*(q,w),a)$ určuje indukčný krok. Zápis $wa$ je vhodný, lebo automat číta zľava doprava a posledný symbol je ten, ktorý pribudol.",
+    "pitfalls": [
+     "Nezabudnite na bázu: bez nej indukčný krok nič nedokazuje.",
+     "Indukčný predpoklad sa týka rovnakého tvrdenia pre slovo $w$, nie pre $wa$."
+    ],
+    "examples": [
+     "Dokážte $|uv|=|u|+|v|$ indukciou podľa $|v|$."
+    ]
+   },
+   "uses": [
+    "def.mnozina-relacia-funkcia",
+    "dfn.slovo",
+    "dfn.jazyk"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "def.dokaz-sporom",
+   "type": "concept",
+   "topic": "gramatiky",
+   "title": "Dôkaz sporom",
+   "terms": [
+    {
+     "term": "dôkaz sporom",
+     "alt": "proof by contradiction"
+    }
+   ],
+   "aliases": [],
+   "tags": [
+    "dôkazy"
+   ],
+   "origin": "supplement",
+   "statement": "Pri **dôkaze sporom** predpokladáme, že tvrdenie neplatí, a z tohto predpokladu odvodíme tvrdenie, ktoré je evidentne nepravdivé (spor), alebo ktoré odporuje známemu výsledku. Preto musí tvrdenie platiť.",
+   "explanation": {
+    "intuition": "Ak z negácie tvrdenia vyplýva nezmysel, negácia nemôže platiť.",
+    "detailed": "Takto sa dokazuje, že niektorý [jazyk](dfn.jazyk) nie je regulárny alebo nie je bezkontextový: predpokladáme, že konečný akceptor (alebo [gramatika](dfn.gramatika)) existuje, a pomocou konečnosti počtu stavov alebo neterminálov nájdeme [slovo](dfn.slovo), ktoré by akceptovať nemal.",
+    "pitfalls": [
+     "Spor musí vzniknúť korektným odvodením z predpokladu; chyba v dôkaze nie je spor."
+    ],
+    "examples": [
+     "Neexistuje konečný akceptor pre $\\{a^nb^n\\}$: pre $n$ väčšie ako počet stavov sa zopakuje stav (pozri topic o konštrukciách)."
+    ]
+   },
+   "uses": [
+    "dfn.slovo",
+    "dfn.jazyk",
+    "dfn.gramatika"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "def.holubnikovy-princip",
+   "type": "concept",
+   "topic": "gramatiky",
+   "title": "Holubníkový princíp",
+   "terms": [
+    {
+     "term": "holubníkový princíp",
+     "alt": "pigeonhole principle"
+    }
+   ],
+   "aliases": [],
+   "tags": [
+    "základy",
+    "dôkazy"
+   ],
+   "origin": "supplement",
+   "statement": "Ak rozmiestnime viac ako $k$ objektov do $k$ priehradiek, v nejakej priehradke sú aspoň dva objekty. Pre postupnosť $x_1,\\dots,x_m$ prvkov z množiny s $k<m$ prvkami to znamená, že niektoré $x_i=x_j$ pre $i<j$.",
+   "explanation": {
+    "intuition": "V dostatočne dlhej postupnosti nad konečnou množinou sa niečo musí zopakovať.",
+    "detailed": "Základ všetkých „pumping“ argumentov: výpočet automatu na dlhom [slove](dfn.slovo) prejde viac stavmi, ako ich je, takže sa niektorý stav zopakuje, a medzi dvoma jeho výskytmi možno cyklus vynechať alebo zopakovať. To isté platí pre neterminál na dlhej ceste [derivačného stromu](dfn.derivacny-strom).",
+    "pitfalls": [
+     "Princíp hovorí, že sa niečo zopakuje, nie čo to bude ani kde."
+    ],
+    "examples": [
+     "Akceptujúci výpočet DFA s $n$ stavmi na slove dĺžky $\\ge n$ navštívi aspoň $n+1$ stavov, takže niektorý stav navštívi dvakrát."
+    ]
+   },
+   "uses": [
+    "def.mnozina-relacia-funkcia",
+    "dfn.slovo"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.derivacny-strom"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "def.strom",
+   "type": "concept",
+   "topic": "gramatiky",
+   "title": "Strom",
+   "terms": [
+    {
+     "term": "strom",
+     "alt": "tree"
+    },
+    {
+     "term": "koreň",
+     "alt": "root"
+    },
+    {
+     "term": "list",
+     "alt": "leaf"
+    }
+   ],
+   "aliases": [],
+   "tags": [
+    "základy"
+   ],
+   "origin": "supplement",
+   "statement": "**Strom** je súvislý graf bez cyklov. V zakorenenom strome rozlišujeme **koreň**, **vnútorné uzly**, **listy** (uzly bez synov) a **výšku** (dĺžka najdlhšej cesty z koreňa do listu). **Binárny strom** má každý vnútorný uzol najviac dvoch synov.",
+   "explanation": {
+    "intuition": "Strom je hierarchia: z koreňa sa vetví k listom a nikdy sa nevracia.",
+    "detailed": "Derivačný strom [bezkontextovej gramatiky](dfn.bezkontextova-gramatika) má v koreni počiatočný neterminál, vnútorné uzly sú neterminály a listy tvoria odvodené [slovo](dfn.slovo). Pri [pumping leme](thm.pumping-lema-bezkontextove) sa používa vzťah medzi počtom listov a výškou binárneho stromu.",
+    "pitfalls": [
+     "Výška sa počíta v hranách (alebo v uzloch); pri porovnávaní vždy použite jednu konvenciu."
+    ],
+    "examples": [
+     "Binárny strom výšky $h$ má najviac $2^h$ listov."
+    ]
+   },
+   "uses": [
+    "def.mnozina-relacia-funkcia",
+    "dfn.slovo"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "thm.pumping-lema-bezkontextove"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.bezkontextova-gramatika"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.abeceda",
+   "type": "definition",
+   "topic": "gramatiky",
+   "title": "Abeceda a symbol",
+   "terms": [
+    {
+     "term": "abeceda",
+     "alt": "alphabet",
+     "symbol": "\\Sigma"
+    },
+    {
+     "term": "symbol",
+     "alt": "symbol"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja01_gramatiky_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "**Abeceda** je ľubovoľná konečná (zvyčajne neprázdna) [množina](def.mnozina-relacia-funkcia). Ak $\\Sigma$ je abeceda, prvky $a\\in\\Sigma$ nazývame **symbolmi** (znakmi, písmenami) abecedy $\\Sigma$. Príklady: $\\Sigma_1=\\{a,b,c,\\dots,z\\}$, $\\Sigma_2=\\{a,\\acute a,\\ddot a,b,c,\\check c,\\dots,z,\\check z\\}$, $\\Sigma_3=\\{0,1\\}$, $\\Sigma_4=\\{a\\}$.",
+   "explanation": {
+    "intuition": "Abeceda je konečná zásoba písmen, z ktorých skladáme slová.",
+    "detailed": "Konečnosť je podstatná: automat s konečne mnoho stavmi môže mať pre každý stav a každý symbol zapísaný prechod len vtedy, keď je symbolov konečne mnoho. Symbolom môže byť čokoľvek: písmeno, číslica, token programovacieho [jazyka](dfn.jazyk) alebo celé [slovo](dfn.slovo).",
+    "pitfalls": [
+     "Abeceda nemusí byť tvorená písmenami; pre jazyk programu je symbolom napríklad kľúčové slovo.",
+     "Neterminály a terminály gramatiky tvoria dve abecedy, ktoré musia byť disjunktné."
+    ],
+    "examples": [
+     "Pre binárne reťazce $\\Sigma_3=\\{0,1\\}$; pre unárne čísla $\\Sigma_4=\\{a\\}$."
+    ]
+   },
+   "uses": [],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "def.mnozina-relacia-funkcia"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.jazyk"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.slovo"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.slovo",
+   "type": "definition",
+   "topic": "gramatiky",
+   "title": "Slovo a tranzitívny uzáver Σ*",
+   "terms": [
+    {
+     "term": "slovo",
+     "alt": "word, string"
+    },
+    {
+     "term": "tranzitívny uzáver",
+     "alt": "Kleene closure",
+     "symbol": "\\Sigma^*"
+    },
+    {
+     "term": "prázdne slovo",
+     "alt": "empty word",
+     "symbol": "\\varepsilon"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja01_gramatiky_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "**Tranzitívny uzáver** $\\Sigma^*$ [abecedy](dfn.abeceda) $\\Sigma$ je množina všetkých postupností symbolov abecedy konečnej dĺžky. Prvky $\\Sigma^*$ nazývame **slová** (reťazce) nad abecedou $\\Sigma$. Slovo nulovej dĺžky sa nazýva **prázdne slovo** a označujeme ho $\\varepsilon$. Napríklad $\\Sigma_4^*=\\{\\varepsilon,a,aa,aaa,\\dots\\}$, $\\Sigma_3^*=\\{\\varepsilon,0,1,00,01,10,11,000,\\dots\\}$ a $\\emptyset^*=\\{\\varepsilon\\}$.",
+   "explanation": {
+    "intuition": "Slová sú všetky konečné reťazce, ktoré sa dajú z písmen [abecedy](dfn.abeceda) poskladať, vrátane prázdneho.",
+    "detailed": "Množina $\\Sigma^*$ je nekonečná, ak $\\Sigma\\ne\\emptyset$, ale každé jej slovo je konečné. Slová sa dajú zoradiť podľa dĺžky: jedno slovo dĺžky $0$, $|\\Sigma|$ slov dĺžky $1$, $|\\Sigma|^2$ slov dĺžky $2$ atď. Prázdne slovo $\\varepsilon$ je slovom nad každou [abecedou](dfn.abeceda).",
+    "pitfalls": [
+     "$\\varepsilon$ nie je symbol abecedy, je to slovo dĺžky $0$.",
+     "Aj pre prázdnu abecedu platí $\\emptyset^*=\\{\\varepsilon\\}$, nie $\\emptyset$."
+    ],
+    "examples": [
+     "$\\{a,b\\}^*=\\{\\varepsilon,a,b,aa,ab,ba,bb,aaa,\\dots\\}$."
+    ]
+   },
+   "uses": [
+    "dfn.abeceda"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.zretazenie-slov",
+   "type": "definition",
+   "topic": "gramatiky",
+   "title": "Dĺžka slova a zreťazenie",
+   "terms": [
+    {
+     "term": "dĺžka slova",
+     "alt": "length of a word",
+     "symbol": "|\\omega|"
+    },
+    {
+     "term": "zreťazenie",
+     "alt": "concatenation"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja01_gramatiky_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "Ak $a_1,\\dots,a_n\\in\\Sigma$, **dĺžka** [slova](dfn.slovo) $\\omega=a_1\\dots a_n\\in\\Sigma^*$ je číslo $n$, označujeme ho $|\\omega|$; platí $|\\varepsilon|=0$. **Zreťazením** slov $\\alpha=a_1\\dots a_n$ a $\\beta=b_1\\dots b_m$ je slovo $\\alpha\\beta=a_1\\dots a_nb_1\\dots b_m$. Platí $\\alpha\\varepsilon=\\varepsilon\\alpha=\\alpha$, $(\\alpha\\beta)\\gamma=\\alpha(\\beta\\gamma)$ a $|\\alpha\\beta|=|\\alpha|+|\\beta|$.",
+   "explanation": {
+    "intuition": "Zreťazenie je prilepenie dvoch slov; $\\varepsilon$ je neutrálny prvok, ktorý nič nemení.",
+    "detailed": "Zreťazenie je asociatívne, ale nie komutatívne: $ab\\ne ba$. Vďaka asociativite môžeme zátvorky vynechať. Vlastnosť $|\\alpha\\beta|=|\\alpha|+|\\beta|$ sa používa pri dôkazoch [indukciou](def.indukcia) podľa dĺžky.",
+    "pitfalls": [
+     "Zreťazenie nie je komutatívne."
+    ],
+    "examples": [
+     "$\\alpha=ab$, $\\beta=ba$: $\\alpha\\beta=abba$, $\\beta\\alpha=baab$, obe majú dĺžku $4$."
+    ]
+   },
+   "uses": [
+    "dfn.slovo",
+    "def.indukcia"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.jazyk",
+   "type": "definition",
+   "topic": "gramatiky",
+   "title": "Jazyk",
+   "terms": [
+    {
+     "term": "jazyk",
+     "alt": "language",
+     "symbol": "L"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja01_gramatiky_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "**Jazyk** nad [abecedou](dfn.abeceda) $\\Sigma$ je ľubovoľná podmnožina $L\\subseteq\\Sigma^*$, teda ľubovoľná množina [slov](dfn.slovo) nad $\\Sigma$.",
+   "explanation": {
+    "intuition": "Jazyk je vlastnosť slov: každé [slovo](dfn.slovo) buď do jazyka patrí, alebo nepatrí.",
+    "detailed": "Jazyk môže byť konečný aj nekonečný, prázdny ($\\emptyset$) aj taký, že obsahuje všetky slová ($\\Sigma^*$). Ústrednou otázkou teórie je, ako takú množinu popísať konečným objektom: [gramatikou](dfn.gramatika), automatom alebo [regulárnym výrazom](dfn.regularny-vyraz). Keďže slov je spočítateľne veľa, ale jazykov nespočítateľne veľa, väčšina jazykov nemá konečný popis.",
+    "pitfalls": [
+     "$\\emptyset$ (prázdny jazyk) a $\\{\\varepsilon\\}$ (jazyk s jediným prázdnym slovom) sú rôzne jazyky."
+    ],
+    "examples": [
+     "$L=\\{\\omega\\in\\{0,1\\}^*:$ počet núl v $\\omega$ je párny$\\}$; $10011\\in L$, $10010\\notin L$."
+    ]
+   },
+   "uses": [
+    "dfn.slovo",
+    "dfn.abeceda"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.regularny-vyraz"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.gramatika"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.priklady-jazykov",
+   "type": "example",
+   "topic": "gramatiky",
+   "title": "Príklady jazykov",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja01_gramatiky_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "$L=\\{\\omega\\in\\Sigma_2^*:\\omega$ je korektným slovenským [slovom](dfn.slovo)$\\}$; napr. $\\check z\\check z\\notin L$, ale $\\text{poľnohospodárstvo}\\in L$. $L'=\\{\\omega\\in\\{0,1\\}^*:$ počet núl v $\\omega$ je párny$\\}$; napr. $10011\\in L'$ a $111\\in L'$, ale $10010\\notin L'$.",
+   "explanation": {
+    "intuition": "Jazyk môže popisovať prirodzenú aj umelú vlastnosť slov.",
+    "detailed": "Prvý [jazyk](dfn.jazyk) sa nedá zachytiť jednoduchou formulou; druhý má jednoduchú štruktúru, ktorú rozpozná aj konečný akceptor, ktorý si pamätá len paritu počtu núl.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.slovo"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Oprava zdroja: slajd uvádza $10010\\in L'$ a $10011,111\\notin L'$, čo platí pre párny počet jednotiek, nie núl (10010 má tri nuly). Gramatika $G_1$ na slajde 8 generuje párny počet núl, preto sú v texte uvedené správne príslušnosti. Znaky príslušnosti v PDF chýbali, rekonštruované z kontextu."
+    ]
+   }
+  },
+  {
+   "id": "dfn.gramatika",
+   "type": "definition",
+   "topic": "gramatiky",
+   "title": "Gramatika",
+   "terms": [
+    {
+     "term": "gramatika",
+     "alt": "grammar",
+     "symbol": "G=(N,T,P,S)"
+    },
+    {
+     "term": "neterminál",
+     "alt": "nonterminal"
+    },
+    {
+     "term": "terminál",
+     "alt": "terminal"
+    },
+    {
+     "term": "gramatické pravidlo",
+     "alt": "production rule"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja01_gramatiky_P.pdf",
+     "page": 5
+    }
+   ],
+   "statement": "**Gramatika** je usporiadaná štvorica $G=(N,T,P,S)$, kde $N$ je [abeceda](dfn.abeceda) **neterminálnych** symbolov, $T$ je abeceda **terminálnych** symbolov, $N\\cap T=\\emptyset$, $S\\in N$ je počiatočný neterminál (štartovací symbol) a $P\\subseteq(N\\cup T)^*\\times(N\\cup T)^*$ je konečná množina **gramatických pravidiel**. Pravidlo sa píše ako $\\alpha\\to\\beta$, kde $\\alpha$ je ľavá a $\\beta$ pravá strana. Zvyčajne sa požaduje, aby $\\alpha$ obsahovalo aspoň jeden neterminál.",
+   "explanation": {
+    "intuition": "Gramatika je súbor prepisovacích pravidiel: začnem od $S$ a opakovane nahrádzam časti reťazca, až zostanú iba terminály.",
+    "detailed": "Terminály sú znaky výsledného [slova](dfn.slovo), neterminály sú pomocné „premenné“, ktoré sa z výsledku musia stratiť. Pravidlá vyjadrujú, čím môžeme podreťazec nahradiť. Obmedzenia na tvar pravidiel určujú typ gramatiky v [Chomského hierarchii](def.chomskeho-hierarchia). Množina $P$ je konečná, preto je gramatika konečným popisom (zvyčajne nekonečného) [jazyka](dfn.jazyk).",
+    "pitfalls": [
+     "Terminály a neterminály musia byť disjunktné množiny.",
+     "Ľavá strana pravidla nemusí byť jeden symbol; to je rozdiel oproti bezkontextovým gramatikám."
+    ],
+    "examples": [
+     "$G_2=(\\{S\\},\\{a,b\\},\\{S\\to aSb,\\ S\\to ab\\},S)$."
+    ]
+   },
+   "uses": [
+    "dfn.abeceda",
+    "dfn.slovo",
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "generalizes",
+     "target": "dfn.bezkontextova-gramatika",
+     "note": "bezkontextová gramatika má vľavo jediný neterminál"
+    },
+    {
+     "type": "generalizes",
+     "target": "dfn.regularna-gramatika",
+     "note": "najobmedzenejší typ"
+    },
+    {
+     "type": "see-also",
+     "target": "def.chomskeho-hierarchia"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.odvodenie",
+   "type": "definition",
+   "topic": "gramatiky",
+   "title": "Odvoditeľnosť",
+   "terms": [
+    {
+     "term": "priama odvoditeľnosť",
+     "alt": "direct derivation step",
+     "symbol": "\\Rightarrow"
+    },
+    {
+     "term": "odvoditeľnosť",
+     "alt": "derivation",
+     "symbol": "\\Rightarrow^*"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja01_gramatiky_P.pdf",
+     "page": 6
+    }
+   ],
+   "statement": "V [gramatike](dfn.gramatika) $G$ je reťazec $v$ **priamo odvoditeľný** z reťazca $u$ (píšeme $u\\Rightarrow_G v$), ak $u=x\\alpha y$ a $v=x\\beta y$ pre nejaké $x,y,\\alpha,\\beta\\in(N\\cup T)^*$, pričom $\\alpha\\to\\beta\\in P$. Reťazec $v$ je **odvoditeľný** z $u$ ($u\\Rightarrow^*_G v$), ak existujú $w_0,\\dots,w_r$ také, že $u=w_0\\Rightarrow_G w_1\\Rightarrow_G\\dots\\Rightarrow_G w_r=v$. Vždy platí $u\\Rightarrow^*_G u$ (odvodenie dĺžky nula).",
+   "explanation": {
+    "intuition": "Odvodenie je postupnosť krokov, v ktorých vždy nahradím časť reťazca pravou stranou niektorého pravidla.",
+    "detailed": "Jeden krok vyberie ľubovoľný výskyt ľavej strany nejakého pravidla a nahradí ho pravou stranou; okolie $x,y$ ostáva nezmenené. Odvodenie nie je jednoznačné: v reťazci môže byť viac miest, kde sa dá pravidlo použiť, a rôzne poradia vedú k rovnakému výsledku. Relácia $\\Rightarrow^*$ je reflexívny a tranzitívny uzáver relácie $\\Rightarrow$.",
+    "pitfalls": [
+     "$u\\Rightarrow^*u$ platí vždy, aj keď žiadne pravidlo nepoužijeme.",
+     "Pri odvodzovaní sa neterminály môžu objavovať vo vnútri reťazca; slovo patrí do jazyka až po odstránení všetkých neterminálov."
+    ],
+    "examples": [
+     "$S\\Rightarrow aSb\\Rightarrow aaSbb\\Rightarrow aaabbb$ v $G_2$."
+    ]
+   },
+   "uses": [
+    "dfn.gramatika",
+    "dfn.zretazenie-slov"
+   ],
+   "relations": [],
+   "figures": [
+    "fig.odvodenie-anbn"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.jazyk-gramatiky",
+   "type": "definition",
+   "topic": "gramatiky",
+   "title": "Jazyk generovaný gramatikou",
+   "terms": [
+    {
+     "term": "jazyk generovaný gramatikou",
+     "alt": "language generated by a grammar",
+     "symbol": "L(G)"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja01_gramatiky_P.pdf",
+     "page": 6
+    }
+   ],
+   "statement": "[Jazyk](dfn.jazyk) **generovaný** [gramatikou](dfn.gramatika) $G=(N,T,P,S)$ je množina $L(G)=\\{w\\in T^*: S\\Rightarrow^*_G w\\}$.",
+   "explanation": {
+    "intuition": "Jazyk [gramatiky](dfn.gramatika) tvoria práve tie slová zložené iba z terminálov, ktoré sa dajú odvodiť zo štartovacieho symbolu.",
+    "detailed": "Dôležité sú dve podmienky: [odvodenie](dfn.odvodenie) začína v $S$ a výsledok obsahuje iba terminály. Preto reťazce s neterminálmi do [jazyka](dfn.jazyk) nepatria, aj keď sú z $S$ odvoditeľné. Dve rôzne [gramatiky](dfn.gramatika) môžu generovať ten istý jazyk; potom sú ekvivalentné.",
+    "pitfalls": [
+     "Medzistupne odvodenia (vetné formy) obsahujúce neterminály nie sú slová jazyka."
+    ],
+    "examples": [
+     "$L(G_2)=\\{a^nb^n:n\\ge1\\}$."
+    ]
+   },
+   "uses": [
+    "dfn.jazyk",
+    "dfn.odvodenie",
+    "dfn.gramatika"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.gramatika-viet",
+   "type": "example",
+   "topic": "gramatiky",
+   "title": "Gramatika slovenských viet",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja01_gramatiky_P.pdf",
+     "page": 7
+    }
+   ],
+   "statement": "$G=(N,T,P,S)$, kde $N=\\{\\text{veta},\\text{podmet},\\text{sloveso},\\text{predmet}\\}$, $T$ sú písmená, $S=\\text{veta}$ a pravidlá sú: veta $\\to$ podmet sloveso predmet, veta $\\to$ sloveso predmet, podmet $\\to$ dunčo, podmet $\\to$ zora, podmet $\\to$ podmet a podmet, sloveso $\\to$ dones, sloveso $\\to$ daj, predmet $\\to$ loptičku, predmet $\\to$ kostičku, predmet $\\to$ predmet a predmet. Odvodenie: veta $\\Rightarrow$ podmet sloveso predmet $\\Rightarrow$ zora sloveso predmet $\\Rightarrow$ zora dones predmet $\\Rightarrow$ zora dones kostičku.",
+   "explanation": {
+    "intuition": "Gramatika generuje vety tak, že z abstraktnej „veta“ postupne dopĺňa konkrétne slová.",
+    "detailed": "Pravidlá podmet $\\to$ podmet a podmet a predmet $\\to$ predmet a predmet sú rekurzívne, preto [gramatika](dfn.gramatika) generuje nekonečne veľa viet, hoci má konečný počet pravidiel. Medzery a slová sú tu pre čitateľnosť; formálne je každé [slovo](dfn.slovo) reťazec písmen.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "dfn.gramatika",
+    "dfn.odvodenie"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.slovo"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.gramatika-parny-pocet-nul",
+   "type": "example",
+   "topic": "gramatiky",
+   "title": "Gramatika pre párny počet núl",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja01_gramatiky_P.pdf",
+     "page": 8
+    }
+   ],
+   "statement": "$G_1=(N,T,P,S)$, $N=\\{A_0,A_1\\}$, $T=\\{0,1\\}$, $S=A_0$, pravidlá: $A_0\\to0A_1$, $A_1\\to0A_0$, $A_0\\to1A_0$, $A_1\\to1A_1$, $A_0\\to\\varepsilon$. Potom $L(G_1)=\\{\\omega\\in\\{0,1\\}^*:$ počet núl v $\\omega$ je párny$\\}$. Odvodenie [slova](dfn.slovo) $101101$: $A_0\\Rightarrow1A_0\\Rightarrow10A_1\\Rightarrow101A_1\\Rightarrow1011A_1\\Rightarrow10110A_0\\Rightarrow101101A_0\\Rightarrow101101$.",
+   "explanation": {
+    "intuition": "Neterminál $A_i$ si pamätá, či doteraz bol počet núl párny ($A_0$) alebo nepárny ($A_1$).",
+    "detailed": "Gramatika simuluje konečný automat s dvoma stavmi: nula prepína stav, jednotka ho nemení, a [odvodenie](dfn.odvodenie) môže skončiť (pravidlo $A_0\\to\\varepsilon$) iba v stave „párny“. Je to [regulárna gramatika](dfn.regularna-gramatika) (až na $\\varepsilon$-pravidlo vo štartovacom symbole, ktorý sa však vyskytuje na pravých stranách, takže presne vzaté treba pridať nový štartovací symbol).",
+    "pitfalls": [
+     "Pravidlo $A_0\\to\\varepsilon$ a $S=A_0$ na pravej strane pravidla: podľa striktnej definície regulárnej gramatiky by štartovací symbol mal mať $\\varepsilon$-pravidlo len ak sa nevyskytuje na pravých stranách."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.jazyk-gramatiky"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.slovo"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.regularna-gramatika"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.odvodenie"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Poznámka k zdroju: $S=A_0$ sa vyskytuje na pravých stranách ($A_1\\to0A_0$, $A_0\\to1A_0$) a súčasne $A_0\\to\\varepsilon$; podľa striktnej definície regulárnej gramatiky (časť 1, str. 11) by to nebola regulárna gramatika. Jazyk ostáva rovnaký."
+    ]
+   }
+  },
+  {
+   "id": "ex.gramatika-anbn",
+   "type": "example",
+   "topic": "gramatiky",
+   "title": "Gramatika pre a^n b^n",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja01_gramatiky_P.pdf",
+     "page": 8
+    }
+   ],
+   "statement": "$G_2=(\\{S\\},\\{a,b\\},P,S)$, $P=\\{S\\to aSb,\\ S\\to ab\\}$. Potom $L(G_2)=\\{a^nb^n:n\\ge1\\}=\\{ab,aabb,aaabbb,\\dots\\}$. Odvodenie: $S\\Rightarrow aSb\\Rightarrow aaSbb\\Rightarrow aaaSbbb\\Rightarrow aaaabbbb$.",
+   "explanation": {
+    "intuition": "Pravidlo $S\\to aSb$ pridáva jedno $a$ vľavo a jedno $b$ vpravo, takže ich počty ostávajú rovnaké.",
+    "detailed": "Toto je [bezkontextová gramatika](dfn.bezkontextova-gramatika) (ľavá strana je jediný neterminál). Jazyk $\\{a^nb^n\\}$ nie je regulárny, čo ukážeme v prednáške o konštrukciách (Veta 13.4). Vidíme teda, že bez[kontextové gramatiky](dfn.kontextova-gramatika) sú silnejšie ako regulárne.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "dfn.jazyk-gramatiky"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.bezkontextova-gramatika"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.kontextova-gramatika"
+    }
+   ],
+   "figures": [
+    "fig.odvodenie-anbn"
+   ],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.gramatika-anbncn",
+   "type": "example",
+   "topic": "gramatiky",
+   "title": "Kontextová gramatika pre a^n b^n c^n",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja01_gramatiky_P.pdf",
+     "page": 9
+    }
+   ],
+   "statement": "$G_3=(\\{S,B,C\\},\\{a,b,c\\},P,S)$ s pravidlami $S\\to aSBC$, $S\\to aBC$, $CB\\to BC$, $aB\\to ab$, $bB\\to bb$, $bC\\to bc$, $cC\\to cc$. Pravidlá $S\\to aSBC$, $S\\to aBC$ vygenerujú $a\\dots aBCBC\\dots BC$, pravidlo $CB\\to BC$ utriedi neterminály ($a\\dots aB\\dots BC\\dots C$) a ostatné pravidlá ich postupne preklopia na malé písmená. Platí $L(G_3)=\\{a^nb^nc^n:n\\ge1\\}$. Pravidlá $B\\to b$ a $C\\to c$ by nestačili, lebo by sa neterminály mohli prepísať ešte pred usporiadaním; preto sa používajú kontextové pravidlá $aB\\to ab$, $bB\\to bb$, $bC\\to bc$, $cC\\to cc$.",
+   "explanation": {
+    "intuition": "Najprv nagenerujeme správne počty $a$, $B$, $C$; potom neterminály zoradíme a odzadu ich premeníme na terminály zľava doprava.",
+    "detailed": "Pravidlo $CB\\to BC$ má na ľavej strane dva symboly, preto nejde o bezkontextové pravidlo; zachováva však dĺžku, preto [gramatika](dfn.gramatika) je kontextová. Prepisovanie na terminály je zámerne obmedzené kontextom: $B$ sa zmení na $b$ iba ak pred ním už stojí $a$ alebo $b$. Tým sa zaručí správne poradie $a\\dots ab\\dots bc\\dots c$.",
+    "pitfalls": [
+     "Nestačí pravidlo $B\\to b$: neterminály by sa mohli prepísať skôr, než sa usporiadajú."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.jazyk-gramatiky"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.gramatika"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Na slajde 9 sú vynechané šípky v pravidlách; rekonštruované z komentárov a z identického príkladu v prednáške Kontextové jazyky (slajd 2)."
+    ]
+   }
+  },
+  {
+   "id": "def.chomskeho-hierarchia",
+   "type": "concept",
+   "topic": "gramatiky",
+   "title": "Chomského hierarchia gramatík",
+   "terms": [
+    {
+     "term": "Chomského hierarchia",
+     "alt": "Chomsky hierarchy"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja01_gramatiky_P.pdf",
+     "page": 10
+    }
+   ],
+   "statement": "Podľa tvaru pravidiel $\\alpha\\to\\beta$ sa [gramatiky](dfn.gramatika) členia na štyri typy (Noam Chomsky, 1956): **0. Frázové gramatiky**: pravidlá bez obmedzenia, povolené aj $|\\alpha|>|\\beta|$ (skracovanie), simulujú ľubovoľný výpočet [Turingovho stroja](dfn.turingov-stroj). **1. Kontextové gramatiky**: ak $\\alpha\\to\\beta\\in P$, tak $|\\alpha|\\le|\\beta|$ (výnimka $S\\to\\varepsilon$, ak $S$ nie je na žiadnej pravej strane); zodpovedajú im [lineárne ohraničené Turingove stroje](dfn.lba). **2. Bez[kontextové gramatiky](dfn.kontextova-gramatika)**: iba pravidlá $A\\to\\beta$, kde $A\\in N$; syntax väčšiny programovacích [jazykov](dfn.jazyk); zodpovedajú im zariadenia s konečnou pamäťou a zásobníkom. **3. Regulárne gramatiky**: iba pravidlá $A\\to aB$ alebo $A\\to a$, kde $A,B\\in N$, $a\\in T$ (výnimka $S\\to\\varepsilon$); zodpovedajú im zariadenia s konečnou pamäťou.",
+   "explanation": {
+    "intuition": "Čím prísnejšie obmedzíme tvar pravidiel, tým slabšie je generovanie, ale tým jednoduchší je zodpovedajúci stroj a tým viac vieme o [jazyku](dfn.jazyk) rozhodnúť.",
+    "detailed": "Každý nasledujúci typ je špeciálnym prípadom predchádzajúceho (až na drobnosť s pravidlami $A\\to\\varepsilon$ v [bezkontextových gramatikách](dfn.bezkontextova-gramatika), ktoré sa dajú odstrániť): regulárne $\\subset$ bezkontextové $\\subset$ kontextové $\\subset$ frázové. Zodpovedajúce triedy [jazykov](dfn.jazyk) sú pre inklúzie ostré, čo uvidíme na jazykoch $\\{a^nb^n\\}$ (nie regulárny) a $\\{a^nb^nc^n\\}$ (nie bezkontextový). Pre jednotlivé typy platia rôzne uzáverové vlastnosti a rôzne problémy sú rozhodnuteľné; to je hlavná téma celého kurzu.",
+    "pitfalls": [
+     "Kontextové pravidlá nesmú skracovať: $|\\alpha|\\le|\\beta|$, nie $|\\alpha|=|\\beta|$.",
+     "Slovo „kontextový“ sa dá pochopiť doslovne iba pri pravidlách tvaru $\\gamma A\\delta\\to\\gamma\\beta\\delta$; slajdová definícia cez dĺžky je ekvivalentná."
+    ],
+    "examples": [
+     "$G_2$ je typu 2, $G_3$ typu 1, $G_1$ je (takmer) typu 3."
+    ]
+   },
+   "uses": [
+    "dfn.gramatika",
+    "dfn.jazyk"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.frazova-gramatika",
+     "note": "typ 0"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.kontextova-gramatika",
+     "note": "typ 1"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.bezkontextova-gramatika",
+     "note": "typ 2"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.regularna-gramatika",
+     "note": "typ 3"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.turingov-stroj",
+     "note": "stroj pre typ 0"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.lba",
+     "note": "stroj pre typ 1"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.zasobnikovy-automat",
+     "note": "stroj pre typ 2"
+    },
+    {
+     "type": "see-also",
+     "target": "dfn.konecnostavovy-akceptor",
+     "note": "stroj pre typ 3"
+    }
+   ],
+   "figures": [
+    "fig.chomsky-typy",
+    "fig.chomsky-inkluzie"
+   ],
+   "attribution": "Noam Chomsky, 1956",
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.chomsky-typy",
+   "title": "Štyri typy gramatík",
+   "caption": "Chomského hierarchia podľa slajdov 10–11.",
+   "origin": "slides",
+   "illustrates": [
+    "def.chomskeho-hierarchia"
+   ],
+   "sources": [
+    {
+     "file": "Afja01_gramatiky_P.pdf",
+     "page": 10
+    }
+   ],
+   "kind": "table",
+   "columns": [
+    "Typ",
+    "Názov",
+    "Tvar pravidiel",
+    "Zodpovedajúci stroj"
+   ],
+   "rows": [
+    [
+     "0",
+     "frázová",
+     "$\\alpha\\to\\beta$ (bez obmedzenia)",
+     "Turingov stroj"
+    ],
+    [
+     "1",
+     "kontextová",
+     "$|\\alpha|\\le|\\beta|$",
+     "lineárne ohraničený Turingov stroj"
+    ],
+    [
+     "2",
+     "bezkontextová",
+     "$A\\to\\beta$, $A\\in N$",
+     "zásobníkový automat"
+    ],
+    [
+     "3",
+     "regulárna",
+     "$A\\to aB$ alebo $A\\to a$",
+     "konečný automat (akceptor)"
+    ]
+   ]
+  },
+  {
+   "id": "fig.chomsky-inkluzie",
+   "title": "Zanorenie tried jazykov",
+   "caption": "Každá trieda je vlastnou podmnožinou nasledujúcej; ostrosť ukazujú jazyky $a^nb^n$ a $a^nb^nc^n$ (a ďalšie výsledky kurzu).",
+   "origin": "generated",
+   "illustrates": [
+    "def.chomskeho-hierarchia"
+   ],
+   "sources": [],
+   "kind": "mermaid",
+   "code": "flowchart LR\n  R[\"regulárne\"] -->|podmnožina| B[\"bezkontextové\"]\n  B -->|podmnožina| K[\"kontextové\"]\n  K -->|podmnožina| F[\"frázové (rekurzívne vyčísliteľné)\"]"
+  },
+  {
+   "id": "fig.odvodenie-anbn",
+   "title": "Odvodenie slova aaabbb v G2",
+   "caption": "Vetné formy ako vrcholy, kroky odvodenia ako hrany.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.gramatika-anbn",
+    "dfn.odvodenie"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "S",
+     "x": 0,
+     "y": 0,
+     "label": "▸ S"
+    },
+    {
+     "id": "aSb",
+     "x": 150,
+     "y": 0,
+     "label": "aSb"
+    },
+    {
+     "id": "aaSbb",
+     "x": 330,
+     "y": 0,
+     "label": "aaSbb"
+    },
+    {
+     "id": "aaabbb",
+     "x": 540,
+     "y": 0,
+     "label": "aaabbb ◉"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "S",
+     "target": "aSb",
+     "label": "S→aSb",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "aSb",
+     "target": "aaSbb",
+     "label": "S→aSb",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "aaSbb",
+     "target": "aaabbb",
+     "label": "S→ab",
+     "directed": true
+    }
+   ],
+   "animations": [
+    {
+     "title": "Odvodenie krok za krokom",
+     "steps": [
+      {
+       "caption": "Začíname v štartovacom symbole S.",
+       "highlight": [
+        "S"
+       ]
+      },
+      {
+       "caption": "Pravidlo S→aSb pridá a vľavo a b vpravo.",
+       "highlight": [
+        "S",
+        "aSb",
+        "e0"
+       ]
+      },
+      {
+       "caption": "Znova S→aSb.",
+       "highlight": [
+        "aSb",
+        "aaSbb",
+        "e1"
+       ]
+      },
+      {
+       "caption": "Pravidlo S→ab odstráni neterminál: dostaneme slovo aaabbb ∈ L(G2).",
+       "highlight": [
+        "aaSbb",
+        "aaabbb",
+        "e2"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.syntax-prog-jazykov",
+   "title": "Syntax programovacieho jazyka v BNF",
+   "summary": "Zápis povolených programov gramatikou.",
+   "scenario": "Návrhári jazyka potrebujú presne a konečne popísať, ktoré texty sú korektné programy.",
+   "modelling": "Symboly sú tokeny jazyka (terminály), syntaktické kategórie (výraz, príkaz) sú neterminály a pravidlá (BNF) popisujú, z čoho sa kategória skladá.",
+   "solution": "Takáto bezkontextová gramatika je podkladom pre generátory syntaktických analyzátorov. Jazyk $\\{a^nb^n\\}$ ukazuje, prečo sú pre vnorené zátvorky potrebné bezkontextové gramatiky, nie regulárne.",
+   "connects": [
+    "dfn.gramatika",
+    "dfn.jazyk-gramatiky",
+    "def.chomskeho-hierarchia",
+    "ex.gramatika-anbn"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.validacia-vstupov",
+   "title": "Validácia formátov vstupu",
+   "summary": "Overenie, že reťazec má požadovaný tvar.",
+   "scenario": "Formulár má prijať iba telefónne čísla, identifikátory alebo dátumy v povolenom formáte.",
+   "modelling": "Povolené reťazce tvoria jazyk nad abecedou znakov; jeho tvar vystihuje regulárna gramatika (typ 3).",
+   "solution": "Regulárny jazyk sa dá rozpoznať konečným automatom, takže overenie je lineárne rýchle a nepotrebuje pamäť navyše.",
+   "connects": [
+    "dfn.jazyk",
+    "def.chomskeho-hierarchia",
+    "ex.gramatika-parny-pocet-nul"
+   ],
+   "figures": [],
+   "tags": [
+    "validácia"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.generovanie-testov",
+   "title": "Generovanie testovacích dát z gramatiky",
+   "summary": "Náhodné odvodzovanie vytvára vstupy pre testy.",
+   "scenario": "Chceme otestovať parser alebo databázu na veľkom počte syntakticky správnych vstupov.",
+   "modelling": "Gramatika popisuje vstupný jazyk; náhodným výberom pravidiel pri odvodzovaní vznikajú slová jazyka $L(G)$.",
+   "solution": "Každé odvodenie z $S$ až po terminály dáva korektné slovo, takže generátor nikdy nevyrobí neplatný vstup (pri obmedzení hĺbky rekurzie dostaneme aj konečný výstup).",
+   "connects": [
+    "dfn.odvodenie",
+    "dfn.jazyk-gramatiky",
+    "ex.gramatika-viet"
+   ],
+   "figures": [],
+   "tags": [
+    "testovanie"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.sablony-viet",
+   "title": "Šablóny viet v spracovaní prirodzeného jazyka",
+   "summary": "Jednoduchá generácia viet z kategórií.",
+   "scenario": "Chatbot alebo systém na hlásenia má vytvárať gramaticky správne oznamy z kategórií slov.",
+   "modelling": "Neterminály sú kategórie (podmet, sloveso, predmet), terminály konkrétne slová.",
+   "solution": "Rekurzívne pravidlá ako podmet $\\to$ podmet a podmet umožňujú generovať nekonečne veľa viet z konečnej gramatiky; presne ako v príklade s dunčom a zorou.",
+   "connects": [
+    "ex.gramatika-viet",
+    "dfn.gramatika"
+   ],
+   "figures": [],
+   "tags": [
+    "NLP"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.gram-1",
+   "kind": "mcq",
+   "prompt": "Čomu sa rovná $\\emptyset^*$ (tranzitívny uzáver prázdnej abecedy)?",
+   "options": [
+    "$\\emptyset$",
+    "$\\{\\varepsilon\\}$",
+    "$\\{a\\}$",
+    "nekonečnej množine"
+   ],
+   "answer": 1,
+   "explanation": "Existuje jediná postupnosť nulovej dĺžky, prázdne slovo.",
+   "about": [
+    "dfn.slovo"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.gram-2",
+   "kind": "truefalse",
+   "prompt": "Zreťazenie slov je komutatívne: $\\alpha\\beta=\\beta\\alpha$ pre každé $\\alpha,\\beta$.",
+   "answer": false,
+   "explanation": "Napríklad $ab\\ne ba$. Zreťazenie je asociatívne, nie komutatívne.",
+   "about": [
+    "dfn.zretazenie-slov"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.gram-3",
+   "kind": "mcq",
+   "prompt": "Koľko je slov dĺžky $3$ nad abecedou $\\{0,1\\}$?",
+   "options": [
+    "3",
+    "6",
+    "8",
+    "9"
+   ],
+   "answer": 2,
+   "explanation": "Na každej z troch pozícií môžeme vybrať jeden z dvoch symbolov: $2^3=8$.",
+   "about": [
+    "dfn.slovo"
+   ],
+   "difficulty": 1,
+   "check": {
+    "verifier": "expr",
+    "expr": "2**3"
+   }
+  },
+  {
+   "id": "quiz.gram-4",
+   "kind": "flashcard",
+   "prompt": "Definujte jazyk generovaný gramatikou $G=(N,T,P,S)$.",
+   "answer": "$L(G)=\\{w\\in T^*: S\\Rightarrow^*_G w\\}$, množina slov z terminálov odvoditeľných z $S$.",
+   "explanation": "Slová musia obsahovať iba terminály a odvodenie začína v $S$.",
+   "about": [
+    "dfn.jazyk-gramatiky"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.gram-5",
+   "kind": "mcq",
+   "prompt": "Ktoré slovo patrí do $L(G_2)$, kde $S\\to aSb\\mid ab$?",
+   "options": [
+    "aab",
+    "aabb",
+    "abab",
+    "ba"
+   ],
+   "answer": 1,
+   "explanation": "Jazyk je $\\{a^nb^n:n\\ge1\\}$; $aabb=a^2b^2$.",
+   "about": [
+    "ex.gramatika-anbn"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.gram-6",
+   "kind": "truefalse",
+   "prompt": "Slovo $10010$ patrí do jazyka gramatiky $G_1$ (párny počet núl).",
+   "answer": false,
+   "explanation": "$10010$ obsahuje tri nuly, čo je nepárne číslo.",
+   "about": [
+    "ex.gramatika-parny-pocet-nul"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.gram-7",
+   "kind": "mcq",
+   "prompt": "Akého typu v Chomského hierarchii je gramatika $G_3$ s pravidlom $CB\\to BC$?",
+   "options": [
+    "typ 3 (regulárna)",
+    "typ 2 (bezkontextová)",
+    "typ 1 (kontextová)",
+    "nie je gramatika"
+   ],
+   "answer": 2,
+   "explanation": "Ľavá strana nie je jediný neterminál (nie je typ 2), no žiadne pravidlo neskracuje, takže je typu 1.",
+   "about": [
+    "def.chomskeho-hierarchia",
+    "ex.gramatika-anbncn"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.gram-8",
+   "kind": "mcq",
+   "prompt": "Ktorá podmienka charakterizuje kontextové gramatiky?",
+   "options": [
+    "$|\\alpha|\\le|\\beta|$ pre každé pravidlo $\\alpha\\to\\beta$",
+    "ľavá strana je jediný neterminál",
+    "$\\alpha\\to aB$ alebo $\\alpha\\to a$",
+    "žiadne obmedzenie"
+   ],
+   "answer": 0,
+   "explanation": "Pravidlá kontextových gramatík nesmú skracovať reťazec (až na $S\\to\\varepsilon$).",
+   "about": [
+    "def.chomskeho-hierarchia"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.gram-9",
+   "kind": "truefalse",
+   "prompt": "Každá regulárna gramatika je bezkontextová.",
+   "answer": true,
+   "explanation": "Pravidlá $A\\to aB$ a $A\\to a$ majú vľavo jediný neterminál.",
+   "about": [
+    "def.chomskeho-hierarchia"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.gram-10",
+   "kind": "mcq",
+   "prompt": "Aký stroj zodpovedá bezkontextovým gramatikám?",
+   "options": [
+    "konečný automat",
+    "zásobníkový automat",
+    "lineárne ohraničený Turingov stroj",
+    "Turingov stroj"
+   ],
+   "answer": 1,
+   "explanation": "Zásobník umožňuje rekurziu, napr. pre vnorené zátvorky.",
+   "about": [
+    "def.chomskeho-hierarchia"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.gram-11",
+   "kind": "open",
+   "prompt": "Odvoďte slovo $aabb$ v gramatike $G_2$ ($S\\to aSb\\mid ab$).",
+   "answer": "$S\\Rightarrow aSb\\Rightarrow aabb$.",
+   "explanation": "Najprv pravidlo $S\\to aSb$, potom $S\\to ab$.",
+   "about": [
+    "ex.gramatika-anbn",
+    "dfn.odvodenie"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.gram-12",
+   "kind": "open",
+   "prompt": "Prečo v gramatike $G_3$ nestačia pravidlá $B\\to b$ a $C\\to c$?",
+   "answer": "Neterminály by sa mohli prepísať na terminály pred usporiadaním, čím by vzniklo slovo ako $abcb\\dots$; kontextové pravidlá $aB\\to ab$ atď. dovolia prepis až po usporiadaní.",
+   "explanation": "Poradie $a\\dots ab\\dots bc\\dots c$ sa zaručí tým, že $B\\to b$ sa smie použiť iba za $a$ alebo $b$.",
+   "about": [
+    "ex.gramatika-anbncn"
+   ],
+   "difficulty": 2
+  }
+ ]
+}

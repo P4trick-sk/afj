@@ -1,0 +1,958 @@
+{
+ "schemaVersion": 1,
+ "meta": {
+  "id": "eps-akceptory",
+  "title": "ε-akceptory",
+  "course": "A",
+  "order": 9,
+  "sourceFiles": [
+   "Afja09_eps_akceptory_P.pdf"
+  ],
+  "summary": "ε-akceptor smie meniť stav bez čítania vstupu (ε-prechody). Je to pohodlný nástroj na skladanie akceptorov, ale silu nezvyšuje: ε-prechody sa dajú odstrániť a vznikne nedeterministický akceptor s rovnakým jazykom.",
+  "overview": "Prednáška zavádza ε-akceptory, ktorých prechodová funkcia $\\delta:Q\\times(\\Sigma\\cup\\{\\varepsilon\\})\\to2^Q$ dovoľuje „voľné“ prechody. Výpočet na slove je teraz postupnosť, v ktorej sa striedajú ε-cesty a prečítané symboly. Dôkazom Vety 9.1 ukážeme, že ε-akceptor sa vždy dá nahradiť NFA: pridáme prechody „cez ε-cestu a jeden symbol“ a koncové stavy rozšírime o stavy, z ktorých sa dá ε-cestou dostať do koncového. Pomocné tvrdenie ukazuje, že stačia ε-cesty dĺžky najviac $|Q|$, takže konštrukcia je konečná. ε-akceptory sú základným nástrojom v ďalších prednáškach (gramatiky, regulárne výrazy, uzavretosť).",
+  "keyQuestions": [
+   "Čo je ε-prechod a ako sa mení definícia jazyka?",
+   "Ako sa ε-prechody odstránia?",
+   "Prečo stačí uvažovať ε-cesty dĺžky najviac $|Q|$?"
+  ],
+  "prerequisites": [
+   "nedeterminizmus"
+  ],
+  "alsoCovers": [],
+  "status": "draft"
+ },
+ "nodes": [
+  {
+   "id": "dfn.eps-akceptor",
+   "type": "definition",
+   "topic": "eps-akceptory",
+   "title": "ε-akceptor",
+   "terms": [
+    {
+     "term": "ε-akceptor",
+     "alt": "epsilon-NFA, NFA with epsilon transitions"
+    },
+    {
+     "term": "ε-prechod",
+     "alt": "epsilon transition"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja09_eps_akceptory_P.pdf",
+     "page": 2
+    }
+   ],
+   "statement": "**$\\varepsilon$-akceptor** je usporiadaná päťica $M=(Q,\\Sigma,q_I,\\delta,F)$, kde $Q$ je konečná množina stavov, $\\Sigma$ konečná vstupná [abeceda](dfn.abeceda), $q_I\\in Q$ počiatočný stav, $F\\subseteq Q$ koncové stavy a $\\delta:Q\\times(\\Sigma\\cup\\{\\varepsilon\\})\\to2^Q$ [prechodová funkcia](dfn.konecnostavovy-automat) taká, že pre $q\\in Q$ platí $q\\in\\delta(q,\\varepsilon)$ (trivialné $\\varepsilon$-prechody). Ak napr. $q_2,q_5\\in\\delta(q_1,\\varepsilon)$, $q_3\\in\\delta(q_2,\\varepsilon)$ a $q_6\\in\\delta(q_3,a)$, tak $M$ sa môže bez čítania zo vstupu preklopiť z $q_1$ do $q_2$ alebo $q_5$, potom z $q_2$ do $q_3$ a až potom čítaním $a$ do $q_6$. Zápis $q\\xrightarrow{\\varepsilon}q'$ a $q\\xrightarrow{a}q'$.",
+   "explanation": {
+    "intuition": "ε-prechod je „voľný“ presun medzi stavmi bez čítania symbolu, ako dvere, ktorými sa dá prejsť bez vstupu.",
+    "detailed": "Z hľadiska výpočtu možno ε-prechody použiť ľubovoľný počet ráz (aj nula) medzi dvoma prečítanými symbolmi. Sú výhodné pri skladaní akceptorov: stačí spojiť koncové stavy jedného so začiatkom druhého ε-hranou.",
+    "pitfalls": [
+     "ε-hrany môžu tvoriť cykly; výpočet na slove však používa cesty konečnej dĺžky.",
+     "Trivialný ε-prechod $q\\to q$ sa v diagrame zvyčajne nekreslí."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.nfa",
+    "dfn.slovo",
+    "dfn.konecnostavovy-automat",
+    "dfn.abeceda"
+   ],
+   "relations": [
+    {
+     "type": "generalizes",
+     "target": "dfn.nfa",
+     "note": "NFA je ε-akceptor bez netriviálnych ε-prechodov"
+    },
+    {
+     "type": "equivalent",
+     "target": "dfn.nfa",
+     "note": "rovnaká trieda jazykov (Veta 9.1)"
+    }
+   ],
+   "figures": [
+    "fig.eps-akceptor"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "dfn.jazyk-eps-akceptora",
+   "type": "definition",
+   "topic": "eps-akceptory",
+   "title": "Jazyk rozpoznávaný ε-akceptorom",
+   "terms": [
+    {
+     "term": "jazyk ε-akceptora",
+     "alt": "language of an epsilon-NFA",
+     "symbol": "L(M)"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja09_eps_akceptory_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "[Jazyk](dfn.jazyk) rozpoznávaný $\\varepsilon$-akceptorom $M$ je množina $L(M)=\\{\\omega\\in\\Sigma^*:\\exists q_1,\\dots,q_n\\in Q,\\ \\exists e_1,\\dots,e_n\\in\\Sigma\\cup\\{\\varepsilon\\}:\\ e_1\\dots e_n=\\omega,\\ q_I\\xrightarrow{e_1}q_1\\xrightarrow{e_2}q_2\\dots q_{n-1}\\xrightarrow{e_n}q_n\\in F\\}$. Pre nedeterministický $M$ bez $\\varepsilon$-prechodov je $n=|\\omega|$; vo všeobecnosti $n\\ge m=|\\omega|$.",
+   "explanation": {
+    "intuition": "Slovo je prijaté, ak existuje cesta zo štartu do koncového stavu, ktorej označenia po vynechaní ε dajú [slovo](dfn.slovo).",
+    "detailed": "Medzi prečítanými symbolmi sa môžu ľubovoľne vkladať ε-kroky. Ak $\\omega=a_1\\dots a_m$, tak $a_j=e_{i_j}$ pre nejaké rastúce indexy $i_1<\\dots<i_m$.",
+    "pitfalls": [
+     "Cesta končiaca ε-krokmi po poslednom symbole je povolená: ε-cestou sa možno dostať do koncového stavu."
+    ],
+    "examples": []
+   },
+   "uses": [
+    "dfn.eps-akceptor",
+    "dfn.jazyk",
+    "dfn.slovo"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.eps-vypocet",
+   "type": "example",
+   "topic": "eps-akceptory",
+   "title": "Výpočet ε-akceptora s uzáverom",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja09_eps_akceptory_P.pdf",
+     "page": 3
+    }
+   ],
+   "statement": "Pre $\\varepsilon$-akceptor zodpovedajúci výrazu $(ab+abb)^*(ab+aab)^*$ sú po prečítaní prefixov $\\varepsilon$, $a$, $ab$ množiny aktívnych stavov postupne $\\{0,4\\}$, $\\{1,5\\}$, $\\{0,2,4,6\\}$ (po uzávere cez $\\varepsilon$-hrany). Keďže $4\\in F$ je v poslednej množine, [slovo](dfn.slovo) $ab$ sa prijme.",
+   "explanation": {
+    "intuition": "Po každom symbole pridáme všetky stavy dosiahnuteľné ε-cestou.",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "dfn.jazyk-eps-akceptora"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.slovo"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Príklad na slajde 3 je nečitateľný (len obrázok); nahradený vlastným príkladom výpočtu s ε-uzáverom na akceptore zo slajdu 8–10, ktorý je zrekonštruovaný a overený (jazyk $(ab+abb)^*(ab+aab)^*$ na slovách do dĺžky 12)."
+    ]
+   }
+  },
+  {
+   "id": "thm.eps-cesta-kratka",
+   "type": "theorem",
+   "topic": "eps-akceptory",
+   "title": "Pomocné tvrdenie: stačia ε-cesty dĺžky najviac |Q|",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja09_eps_akceptory_P.pdf",
+     "page": 5
+    }
+   ],
+   "statement": "Ak v $\\varepsilon$-akceptore $M$ existuje postupnosť $\\varepsilon$-prechodov zo stavu $p$ do $p'$, t.j. $p=p_0\\xrightarrow{\\varepsilon}p_1\\xrightarrow{\\varepsilon}\\dots\\xrightarrow{\\varepsilon}p_m=p'$, tak existuje aj taká postupnosť z $p$ do $p'$, v ktorej $m\\le|Q|$.",
+   "explanation": {
+    "intuition": "Cykly v ε-ceste sú zbytočné, preto stačia ε-cesty bez opakovania stavov.",
+    "detailed": "Najkratšia ε-cesta z $p$ do $p'$ neopakuje žiaden stav. Preto má najviac $|Q|$ hrán; to zaručuje, že pri odstraňovaní ε-prechodov stačí skúmať konečný počet ciest. Pre $m=0$ je $p=p_0=p'$.",
+    "pitfalls": [],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Zoberme najkratšiu postupnosť $\\varepsilon$-prechodov z $p$ do $p'$. Sporom predpokladajme, že má dĺžku $m>|Q|$.",
+      "why": "Chceme ukázať, že taká cesta nemôže byť najkratšia.",
+      "uses": [
+       "def.dokaz-sporom"
+      ]
+     },
+     {
+      "text": "Potom sa medzi stavmi $p_1,\\dots,p_m$ musel nejaký zopakovať: $p_i=p_j$ pre nejaké $1\\le i<j\\le m$.",
+      "why": "Holubníkový princíp: viac ako $|Q|$ stavov vo $|Q|$ možnostiach.",
+      "uses": [
+       "def.holubnikovy-princip"
+      ]
+     },
+     {
+      "text": "Vynechaním úseku medzi $p_i$ a $p_j$ dostaneme kratšiu postupnosť $\\varepsilon$-prechodov z $p$ do $p'$. To je spor s tým, že pôvodná bola najkratšia.",
+      "why": "Cyklus možno vynechať.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "dfn.eps-akceptor",
+    "def.holubnikovy-princip",
+    "def.dokaz-sporom"
+   ],
+   "relations": [],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 2,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "alg.odstranenie-eps-prechodov",
+   "type": "algorithm",
+   "topic": "eps-akceptory",
+   "title": "Odstránenie ε-prechodov",
+   "terms": [
+    {
+     "term": "odstránenie ε-prechodov",
+     "alt": "epsilon elimination"
+    }
+   ],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja09_eps_akceptory_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "Pre $\\varepsilon$-akceptor $M=(Q,\\Sigma,q_I,\\delta,F)$ zostrojíme [NFA](dfn.nfa) $M'=(Q,\\Sigma,q_I,\\delta',F')$ takto: (1) ak v $M$ existuje postupnosť $p_0\\xrightarrow{\\varepsilon}p_1\\xrightarrow{\\varepsilon}\\dots\\xrightarrow{\\varepsilon}p_m\\xrightarrow{a}p'$ pre nejaké $m\\in\\{0,\\dots,|Q|\\}$ a $a\\in\\Sigma$, pridáme prechod $p_0\\xrightarrow{a}p'$ do $M'$; (2) ak existuje postupnosť $p_0\\xrightarrow{\\varepsilon}\\dots\\xrightarrow{\\varepsilon}p_m\\in F$, pridáme $p_0$ medzi koncové stavy $F'$.",
+   "explanation": {
+    "intuition": "Každú trojicu „ε-cesta, symbol“ nahradíme jednou hranou so symbolom a stavy s ε-cestou do koncového urobíme koncovými.",
+    "detailed": "Výsledok je [NFA](dfn.nfa) nad rovnakými stavmi. Zaručuje, že každý prijímajúci výpočet sa dá preskupiť na prechody po symboloch, pričom koncové ε-cesty sa pripočítajú do koncovosti. Počet stavov sa nezmení, môže však vzrásť počet hrán.",
+    "pitfalls": [
+     "Zabudnutie na pravidlo (2) vedie k tomu, že sa stratia slová, ktoré sa po poslednom symbole dostanú do koncového stavu len ε-cestou."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "generated",
+    "status": "none",
+    "idea": "Korektnosť dokazuje Veta 9.1: každý prijímajúci výpočet $M$ sa rozloží na úseky „ε-cesta a symbol“ a záverečnú ε-cestu, a naopak.",
+    "steps": []
+   },
+   "uses": [
+    "dfn.eps-akceptor",
+    "thm.eps-cesta-kratka",
+    "dfn.nfa"
+   ],
+   "relations": [
+    {
+     "type": "algorithm-for",
+     "target": "thm.veta-9-1-eps-na-nfa",
+     "note": "Veta 9.1 dokazuje korektnosť"
+    }
+   ],
+   "figures": [
+    "fig.eps-odstranene",
+    "fig.eps-uzavery"
+   ],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "thm.veta-9-1-eps-na-nfa",
+   "type": "theorem",
+   "topic": "eps-akceptory",
+   "title": "Veta 9.1: každý ε-akceptor sa dá nahradiť NFA",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja09_eps_akceptory_P.pdf",
+     "page": 4
+    }
+   ],
+   "statement": "Každý $\\varepsilon$-akceptor $M=(Q,\\Sigma,q_I,\\delta,F)$ sa dá nahradiť [nedeterministickým akceptorom](dfn.nfa) $M'$ takým, že $L(M')=L(M)$.",
+   "explanation": {
+    "intuition": "ε-prechody sú pohodlné, ale nie nevyhnutné: nič nové nevedia.",
+    "detailed": "Dôkaz má dve inklúzie. $L(M)\\subseteq L(M')$: každý prijímajúci výpočet $M$ sa rozpadne na úseky ε-ciest a jednotlivé symboly, a pre každý úsek má $M'$ jednu hranu. $L(M')\\subseteq L(M)$: opačne, hrany $M'$ a koncové stavy $F'$ sa dajú prepísať na ε-cesty $M$.",
+    "pitfalls": [
+     "Počiatočný stav ostáva rovnaký, ale $q_I$ môže pribudnúť do $F'$ (ak sa dá ε-cestou dostať do koncového)."
+    ],
+    "examples": []
+   },
+   "proof": {
+    "origin": "slides",
+    "status": "full",
+    "steps": [
+     {
+      "text": "Pre $\\omega=a_1\\dots a_n\\in L(M)$ má $M$ postupnosť $q_I'=\\dots\\xrightarrow{\\varepsilon}q_1\\xrightarrow{a_1}q_1'\\to\\dots\\xrightarrow{\\varepsilon}q_2\\xrightarrow{a_2}q_2'\\dots q_n\\xrightarrow{a_n}q_n'\\xrightarrow{\\varepsilon}\\dots\\xrightarrow{\\varepsilon}q_{n+1}\\in F$ s $q_0'=q_I$.",
+      "why": "Rozklad prijímajúceho výpočtu na ε-úseky a symboly.",
+      "uses": []
+     },
+     {
+      "text": "Podľa pomocného tvrdenia sa každý ε-úsek $q_{i-1}'\\Rightarrow q_i$ dá nahradiť ε-cestou dĺžky najviac $|Q|$. Z definície $\\delta'$ potom $M'$ má prechod $q_{i-1}'\\xrightarrow{a_i}q_i'$ pre $i=1,\\dots,n$.",
+      "why": "Pravidlo (1) konštrukcie.",
+      "uses": [
+       "thm.eps-cesta-kratka"
+      ]
+     },
+     {
+      "text": "Záverečný úsek $q_n'\\Rightarrow q_{n+1}\\in F$ dáva $q_n'\\in F'$ (pravidlo (2)). Teda $M'$ má prijímajúci výpočet $q_I=q_0'\\xrightarrow{a_1}q_1'\\to\\dots\\xrightarrow{a_n}q_n'\\in F'$, čiže $\\omega\\in L(M')$.",
+      "why": "Dôkaz inklúzie $L(M)\\subseteq L(M')$.",
+      "uses": []
+     },
+     {
+      "text": "Opačne: nech $\\omega=a_1\\dots a_n\\in L(M')$ s výpočtom $q_I=q_0'\\xrightarrow{a_1}\\dots\\xrightarrow{a_n}q_n'\\in F'$. Každá hrana $q_{i-1}'\\xrightarrow{a_i}q_i'$ vznikla z ε-cesty $q_{i-1}'\\Rightarrow q_i$ a prechodu $q_i\\xrightarrow{a_i}q_i'$ v $M$; stav $q_n'\\in F'$ z ε-cesty do $q_{n+1}\\in F$.",
+      "why": "Definícia $\\delta'$ a $F'$ (inverzne).",
+      "uses": []
+     },
+     {
+      "text": "Spojením úsekov dostaneme prijímajúci výpočet $M$ na $\\omega$, teda $\\omega\\in L(M)$. Platí $L(M')=L(M)$.",
+      "why": "Dôkaz inklúzie $L(M')\\subseteq L(M)$ je analogický.",
+      "uses": []
+     }
+    ]
+   },
+   "uses": [
+    "alg.odstranenie-eps-prechodov",
+    "dfn.jazyk-eps-akceptora",
+    "dfn.jazyk-nfa",
+    "thm.eps-cesta-kratka",
+    "dfn.nfa"
+   ],
+   "relations": [
+    {
+     "type": "analogue",
+     "target": "thm.eliminacia-eps-pravidiel",
+     "note": "rovnaká myšlienka u automatov a gramatík"
+    }
+   ],
+   "figures": [],
+   "difficulty": 1,
+   "importance": 3,
+   "review": {
+    "status": "draft",
+    "notes": []
+   }
+  },
+  {
+   "id": "ex.eps-bloky",
+   "type": "example",
+   "topic": "eps-akceptory",
+   "title": "ε-akceptor pre zreťazenie blokov ab/abb a ab/aab",
+   "terms": [],
+   "aliases": [],
+   "tags": [],
+   "origin": "slides",
+   "source": [
+    {
+     "file": "Afja09_eps_akceptory_P.pdf",
+     "page": 8
+    }
+   ],
+   "statement": "Jazyk $L=\\{\\omega\\in\\{a,b\\}^*:\\omega=\\alpha_1\\dots\\alpha_n\\beta_1\\dots\\beta_m,\\ n,m\\ge0,\\ \\alpha_i\\in\\{ab,abb\\},\\ \\beta_j\\in\\{ab,aab\\}\\}$ rozpoznáva $\\varepsilon$-akceptor s ôsmimi stavmi a $\\varepsilon$-prechodmi. Odstránením $\\varepsilon$-prechodov vznikne [NFA](dfn.nfa) $M'$ na rovnakých stavoch. Napr. $abababbabbababaabab\\in L$.",
+   "explanation": {
+    "intuition": "Prvá slučka generuje bloky $ab$ alebo $abb$, druhá bloky $ab$ alebo $aab$; medzi nimi je ε-most.",
+    "detailed": "",
+    "pitfalls": [],
+    "examples": []
+   },
+   "uses": [
+    "alg.odstranenie-eps-prechodov"
+   ],
+   "relations": [
+    {
+     "type": "see-also",
+     "target": "dfn.nfa"
+    }
+   ],
+   "figures": [
+    "fig.eps-akceptor",
+    "fig.eps-odstranene"
+   ],
+   "difficulty": 1,
+   "importance": 1,
+   "review": {
+    "status": "draft",
+    "notes": [
+     "Obrázky na slajdoch 8–10 (M, M', M'') sú nečitateľné; akceptor je zrekonštruovaný (9 stavov $0,\\dots,8$, $F=\\{4\\}$) a oba tvary ($\\varepsilon$-akceptor aj NFA bez $\\varepsilon$) sú overené porovnaním s výrazom $(ab|abb)^*(ab|aab)^*$ na všetkých slovách do dĺžky 12."
+    ]
+   }
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig.eps-akceptor",
+   "title": "ε-akceptor pre (ab+abb)*(ab+aab)*",
+   "caption": "Prvá slučka: stavy $0$–$3$; druhá: stavy $4$–$8$; ε-most $0\\to4$.",
+   "origin": "generated",
+   "illustrates": [
+    "ex.eps-bloky",
+    "dfn.eps-akceptor"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "0",
+     "x": 0,
+     "y": 60,
+     "label": "▸ 0"
+    },
+    {
+     "id": "1",
+     "x": 110,
+     "y": 0,
+     "label": "1"
+    },
+    {
+     "id": "2",
+     "x": 220,
+     "y": 0,
+     "label": "2"
+    },
+    {
+     "id": "3",
+     "x": 330,
+     "y": 0,
+     "label": "3"
+    },
+    {
+     "id": "4",
+     "x": 220,
+     "y": 160,
+     "label": "4 ◉"
+    },
+    {
+     "id": "5",
+     "x": 330,
+     "y": 160,
+     "label": "5"
+    },
+    {
+     "id": "6",
+     "x": 440,
+     "y": 160,
+     "label": "6"
+    },
+    {
+     "id": "7",
+     "x": 440,
+     "y": 260,
+     "label": "7"
+    },
+    {
+     "id": "8",
+     "x": 550,
+     "y": 260,
+     "label": "8"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "0",
+     "target": "1",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "1",
+     "target": "2",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "2",
+     "target": "3",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "4",
+     "target": "5",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "5",
+     "target": "6",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e5",
+     "source": "5",
+     "target": "7",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e6",
+     "source": "7",
+     "target": "8",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e7",
+     "source": "2",
+     "target": "0",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e8",
+     "source": "3",
+     "target": "0",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e9",
+     "source": "0",
+     "target": "4",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e10",
+     "source": "6",
+     "target": "4",
+     "label": "ε",
+     "directed": true
+    },
+    {
+     "id": "e11",
+     "source": "8",
+     "target": "4",
+     "label": "ε",
+     "directed": true
+    }
+   ],
+   "animations": []
+  },
+  {
+   "id": "fig.eps-odstranene",
+   "title": "NFA po odstránení ε-prechodov",
+   "caption": "Koncové stavy: všetky, z ktorých vedie ε-cesta do $4$.",
+   "origin": "generated",
+   "illustrates": [
+    "alg.odstranenie-eps-prechodov",
+    "ex.eps-bloky"
+   ],
+   "sources": [],
+   "kind": "graph",
+   "directed": true,
+   "vertices": [
+    {
+     "id": "0",
+     "x": 0,
+     "y": 60,
+     "label": "▸ 0 ◉"
+    },
+    {
+     "id": "1",
+     "x": 110,
+     "y": 0,
+     "label": "1"
+    },
+    {
+     "id": "2",
+     "x": 220,
+     "y": 0,
+     "label": "2 ◉"
+    },
+    {
+     "id": "3",
+     "x": 330,
+     "y": 0,
+     "label": "3 ◉"
+    },
+    {
+     "id": "4",
+     "x": 220,
+     "y": 160,
+     "label": "4 ◉"
+    },
+    {
+     "id": "5",
+     "x": 330,
+     "y": 160,
+     "label": "5"
+    },
+    {
+     "id": "6",
+     "x": 440,
+     "y": 160,
+     "label": "6 ◉"
+    },
+    {
+     "id": "7",
+     "x": 440,
+     "y": 260,
+     "label": "7"
+    },
+    {
+     "id": "8",
+     "x": 550,
+     "y": 260,
+     "label": "8 ◉"
+    }
+   ],
+   "edges": [
+    {
+     "id": "e0",
+     "source": "0",
+     "target": "1",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e1",
+     "source": "0",
+     "target": "5",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e2",
+     "source": "1",
+     "target": "2",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e3",
+     "source": "2",
+     "target": "1",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e4",
+     "source": "2",
+     "target": "5",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e5",
+     "source": "2",
+     "target": "3",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e6",
+     "source": "3",
+     "target": "1",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e7",
+     "source": "3",
+     "target": "5",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e8",
+     "source": "4",
+     "target": "5",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e9",
+     "source": "5",
+     "target": "7",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e10",
+     "source": "5",
+     "target": "6",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e11",
+     "source": "6",
+     "target": "5",
+     "label": "a",
+     "directed": true
+    },
+    {
+     "id": "e12",
+     "source": "7",
+     "target": "8",
+     "label": "b",
+     "directed": true
+    },
+    {
+     "id": "e13",
+     "source": "8",
+     "target": "5",
+     "label": "a",
+     "directed": true
+    }
+   ],
+   "animations": []
+  },
+  {
+   "id": "fig.eps-uzavery",
+   "title": "ε-uzávery stavov",
+   "caption": "Overené výpočtom.",
+   "origin": "generated",
+   "illustrates": [
+    "alg.odstranenie-eps-prechodov"
+   ],
+   "sources": [],
+   "kind": "table",
+   "columns": [
+    "stav",
+    "ε-uzáver"
+   ],
+   "rows": [
+    [
+     "0",
+     "$\\{0,4\\}$"
+    ],
+    [
+     "1",
+     "$\\{1\\}$"
+    ],
+    [
+     "2",
+     "$\\{0,2,4\\}$"
+    ],
+    [
+     "3",
+     "$\\{0,3,4\\}$"
+    ],
+    [
+     "4",
+     "$\\{4\\}$"
+    ],
+    [
+     "5",
+     "$\\{5\\}$"
+    ],
+    [
+     "6",
+     "$\\{4,6\\}$"
+    ],
+    [
+     "7",
+     "$\\{7\\}$"
+    ],
+    [
+     "8",
+     "$\\{4,8\\}$"
+    ]
+   ]
+  }
+ ],
+ "applications": [
+  {
+   "id": "app.skladanie-automatov",
+   "title": "Skladanie automatov z menších častí",
+   "summary": "ε-hrany spájajú komponenty.",
+   "scenario": "Veľký akceptor sa skladá zo zreťazenia a zjednotenia menších.",
+   "modelling": "Zreťazenie: ε-hrany z koncových stavov prvého do počiatku druhého; zjednotenie: nový štart s ε-hranami do oboch.",
+   "solution": "Po zložení sa ε-prechody odstránia podľa Vety 9.1.",
+   "connects": [
+    "dfn.eps-akceptor",
+    "alg.odstranenie-eps-prechodov"
+   ],
+   "figures": [],
+   "tags": [
+    "modulárnosť"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.thompson-pouzitie",
+   "title": "Thompsonova konštrukcia pre regulárne výrazy",
+   "summary": "Regulárny výraz na ε-akceptor.",
+   "scenario": "Nástroje ako grep a lex potrebujú preložiť výraz na stroj.",
+   "modelling": "Operácie $+$, zreťazenie a iterácia sa prepíšu na ε-spojenia.",
+   "solution": "Výsledný ε-akceptor sa zbaví ε-prechodov alebo sa priamo simuluje s ε-uzáverom.",
+   "connects": [
+    "dfn.eps-akceptor",
+    "thm.veta-9-1-eps-na-nfa"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  },
+  {
+   "id": "app.lexery-eps",
+   "title": "Modulárny návrh lexikálnych analyzátorov",
+   "summary": "Každý token má vlastný ε-akceptor.",
+   "scenario": "Lexer zoskupuje pravidlá tokenov do jedného automatu.",
+   "modelling": "Nový štartovací stav s ε-hranami do štartov jednotlivých tokenov.",
+   "solution": "Odstránenie ε a determinizácia dajú výsledný DFA lexer.",
+   "connects": [
+    "dfn.eps-akceptor",
+    "alg.odstranenie-eps-prechodov"
+   ],
+   "figures": [],
+   "tags": [
+    "kompilátory"
+   ],
+   "origin": "generated"
+  }
+ ],
+ "quiz": [
+  {
+   "id": "quiz.eps-1",
+   "kind": "mcq",
+   "prompt": "Čo znamená ε-prechod?",
+   "options": [
+    "prechod, ktorý číta symbol $\\varepsilon$ zo vstupu",
+    "prechod bez čítania zo vstupu",
+    "prechod do koncového stavu",
+    "prechod do pasce"
+   ],
+   "answer": 1,
+   "explanation": "ε-prechod sa vykoná bez posunu po vstupe.",
+   "about": [
+    "dfn.eps-akceptor"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.eps-2",
+   "kind": "truefalse",
+   "prompt": "ε-akceptory rozpoznávajú viac jazykov ako NFA.",
+   "answer": false,
+   "explanation": "Veta 9.1: ku každému ε-akceptoru existuje NFA s rovnakým jazykom.",
+   "about": [
+    "thm.veta-9-1-eps-na-nfa"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.eps-3",
+   "kind": "mcq",
+   "prompt": "Aká je najväčšia potrebná dĺžka ε-cesty v akceptore s $|Q|$ stavmi?",
+   "options": [
+    "$|Q|^2$",
+    "$|Q|$",
+    "$2|Q|$",
+    "neobmedzená"
+   ],
+   "answer": 1,
+   "explanation": "Najkratšia ε-cesta neopakuje stav; má najviac $|Q|$ hrán.",
+   "about": [
+    "thm.eps-cesta-kratka"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.eps-4",
+   "kind": "mcq",
+   "prompt": "Prečo sa pri odstraňovaní ε-prechodov rozširuje množina koncových stavov?",
+   "options": [
+    "aby sa zachovali slová, ktoré končia ε-cestou do koncového stavu",
+    "aby sa zmenšil počet stavov",
+    "aby bol automat deterministický",
+    "nerozširuje sa"
+   ],
+   "answer": 0,
+   "explanation": "Pravidlo (2) konštrukcie.",
+   "about": [
+    "alg.odstranenie-eps-prechodov"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.eps-5",
+   "kind": "truefalse",
+   "prompt": "Po odstránení ε-prechodov sa počet stavov nutne zmenší.",
+   "answer": false,
+   "explanation": "Stavy ostávajú rovnaké; menia sa hrany a koncové stavy.",
+   "about": [
+    "alg.odstranenie-eps-prechodov"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.eps-6",
+   "kind": "open",
+   "prompt": "Aké sú ε-uzávery stavov $2$ a $6$ v ε-akceptore z príkladu?",
+   "answer": "$\\{0,2,4\\}$ a $\\{4,6\\}$: zo $2$ vedie ε do $0$ a z $0$ do $4$; zo $6$ do $4$.",
+   "explanation": "Postupne pridávajte ε-nasledovníkov.",
+   "about": [
+    "alg.odstranenie-eps-prechodov",
+    "ex.eps-bloky"
+   ],
+   "difficulty": 2
+  },
+  {
+   "id": "quiz.eps-7",
+   "kind": "flashcard",
+   "prompt": "Zapíšte pravidlá konštrukcie $M'$ pri odstránení ε-prechodov.",
+   "answer": "(1) $p_0\\xrightarrow{\\varepsilon}\\dots\\xrightarrow{\\varepsilon}p_m\\xrightarrow{a}p'$ v $M$ $\\Rightarrow$ $p_0\\xrightarrow{a}p'$ v $M'$; (2) $p_0\\xrightarrow{\\varepsilon}\\dots\\xrightarrow{\\varepsilon}p_m\\in F$ $\\Rightarrow$ $p_0\\in F'$.",
+   "explanation": "Veta 9.1.",
+   "about": [
+    "alg.odstranenie-eps-prechodov"
+   ],
+   "difficulty": 1
+  },
+  {
+   "id": "quiz.eps-8",
+   "kind": "open",
+   "prompt": "Dokážte, že najkratšia ε-cesta neopakuje stav.",
+   "answer": "Ak $p_i=p_j$, $i<j$, vynechaním úseku medzi nimi dostaneme kratšiu ε-cestu s rovnakými koncami.",
+   "explanation": "Holubníkový princíp.",
+   "about": [
+    "thm.eps-cesta-kratka"
+   ],
+   "difficulty": 2
+  }
+ ]
+}
